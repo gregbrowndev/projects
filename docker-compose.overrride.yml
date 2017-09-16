@@ -1,0 +1,16 @@
+version: '3.1'
+
+# This file is used by default by docker-compose to override the settings in the base docker-compose.yml.
+# These overrides are for development.
+
+services:
+
+  client:
+    build: .
+    ports:
+      - "4200:4200"
+#    volumes:
+#      - .:/app
+    environment:
+      DEBUG: 'true'
+

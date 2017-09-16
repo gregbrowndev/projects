@@ -1,6 +1,26 @@
-# AngularReference
+# Angular 4 Reference Project
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.2.
+This is my reference Angular project creating a shopping list and recipe book web app, following the Udemy course: 
+[The Complete Guide to Angular 2](https://www.udemy.com/the-complete-guide-to-angular-2).
+
+The project has also being extended with Docker for deploying the app as a service.
+
+## Docker 
+
+The project has been outfitted with Docker.
+
+Deploy:
+
+```console
+docker-compose up -d --build
+```
+
+Build and run as single container:
+```console
+docker container build -t gregbrown/angular-reference .
+
+docker container run -d gregbrown/angular-reference
+```
 
 ## Development server
 
@@ -26,3 +46,5 @@ Before running the tests make sure you are serving the app via `ng serve`.
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+

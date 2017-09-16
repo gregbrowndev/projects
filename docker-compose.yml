@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+
+#  client:
+#    image: gregbrown/angular-reference:latest
+
+  client:
+    build: .
+    ports:
+      - "4200:4200"
+#    volumes:
+#      - .:/app
