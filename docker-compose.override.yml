@@ -1,7 +1,7 @@
 version: '3.1'
 
 # This file is used by default by docker-compose to override the settings in the base docker-compose.yml.
-# These overrides are for development.
+# These overrides are for development, such as bind mount to /app for live code updates.
 
 services:
 
@@ -9,8 +9,6 @@ services:
     build: .
     ports:
       - "4200:4200"
-#    volumes:
-#      - .:/app
-    environment:
-      DEBUG: 'true'
+    volumes:
+      - .:/app
 

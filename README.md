@@ -1,9 +1,10 @@
 # Angular 4 Reference Project
 
-This is my reference Angular project creating a shopping list and recipe book web app, following the Udemy course: 
+This is my reference Angular project. The app is a shopping list and recipe book, following the Udemy course: 
 [The Complete Guide to Angular 2](https://www.udemy.com/the-complete-guide-to-angular-2).
 
-The project has also being extended with Docker for deploying the app as a service.
+The project has also been extended with Docker for deploying the app as a service and doing automated builds. The image is
+hosted on [Docker Hub](https://cloud.docker.com/swarm/gregbrown/repository/docker/gregbrown/angular-reference).
 
 ## Docker 
 
@@ -20,6 +21,20 @@ Build and run as single container:
 docker container build -t gregbrown/angular-reference .
 
 docker container run -d gregbrown/angular-reference
+```
+
+Deploy in production:
+
+```console
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+```
+
+Deploy as Stack:
+
+```console
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml config > docker-stack.yml
+
+docker stack deploy -c docker-stack.yml angular-reference
 ```
 
 ## Development server

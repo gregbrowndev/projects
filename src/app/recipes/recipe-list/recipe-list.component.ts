@@ -9,10 +9,10 @@ import {RecipeModel} from '../recipe.model';
 export class RecipeListComponent implements OnInit {
   // Here we declare a list of type RecipeModel
   recipes: RecipeModel[] = [
-    new RecipeModel('A Test RecipeModel', 'A simple test.',
+    new RecipeModel('A Test Recipe Model', 'A simple test.',
       'https://www.bbcgoodfood.com/sites/default/files/recipe-collections/collection-image/' +
       '2013/05/frying-pan-pizza-easy-recipe-collection.jpg'),
-    new RecipeModel('Another Test RecipeModel', 'Another simple test.',
+    new RecipeModel('Another Test Recipe Model', 'Another simple test.',
       'http://www.alt-gifts.com/wp-content/uploads/2016/09/fast-food.jpg')
   ];
 
