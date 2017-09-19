@@ -16,6 +16,7 @@ COPY . .
 # Expose the port the app runs in
 EXPOSE 4200
 
+
 # Serve the app
 CMD [ "npm", "start" ]
 
