@@ -11,4 +11,8 @@ services:
       - "4200:4200"
     volumes:
       - .:/app
+      # Creates an anonymous volume to store node_modules which would get hidden within /app by the bind mount above
+      - client-node_modules:/app/node_modules
 
+volumes:
+  client-node_modules:
