@@ -13,7 +13,7 @@ The project has been outfitted with Docker.
 Deploy:
 
 ```console
-docker-compose up -d --build
+docker-compose up -d
 ```
 
 Build and run as single container:
