@@ -27,7 +27,7 @@ export class RecipesService {
         new IngredientModel('Beef Burger', 1),
         new IngredientModel('Buns', 2),
         new IngredientModel('Fries', 20),
-        new IngredientModel('Salad', 0)
+        new IngredientModel('Salad', 1)
       ])
   ];
 
