@@ -4,7 +4,8 @@ import {Subject} from 'rxjs/Subject';
 import {RecipeModel} from './recipe.model';
 import {IngredientModel} from '../shared/ingredient.model';
 import {ShoppingListService} from '../shopping-list/shopping-list.service';
-
+import {Http, Response} from '@angular/http';
+import 'rxjs/Rx';
 
 @Injectable()
 export class RecipesService {
@@ -34,7 +35,37 @@ export class RecipesService {
       ])
   ];
 
-  constructor(private shoppingListService: ShoppingListService) { }
+  constructor(private shoppingListService: ShoppingListService,
+              private http: Http) { }
+
+  save() {
+    return this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json', this.recipes)
+      .subscribe(
+        (response: Response) => console.log(response)
+      );
+  }
+
+  fetch() {
+    return this.http.get('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json')
+      .map(
+        (response: Response) => {
+          const recipes: RecipeModel[] = response.json();
+          for (let recipe of recipes) {
+            if (!recipe['ingredients']) {
+              console.log(recipe);
+              recipe['ingredients'] = [];
+            }
+          }
+          return recipes;
+        }
+      )
+      .subscribe(
+        (recipes: RecipeModel[]) => {
+          this.recipes = recipes;
+          this.emitRecipesChanged();
+        }
+      );
+  }
 
   getRecipes() {
     return this.recipes.slice();
@@ -62,7 +93,7 @@ export class RecipesService {
     this.emitRecipesChanged();
   }
 
-  emitRecipesChanged(){
+  emitRecipesChanged() {
     this.recipesChanged.next(this.recipes.slice());
   }
 

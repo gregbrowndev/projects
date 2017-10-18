@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {IngredientModel} from '../shared/ingredient.model';
 import {Subject} from 'rxjs/Subject';
+import {Http, Response} from '@angular/http';
+import 'rxjs/Rx';
 
 @Injectable()
 export class ShoppingListService {
@@ -12,7 +14,24 @@ export class ShoppingListService {
     new IngredientModel('Tomatoes', 10),
   ];
 
-  constructor() { }
+  constructor(private http: Http) { }
+
+  save() {
+    this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/ingredients.json', this.ingredients).subscribe(
+      (response: Response) => console.log(response)
+    );
+  }
+
+  fetch() {
+    this.http.get('https://ng-recipe-book-a8b74.firebaseio.com/ingredients.json')
+      .subscribe(
+        (response: Response) => {
+          console.log(response);
+          this.ingredients = response.json();
+          this.pushIngredients();
+        }
+      );
+  }
 
   getIngredients() {
     return this.ingredients.slice();
