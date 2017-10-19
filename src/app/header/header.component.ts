@@ -19,11 +19,11 @@ export class HeaderComponent implements OnInit {
 
   onSave() {
     this.recipesService.save();
-    this.shoppingListService.save();
+    // this.shoppingListService.save();
   }
 
   onFetch() {
     this.recipesService.fetch();
-    this.shoppingListService.fetch();
+    // this.shoppingListService.fetch();
   }
 }

@@ -6,6 +6,7 @@ import {IngredientModel} from '../shared/ingredient.model';
 import {ShoppingListService} from '../shopping-list/shopping-list.service';
 import {Http, Response} from '@angular/http';
 import 'rxjs/Rx';
+import {AuthService} from '../auth/auth.service';
 
 @Injectable()
 export class RecipesService {
@@ -36,7 +37,8 @@ export class RecipesService {
   ];
 
   constructor(private shoppingListService: ShoppingListService,
-              private http: Http) { }
+              private http: Http,
+              private authService: AuthService) { }
 
   save() {
     return this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json', this.recipes)
@@ -46,7 +48,9 @@ export class RecipesService {
   }
 
   fetch() {
-    return this.http.get('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json')
+    const token = this.authService.getToken();
+
+    return this.http.get('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json?auth=' + token)
       .map(
         (response: Response) => {
           const recipes: RecipeModel[] = response.json();
