@@ -41,7 +41,8 @@ export class RecipesService {
               private authService: AuthService) { }
 
   save() {
-    return this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json', this.recipes)
+    const token = this.authService.getToken();
+    return this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json?auth=' + token, this.recipes)
       .subscribe(
         (response: Response) => console.log(response)
       );

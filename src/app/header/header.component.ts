@@ -3,6 +3,7 @@ import {Response} from '@angular/http';
 import 'rxjs/Rx';
 import {RecipesService} from '../recipes/recipes.service';
 import {ShoppingListService} from '../shopping-list/shopping-list.service';
+import {AuthService} from "../auth/auth.service";
 
 @Component({
   selector: 'app-header',
@@ -12,18 +13,20 @@ import {ShoppingListService} from '../shopping-list/shopping-list.service';
 export class HeaderComponent implements OnInit {
 
   constructor(private recipesService: RecipesService,
-              private shoppingListService: ShoppingListService) { }
+              private authService: AuthService) { }
 
   ngOnInit() {
   }
 
   onSave() {
     this.recipesService.save();
-    // this.shoppingListService.save();
   }
 
   onFetch() {
     this.recipesService.fetch();
-    // this.shoppingListService.fetch();
+  }
+
+  onLogout() {
+    this.authService.logout();
   }
 }
