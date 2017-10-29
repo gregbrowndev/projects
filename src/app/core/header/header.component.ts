@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Response} from '@angular/http';
 import 'rxjs/Rx';
-import {RecipesService} from '../recipes/recipes.service';
-import {ShoppingListService} from '../shopping-list/shopping-list.service';
-import {AuthService} from "../auth/auth.service";
+import {AuthService} from '../../auth/auth.service';
+import {RecipesService} from '../../recipes/recipes.service';
+
 
 @Component({
   selector: 'app-header',
