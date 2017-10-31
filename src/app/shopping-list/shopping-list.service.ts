@@ -16,26 +16,6 @@ export class ShoppingListService {
 
   constructor(private http: Http) { }
 
-  // save() {
-  //   this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/ingredients.json', this.ingredients).subscribe(
-  //     (response: Response) => console.log(response)
-  //   );
-  // }
-  //
-  // fetch() {
-  //   this.http.get('https://ng-recipe-book-a8b74.firebaseio.com/ingredients.json')
-  //     .subscribe(
-  //       (response: Response) => {
-  //         console.log(response);
-  //         this.ingredients = response.json();
-  //         this.pushIngredients();
-  //       }
-  //     );
-  // }
-
-  getIngredients() {
-    return this.ingredients.slice();
-  }
 
   getIngredient(index: number) {
     return this.ingredients[index];
@@ -45,11 +25,6 @@ export class ShoppingListService {
     this.ingredientsChanged.next(this.ingredients.slice());
   }
 
-  addIngredient(ingredient: IngredientModel) {
-    console.log(ingredient);
-    this.ingredients.push(ingredient);
-    this.pushIngredients();
-  }
 
   addIngredients(ingredients: IngredientModel[]) {
     // Viable option but may lead to unnecessary event emission
