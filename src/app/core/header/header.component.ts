@@ -12,7 +12,7 @@ import {RecipesService} from '../../recipes/recipes.service';
 export class HeaderComponent implements OnInit {
 
   constructor(private recipesService: RecipesService,
-              private authService: AuthService) { }
+              public authService: AuthService) { }
 
   ngOnInit() {
   }

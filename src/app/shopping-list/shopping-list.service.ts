@@ -26,14 +26,14 @@ export class ShoppingListService {
   }
 
 
-  addIngredients(ingredients: IngredientModel[]) {
-    // Viable option but may lead to unnecessary event emission
-    // for (const ingredient of ingredients) {
-    //   this.addIngredient(ingredient);
-    // }
-    this.ingredients.push(...ingredients);
-    this.pushIngredients();
-  }
+  // addIngredients(ingredients: IngredientModel[]) {
+  //   // Viable option but may lead to unnecessary event emission
+  //   // for (const ingredient of ingredients) {
+  //   //   this.addIngredient(ingredient);
+  //   // }
+  //   this.ingredients.push(...ingredients);
+  //   this.pushIngredients();
+  // }
 
   updateIngredient(index: number, ingredient: IngredientModel) {
     this.ingredients[index] = ingredient;

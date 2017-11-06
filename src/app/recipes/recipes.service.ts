@@ -3,7 +3,6 @@ import {Subject} from 'rxjs/Subject';
 
 import {RecipeModel} from './recipe.model';
 import {IngredientModel} from '../shared/ingredient.model';
-import {ShoppingListService} from '../shopping-list/shopping-list.service';
 import {Http, Response} from '@angular/http';
 import 'rxjs/Rx';
 import {AuthService} from '../auth/auth.service';
@@ -36,9 +35,9 @@ export class RecipesService {
       ])
   ];
 
-  constructor(private shoppingListService: ShoppingListService,
-              private http: Http,
-              private authService: AuthService) { }
+  constructor(private http: Http,
+              private authService: AuthService) {
+  }
 
   save() {
     const token = this.authService.getToken();
@@ -78,14 +77,6 @@ export class RecipesService {
 
   getRecipe(id: number) {
     return this.recipes[id];
-  }
-
-  // updateSelectedRecipe(recipe: RecipeModel) {
-  //   this.recipeSelected.emit(recipe);
-  // }
-
-  addRecipeToShoppingList(recipe: RecipeModel) {
-    this.shoppingListService.addIngredients(recipe.ingredients);
   }
 
   addRecipe(recipe: RecipeModel) {
