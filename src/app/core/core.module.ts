@@ -7,7 +7,6 @@ import {SharedModule} from '../shared/shared.module';
 import {AppRoutingModule} from '../app-routing.module';
 import {AuthService} from '../auth/auth.service';
 import {AuthGuard} from '../auth/auth.guard';
-import {ShoppingListService} from '../shopping-list/shopping-list.service';
 import {RecipesService} from '../recipes/recipes.service';
 
 @NgModule({
@@ -28,7 +27,6 @@ import {RecipesService} from '../recipes/recipes.service';
   providers: [
     AuthService,
     AuthGuard,
-    ShoppingListService,
     RecipesService
   ],
 })
