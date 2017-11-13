@@ -1,8 +1,9 @@
 import {RecipeModel} from '../recipe.model';
 import {IngredientModel} from '../../shared/ingredient.model';
 import * as RecipesActions from './recipes.actions';
+import {AppState} from '../../store/app.reducers';
 
-export interface FeatureState {
+export interface FeatureState extends AppState {
   recipes: State;
 }
 
@@ -35,7 +36,8 @@ const initialState: State = {
   ]
 };
 
-export function recipeReducer(state = initialState, action: RecipesActions.RecipesActions) {
+export function recipeReducer(state = initialState,
+                              action: RecipesActions.RecipesActions) {
   switch (action.type) {
     case (RecipesActions.SET_RECIPES):
       return {
