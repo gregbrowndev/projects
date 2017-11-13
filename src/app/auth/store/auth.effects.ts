@@ -1,10 +1,11 @@
-import {Actions, Effect} from '@ngrx/effects';
 import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
+import {Actions, Effect} from '@ngrx/effects';
 import { fromPromise} from 'rxjs/observable/fromPromise';
 import * as firebase from 'firebase';
+import {Observable} from 'rxjs/Observable';
 
 import * as AuthActions from './auth.actions';
-import {Observable} from 'rxjs/Observable';
 
 @Injectable()
 export class AuthEffects {
@@ -22,6 +23,7 @@ export class AuthEffects {
       return this.getToken();
     })
     .mergeMap((token: string) => {
+      this.navHome();
       return [
         {
           type: AuthActions.SIGNUP
@@ -46,6 +48,7 @@ export class AuthEffects {
       return this.getToken();
     })
     .mergeMap((token: string) => {
+      this.navHome();
       return [
         {
           type: AuthActions.SIGNIN
@@ -57,21 +60,24 @@ export class AuthEffects {
       ];
     });
 
-  @Effect()
+  @Effect({dispatch: false})
   authSignout = this.actions$
-    .ofType(AuthActions.TRY_SIGNOUT)
+    .ofType(AuthActions.SIGNOUT)
     .switchMap(() => {
       return fromPromise(firebase.auth().signOut());
     })
-    .map(() => {
-      return {
-        type: AuthActions.SIGNOUT
-      };
+    .do(() => {
+      this.navHome();
     });
 
   private getToken(): Observable<string> {
     return fromPromise(firebase.auth().currentUser.getIdToken());
   }
 
-  constructor(private actions$: Actions) {}
+  private navHome() {
+    this.router.navigate(['/']);
+  }
+
+  constructor(private actions$: Actions,
+              private router: Router) {}
 }

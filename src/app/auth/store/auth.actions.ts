@@ -4,7 +4,6 @@ export const TRY_SIGNUP = 'TRY_SIGNUP';
 export const SIGNUP = 'SIGNUP';
 export const TRY_SIGNIN = 'TRY_SIGNIN';
 export const SIGNIN = 'SIGNIN';
-export const TRY_SIGNOUT = 'TRY_SIGNOUT';
 export const SIGNOUT = 'SIGNOUT';
 export const SET_TOKEN = 'SET_TOKEN';
 
@@ -28,10 +27,6 @@ export class Signin implements Action {
   readonly type = SIGNIN;
 }
 
-export class TrySignout implements Action {
-  readonly type = TRY_SIGNOUT;
-}
-
 export class Signout implements Action {
   readonly type = SIGNOUT;
 }
@@ -47,5 +42,4 @@ export type AuthActions = Signin
   | Signup
   | SetToken
   | TrySignup
-  | TrySignin
-  | TrySignout;
+  | TrySignin;

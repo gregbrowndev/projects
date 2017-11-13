@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import 'rxjs/Rx';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs/Observable';
-import {AuthService} from '../../auth/auth.service';
 import {RecipesService} from '../../recipes/recipes.service';
 import {AppState} from '../../store/app.reducers';
 import * as fromAuth from '../../auth/store/auth.reducers';
@@ -18,7 +17,6 @@ export class HeaderComponent implements OnInit {
   authState: Observable<fromAuth.State>;
 
   constructor(private recipesService: RecipesService,
-              public authService: AuthService,
               private store: Store<AppState>) { }
 
   ngOnInit() {
@@ -35,6 +33,6 @@ export class HeaderComponent implements OnInit {
 
   onLogout() {
     // this.authService.logout();
-    this.store.dispatch(new AuthActions.TrySignout());
+    this.store.dispatch(new AuthActions.Signout());
   }
 }

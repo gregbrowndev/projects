@@ -3,9 +3,6 @@ import {Subject} from 'rxjs/Subject';
 
 import {RecipeModel} from './recipe.model';
 import {IngredientModel} from '../shared/ingredient.model';
-import {Response} from '@angular/http';
-import 'rxjs/Rx';
-import {AuthService} from '../auth/auth.service';
 import {HttpClient} from '@angular/common/http';
 
 @Injectable()
@@ -36,8 +33,7 @@ export class RecipesService {
       ])
   ];
 
-  constructor(private http: HttpClient,
-              private authService: AuthService) {
+  constructor(private http: HttpClient) {
   }
 
   save() {
