@@ -14,8 +14,7 @@ import * as AuthActions from '../store/auth.actions';
 export class SignupComponent implements OnInit {
   @ViewChild('f') form: NgForm;
 
-  constructor(private store: Store<AppState>,
-    private authEffects: AuthEffects) { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit() {
   }

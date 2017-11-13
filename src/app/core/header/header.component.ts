@@ -6,6 +6,7 @@ import {AuthService} from '../../auth/auth.service';
 import {RecipesService} from '../../recipes/recipes.service';
 import {AppState} from '../../store/app.reducers';
 import * as fromAuth from '../../auth/store/auth.reducers';
+import * as AuthActions from '../../auth/store/auth.actions';
 
 
 @Component({
@@ -33,6 +34,7 @@ export class HeaderComponent implements OnInit {
   }
 
   onLogout() {
-    this.authService.logout();
+    // this.authService.logout();
+    this.store.dispatch(new AuthActions.TrySignout());
   }
 }
