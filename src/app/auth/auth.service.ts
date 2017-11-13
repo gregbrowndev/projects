@@ -60,6 +60,7 @@ export class AuthService {
     firebase.auth().currentUser.getToken()
       .then(
         (token: string) => {
+          console.log(token);
           this.store.dispatch(new AuthActions.SetToken(token));
         }
       );
