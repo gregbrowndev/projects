@@ -6,7 +6,7 @@ import {ShoppingListComponent} from './shopping-list/shopping-list.component';
 
 const appRouters: Routes = [
   {path: '', component: HomeComponent},
-  {path: 'recipes', loadChildren: './recipes/recipes.module#RecipesModule', canLoad: [AuthGuard]},
+  {path: 'recipes', loadChildren: './recipes/recipes.module#RecipesModule'},
   {path: 'shopping-list', component: ShoppingListComponent}
 ];
 

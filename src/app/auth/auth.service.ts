@@ -21,6 +21,7 @@ export class AuthService {
       .then(
         user => {
           this.store.dispatch(new AuthActions.Signup());
+          this.getToken();
         }
       )
       .catch(
@@ -48,6 +49,13 @@ export class AuthService {
     this.router.navigate(['/']);
   }
 
+  isAuthenticated(): Observable<boolean> {
+    return this.store.select('auth')
+      .map((authState: fromAuth.State) => {
+        return authState.authenticated;
+      });
+  }
+
   private getToken() {
     firebase.auth().currentUser.getToken()
       .then(
@@ -55,12 +63,5 @@ export class AuthService {
           this.store.dispatch(new AuthActions.SetToken(token));
         }
       );
-  }
-
-  isAuthenticated(): Observable<boolean> {
-    return this.store.select('auth')
-      .map((authState: fromAuth.State) => {
-        return authState.authenticated;
-      });
   }
 }
