@@ -22,11 +22,11 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <ng-template [ngIf]="!authService.isAuthenticated()">
+        <ng-template [ngIf]="!(authState | async).authenticated">
           <li><a routerLink="/signup">Register</a></li>
           <li><a routerLink="/signin">Login</a></li>
         </ng-template>
-        <ng-template [ngIf]="authService.isAuthenticated()">
+        <ng-template [ngIf]="(authState | async).authenticated">
           <li
             class="dropdown"
             appDropdown>

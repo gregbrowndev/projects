@@ -40,17 +40,14 @@ export class RecipesService {
   }
 
   save() {
-    const token = this.authService.getToken();
-    return this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json?auth=' + token, this.recipes)
+    return this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json', this.recipes)
       .subscribe(
         (response: Response) => console.log(response)
       );
   }
 
   fetch() {
-    const token = this.authService.getToken();
-
-    return this.http.get('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json?auth=' + token)
+    return this.http.get('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json')
       .map(
         (response: Response) => {
           const recipes: RecipeModel[] = response.json();

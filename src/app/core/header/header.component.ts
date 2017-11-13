@@ -1,7 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import 'rxjs/Rx';
+import {Store} from '@ngrx/store';
+import {Observable} from 'rxjs/Observable';
 import {AuthService} from '../../auth/auth.service';
 import {RecipesService} from '../../recipes/recipes.service';
+import {AppState} from '../../store/app.reducers';
+import * as fromAuth from '../../auth/store/auth.reducers';
 
 
 @Component({
@@ -10,11 +14,14 @@ import {RecipesService} from '../../recipes/recipes.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  authState: Observable<fromAuth.State>;
 
   constructor(private recipesService: RecipesService,
-              public authService: AuthService) { }
+              public authService: AuthService,
+              private store: Store<AppState>) { }
 
   ngOnInit() {
+    this.authState = this.store.select('auth');
   }
 
   onSave() {
