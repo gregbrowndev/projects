@@ -5,7 +5,7 @@ import {Store} from '@ngrx/store';
 
 import * as ShoppingListActions from '../../shopping-list/store/shopping-list.actions';
 import * as fromRecipe from '../store/recipe.reducers';
-import * as RecipesActions from '../store/recipes.actions';
+import * as RecipesActions from '../store/recipe.actions';
 
 @Component({
   selector: 'app-recipe-detail',
