@@ -3,9 +3,7 @@ import {Subject} from 'rxjs/Subject';
 
 import {RecipeModel} from './recipe.model';
 import {IngredientModel} from '../shared/ingredient.model';
-import {Http, Response} from '@angular/http';
-import 'rxjs/Rx';
-import {AuthService} from '../auth/auth.service';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class RecipesService {
@@ -35,31 +33,18 @@ export class RecipesService {
       ])
   ];
 
-  constructor(private http: Http,
-              private authService: AuthService) {
+  constructor(private http: HttpClient) {
   }
 
   save() {
-    return this.http.put('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json', this.recipes)
+    return this.http.put<RecipeModel[]>('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json', this.recipes)
       .subscribe(
-        (response: Response) => console.log(response)
+        (response: RecipeModel[]) => console.log(response)
       );
   }
 
   fetch() {
-    return this.http.get('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json')
-      .map(
-        (response: Response) => {
-          const recipes: RecipeModel[] = response.json();
-          for (let recipe of recipes) {
-            if (!recipe['ingredients']) {
-              console.log(recipe);
-              recipe['ingredients'] = [];
-            }
-          }
-          return recipes;
-        }
-      )
+    return this.http.get<RecipeModel[]>('https://ng-recipe-book-a8b74.firebaseio.com/recipes.json')
       .subscribe(
         (recipes: RecipeModel[]) => {
           this.recipes = recipes;
