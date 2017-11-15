@@ -3,7 +3,6 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import { Store } from '@ngrx/store';
 
-import {RecipesService} from '../recipes.service';
 import * as RecipeActions from '../store/recipe.actions';
 import * as fromRecipe from '../store/recipe.reducers';
 
@@ -20,7 +19,6 @@ export class RecipeEditComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private recipeService: RecipesService,
     private store: Store<fromRecipe.FeatureState>) { }
 
   ngOnInit() {
@@ -74,6 +72,9 @@ export class RecipeEditComponent implements OnInit {
       'description': new FormControl(recipeDescription, Validators.required),
       'ingredients': recipeIngredients
     });
+  }
+  get ingredients(): FormArray {
+    return (<FormArray>this.recipeForm.get('ingredients'));
   }
 
   onSubmit() {
