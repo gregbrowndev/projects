@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import 'rxjs/Rx';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs/Observable';
-import {RecipesService} from '../../recipes/recipes.service';
+
 import {AppState} from '../../store/app.reducers';
 import * as fromAuth from '../../auth/store/auth.reducers';
 import * as AuthActions from '../../auth/store/auth.actions';
+import * as RecipeActions from '../../recipes/store/recipe.actions';
 
 
 @Component({
@@ -16,23 +16,21 @@ import * as AuthActions from '../../auth/store/auth.actions';
 export class HeaderComponent implements OnInit {
   authState: Observable<fromAuth.State>;
 
-  constructor(private recipesService: RecipesService,
-              private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit() {
     this.authState = this.store.select('auth');
   }
 
   onSave() {
-    this.recipesService.save();
+    this.store.dispatch(new RecipeActions.StoreRecipes());
   }
 
   onFetch() {
-    this.recipesService.fetch();
+    this.store.dispatch(new RecipeActions.FetchRecipes());
   }
 
   onLogout() {
-    // this.authService.logout();
     this.store.dispatch(new AuthActions.Signout());
   }
 }

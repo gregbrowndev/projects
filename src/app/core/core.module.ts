@@ -5,7 +5,6 @@ import {CommonModule} from '@angular/common';
 import {SharedModule} from '../shared/shared.module';
 import {AppRoutingModule} from '../app-routing.module';
 import {AuthGuard} from '../auth/auth.guard';
-import {RecipesService} from '../recipes/recipes.service';
 import {AuthInterceptor} from '../shared/auth.interceptor';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
@@ -26,7 +25,6 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
   ],
   providers: [
     AuthGuard,
-    RecipesService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
   ],
 })
