@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import './App.css';
-import Person from './Person/Person';
+
+import styles from './App.css';
+import Persons from "../components/Persons/Persons";
+import Cockpit from "../components/Cockpit/Cockpit";
 
 class App extends Component {
   state = {
@@ -34,41 +36,19 @@ class App extends Component {
   };
 
   render() {
-    const style = {
-      backgroundColor: 'white',
-      font: 'inherit',
-      border: '1px solid blue',
-      padding: '8px',
-      cursor: 'pointer'
-    };
-
     let persons = null;
 
     if (this.state.showPersons) {
-      persons = (
-        <div>
-          {this.state.persons.map((person, index) => {
-            return (
-              <Person name={person.name}
-                      age={person.age}
-                      click={() => this.deletePersonHandler(index)}
-                      key={person.id}
-                      changed={(event) => this.nameChangedHandler(event, person.id)}
-              >
-              </Person>
-            );
-          })}
-        </div>
-      );
+      persons = <Persons clicked={this.deletePersonHandler}
+                         changed={this.nameChangedHandler}
+                         persons={this.state.persons}/>
     }
 
     return (
-      <div className="App">
-        <h1>Hi, I'm a React App</h1>
-        <button
-          style={style}
-          onClick={() => this.togglePersonHandler()}>Toggle People
-        </button>
+      <div className={styles.App}>
+        <Cockpit showPersons={this.state.showPersons}
+                 persons={this.state.persons}
+                 clicked={this.togglePersonHandler}/>
         {persons}
       </div>
     );
