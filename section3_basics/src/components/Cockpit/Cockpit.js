@@ -1,11 +1,12 @@
 import React from 'react';
 
+import Aux from '../../hoc/Aux';
 import styles from './Cockpit.css';
 
 const cockpit = (props) => {
-  let btnClass = '';
+  let btnClass = styles.Button;
   if (props.showPersons) {
-    btnClass = styles.Red;
+    btnClass = [styles.Button, styles.Red];
   }
 
   let classes = [];
@@ -17,14 +18,14 @@ const cockpit = (props) => {
   }
 
   return (
-    <div className={styles.Cockpit}>
+    <Aux>
       <h1>Hi, I'm a React App</h1>
       <p className={classes.join(' ')}>We're dynamically applying CSS classes</p>
       <button
         className={btnClass}
         onClick={props.clicked}>Toggle People
       </button>
-    </div>
+    </Aux>
   );
 };
 
