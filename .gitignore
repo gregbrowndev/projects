@@ -1,0 +1,8 @@
+
+*.pyc
+
+*.sqlite3
+
+geodjango/world/data/
+
+transitgtfs/assets/

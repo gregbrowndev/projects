@@ -1,0 +1,34 @@
+web:
+  build: .
+  command: python manage.py runserver 0.0.0.0:8000
+  volumes:
+    - .:/code
+  ports:
+    - "8000:8000"
+  links:
+    - db
+db:
+  image: postgres
+  volumes_from:
+    - pg_data
+pg_data:
+  image: pg_data
+
+# NOTES
+# Had difficulty even getting this basic Dockerized Django+PostgreSQL
+# project to run (i.e. with docker-compose up). The error message indicated
+# the web service could not access the database:
+
+#web_1  | django.db.utils.OperationalError: could not connect to server: Connection refused
+#web_1  | 	Is the server running on host "db" (172.17.0.2) and accepting
+#web_1  | 	TCP/IP connections on port 5432?
+
+# Solution found here (https://stackoverflow.com/a/36531445/5221078)
+# $ sudo pkill postgres
+
+# Work flow:
+
+# 1) Create the pg_data image, e.g. 'cd docker/dockerfiles/pgdata; build -t pg_data .'
+# 2) Apply migrations, in the project root directory run 'docker-compose run web python manage.py migrate'
+    # i.e. using the run command to execute the management command as normal in the container
+# 3) Bring up the stack using 'docker-compose up' in the project root directory (this uses the 'command' key value specified in 'web' above)
