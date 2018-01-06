@@ -16,7 +16,9 @@ export default class App extends React.Component {
         places: prevState.places.concat({
           key: Math.random(),
           name: newPlace,
-          image: placeImage
+          image: {
+            uri: 'http://vacationidea.com/pix/img25Hy8R/articles/most-beautiful-places-in-the-world_g25_mobi.jpg'
+          }
         })
       }
     })
