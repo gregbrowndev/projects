@@ -1,19 +1,41 @@
 import React from 'react';
 import {View, TextInput, StyleSheet, Button} from 'react-native';
 
-const placeInput = (props) => (
-  <View style={styles.inputContainer}>
-    <TextInput
-      style={styles.placeInput}
-      placeholder="An awesome place"
-      value={props.placeName}
-      onChangeText={props.changed}/>
-    <Button
-      styles={styles.placeButton}
-      onPress={props.submitted}
-      title="Add"/>
-  </View>
-);
+export default class PlaceInput extends React.Component {
+  state={
+    placeName: '',
+  };
+
+  placeNameChangedHandler = (val) => {
+    this.setState({
+      placeName: val
+    })
+  };
+
+  placeSumbitHandler = () => {
+    if (this.state.placeName.trim() === '') {
+      return;
+    }
+
+    this.props.onPlaceAdded(this.state.placeName);
+  };
+
+  render() {
+    return (
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.placeInput}
+          placeholder="An awesome place"
+          value={this.state.placeName}
+          onChangeText={this.placeNameChangedHandler}/>
+        <Button
+          styles={styles.placeButton}
+          onPress={this.placeSumbitHandler}
+          title="Add"/>
+      </View>
+    );
+  }
+};
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -30,5 +52,3 @@ const styles = StyleSheet.create({
     width: '30%'
   }
 });
-
-export default placeInput;

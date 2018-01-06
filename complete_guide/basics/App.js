@@ -6,24 +6,13 @@ import PlaceList from './src/components/PlaceList/PlaceList';
 
 export default class App extends React.Component {
   state={
-    placeName: '',
-    places: []
+    places: [],
   };
 
-  placeNameChangedHandler = (val) => {
-    this.setState({
-      placeName: val
-    })
-  };
-
-  placeSumbitHandler = () => {
-    if (this.state.placeName.trim() === '') {
-      return;
-    }
-
+  placeAddedHandler = (newPlace) => {
     this.setState(prevState => {
       return {
-        places: prevState.places.concat(prevState.placeName)
+        places: prevState.places.concat(newPlace)
       }
     })
   };
@@ -31,11 +20,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <PlaceInput
-          changed={this.placeNameChangedHandler}
-          submitted={this.placeSumbitHandler}
-          placeName={this.state.placeName}
-        />
+        <PlaceInput onPlaceAdded={this.placeAddedHandler} />
         <PlaceList places={this.state.places} />
       </View>
     );
