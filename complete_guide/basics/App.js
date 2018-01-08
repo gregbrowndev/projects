@@ -13,6 +13,7 @@ class App extends React.Component {
 
   placeAddedHandler = (newPlace) => {
     this.props.onAddPlace(newPlace);
+    console.log('A Place was added');
   };
 
   placeSelectedHandler = key => {

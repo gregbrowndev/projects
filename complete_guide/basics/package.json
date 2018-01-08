@@ -5,6 +5,7 @@
   "devDependencies": {
     "babel-preset-react-native-stage-0": "^1.0.1",
     "jest-expo": "23.0.0",
+    "react-native-kill-packager": "^1.0.0",
     "react-test-renderer": "16.0.0"
   },
   "scripts": {
@@ -12,7 +13,9 @@
     "android": "react-native run-android",
     "android-linux": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android",
     "ios": "react-native run-ios",
-    "test": "node node_modules/jest/bin/jest.js --watch"
+    "test": "node node_modules/jest/bin/jest.js --watch",
+    "packager:kill": "react-native-kill-packager",
+    "packager:restart": "react-native-kill-packager; npm start"
   },
   "jest": {
     "preset": "jest-expo"
@@ -20,6 +23,7 @@
   "dependencies": {
     "react": "16.0.0",
     "react-native": "0.50.3",
+    "react-native-vector-icons": "^4.4.3",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2"
   }
