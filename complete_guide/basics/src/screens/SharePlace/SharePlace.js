@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Button, StyleSheet, ScrollView } from 'react-native';
+import {View, Button, StyleSheet, ScrollView} from 'react-native';
 import {connect} from 'react-redux';
 
 import {addPlace} from '../../store/actions';
@@ -11,6 +11,9 @@ import LocationPicker from '../../components/LocationPicker/LocationPicker';
 
 
 class SharePlaceScreen extends Component {
+  state = {
+    placeName: '',
+  };
 
   constructor(props) {
     super(props);
@@ -30,10 +33,18 @@ class SharePlaceScreen extends Component {
     }
   };
 
-  placeAddedHandler = (placeName) => {
-    this.props.onAddPlace(placeName);
+  placeNameChangedHandler = val => {
+    this.setState({
+      placeName: val
+    });
   };
 
+  placeAddedHandler = () => {
+    const placeName = this.state.placeName.trim();
+    if (placeName !== '') {
+      this.props.onAddPlace(placeName);
+    }
+  };
 
   render() {
     return (
@@ -42,13 +53,16 @@ class SharePlaceScreen extends Component {
           <MainText>
             <HeadingText>Share a Place with us!</HeadingText>
           </MainText>
-          <ImagePickerWithPreview />
-          <LocationPicker />
-          <PlaceInput />
+          <ImagePickerWithPreview/>
+          <LocationPicker/>
+          <PlaceInput
+            placeName={this.state.placeName}
+            onChangeText={this.placeNameChangedHandler}
+          />
           <View style={styles.button}>
             <Button
               title="Share the Place"
-              onPress={() => alert('Share Place!')}
+              onPress={this.placeAddedHandler}
             />
           </View>
         </View>
