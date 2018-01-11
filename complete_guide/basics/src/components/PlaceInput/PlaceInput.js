@@ -1,8 +1,9 @@
 import React from 'react';
-import {View, TextInput, StyleSheet, Button} from 'react-native';
 
-export default class PlaceInput extends React.Component {
-  state={
+import DefaultInput from '../UI/DefaultInput/DefaultInput';
+
+class PlaceInput extends React.Component {
+  state = {
     placeName: '',
   };
 
@@ -22,33 +23,13 @@ export default class PlaceInput extends React.Component {
 
   render() {
     return (
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.placeInput}
-          placeholder="An awesome place"
-          value={this.state.placeName}
-          onChangeText={this.placeNameChangedHandler}/>
-        <Button
-          styles={styles.placeButton}
-          onPress={this.placeSumbitHandler}
-          title="Add"/>
-      </View>
+      <DefaultInput
+        placeholder="Place Name"
+        value={this.state.placeName}
+        onChangeText={this.placeNameChangedHandler}
+      />
     );
   }
-};
+}
 
-const styles = StyleSheet.create({
-  inputContainer: {
-    // flex: 1,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  placeInput: {
-    width: '70%'
-  },
-  placeButton: {
-    width: '30%'
-  }
-});
+export default PlaceInput;
