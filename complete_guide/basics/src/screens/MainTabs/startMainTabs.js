@@ -46,12 +46,6 @@ const startTabs = () => {
           screen: "awesome-places.SideDrawerScreen",
           fixedWidth: 600
         },
-      },
-      tabsStyle: {
-        tabBarSelectedButtonColor: "orange"
-      },
-      appStyle: {
-        tabBarSelectedButtonColor: "orange"
       }
     });
   });
