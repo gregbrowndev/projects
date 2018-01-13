@@ -7,6 +7,7 @@ import HeadingText from '../../components/UI/HeadingText/HeadingText';
 import MainText from '../../components/UI/MainText/MainText';
 import backgroundImage from '../../assets/background.jpg';
 import ButtonWithBackground from '../../components/UI/ButtonWithBackground/ButtonWithBackground';
+import validate from '../../utility/validation';
 
 class AuthScreen extends Component {
   state = {
@@ -56,16 +57,52 @@ class AuthScreen extends Component {
   };
 
   updateInputState = (key, val) => {
+    const controls = this.state.controls;
+    const control = controls[key];
+
+    let connectedValue = {};
+    if (control.validationRules.equalTo != null) {
+      const equalTo = control.validationRules.equalTo;
+      const equalVal = controls[equalTo].value;
+
+      connectedValue = {
+        ...connectedValue,
+        equalTo: equalVal
+      }
+    }
+
+    // Need to make sure we can re-validate confirmPassword if updating password, so pass connectedValue
+    if (key === "password") {
+      connectedValue = {
+        ...connectedValue,
+        equalTo: val
+      }
+    }
+
     this.setState(prevState => {
-      return {
-        controls: {
-          ...prevState.controls,
-          [key]: {
-            ...prevState.controls[key],
-            value: val
-          }
+      const prevControls = prevState.controls;
+
+      // Get state of previous controls and always do check that password and confirmPassword match
+      const prevConfirmPassword = prevControls.confirmPassword;
+      let controls = {
+        ...prevControls,
+        confirmPassword: {
+          ...prevConfirmPassword,
+          valid: key === 'password'
+            ? validate(prevConfirmPassword.value, prevConfirmPassword.validationRules, connectedValue)
+            : prevConfirmPassword.valid
         }
       };
+
+      // Now update state of control being changed
+      const prevControl = prevControls[key];
+      controls[key] = {
+        ...prevControl,
+        value: val,
+        valid: validate(val, prevControl.validationRules, connectedValue)
+      };
+
+      return {controls: controls};
     });
   };
 
