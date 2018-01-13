@@ -6,6 +6,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {deletePlace} from '../../store/actions';
 
 class PlaceDetail extends Component {
+  static navigatorStyle = {
+    navBarButtonColor: "orange"
+  };
+
   state = {
     viewMode: Dimensions.get('window').height > 500 ? "portrait" : "landscape"
   };
