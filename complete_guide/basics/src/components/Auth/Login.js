@@ -1,5 +1,16 @@
-import React, { Component } from 'react';
-import {View, Text, Button, TextInput, StyleSheet, ImageBackground, Dimensions} from 'react-native';
+import React, {Component} from 'react';
+import {
+  View,
+  Text,
+  Button,
+  TextInput,
+  StyleSheet,
+  ImageBackground,
+  Dimensions,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback
+} from 'react-native';
 
 import validate from '../../utility/validation';
 import ButtonWithBackground from '../UI/ButtonWithBackground/ButtonWithBackground';
@@ -126,70 +137,79 @@ class Login extends Component {
     }
 
     return (
-      <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-        <View style={styles.container}>
-          {headingText}
-          <ButtonWithBackground
-            onPress={this.props.onSwitchAuthMode}
-            backgroundColor="#29aaf4">
-            Switch to Signup
-          </ButtonWithBackground>
-          <View style={styles.inputContainer}>
-            <DefaultInput
-              placeholder="Your Email Address"
-              style={styles.input}
-              value={this.state.controls.email.value}
-              onChangeText={(val) => this.updateInputState('email', val)}
-              valid={this.state.controls.email.valid}
-              touched={this.state.controls.email.touched}
-            />
-            <View style={
-              this.state.viewMode === "portrait"
-                ? styles.portraitPasswordContainer
-                : styles.landscapePasswordContainer
-            }>
-              <View style={
-                this.state.viewMode === "portrait"
-                  ? styles.portraitPasswordWrapper
-                  : styles.landscapePasswordWrapper
-              }>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{flex: 1}}>
+          <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
+              {headingText}
+              <ButtonWithBackground
+                onPress={this.props.onSwitchAuthMode}
+                backgroundColor="#29aaf4">
+                Switch to Signup
+              </ButtonWithBackground>
+              <View style={styles.inputContainer}>
                 <DefaultInput
-                  placeholder="Password"
+                  placeholder="Your Email Address"
                   style={styles.input}
-                  value={this.state.controls.password.value}
-                  onChangeText={(val) => this.updateInputState('password', val)}
-                  valid={this.state.controls.password.valid}
-                  touched={this.state.controls.password.touched}
+                  value={this.state.controls.email.value}
+                  onChangeText={(val) => this.updateInputState('email', val)}
+                  valid={this.state.controls.email.valid}
+                  touched={this.state.controls.email.touched}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
                 />
+                <View style={
+                  this.state.viewMode === "portrait"
+                    ? styles.portraitPasswordContainer
+                    : styles.landscapePasswordContainer
+                }>
+                  <View style={
+                    this.state.viewMode === "portrait"
+                      ? styles.portraitPasswordWrapper
+                      : styles.landscapePasswordWrapper
+                  }>
+                    <DefaultInput
+                      placeholder="Password"
+                      style={styles.input}
+                      value={this.state.controls.password.value}
+                      onChangeText={(val) => this.updateInputState('password', val)}
+                      valid={this.state.controls.password.valid}
+                      touched={this.state.controls.password.touched}
+                      secureTextEntry
+                    />
+                  </View>
+                  <View style={
+                    this.state.viewMode === "portrait"
+                      ? styles.portraitPasswordWrapper
+                      : styles.landscapePasswordWrapper
+                  }>
+                    <DefaultInput
+                      placeholder="Confirm Password"
+                      style={styles.input}
+                      value={this.state.controls.confirmPassword.value}
+                      onChangeText={(val) => this.updateInputState('confirmPassword', val)}
+                      valid={this.state.controls.confirmPassword.valid}
+                      touched={this.state.controls.confirmPassword.touched}
+                      secureTextEntry
+                    />
+                  </View>
+                </View>
               </View>
-              <View style={
-                this.state.viewMode === "portrait"
-                  ? styles.portraitPasswordWrapper
-                  : styles.landscapePasswordWrapper
-              }>
-                <DefaultInput
-                  placeholder="Confirm Password"
-                  style={styles.input}
-                  value={this.state.controls.confirmPassword.value}
-                  onChangeText={(val) => this.updateInputState('confirmPassword', val)}
-                  valid={this.state.controls.confirmPassword.valid}
-                  touched={this.state.controls.confirmPassword.touched}
-                />
-              </View>
-            </View>
-          </View>
-          <ButtonWithBackground
-            backgroundColor="#29aaf4"
-            onPress={this.submitHandler}
-            disabled={
-              !(this.state.controls.email.valid
-                && this.state.controls.password.valid
-                && this.state.controls.confirmPassword.valid)
-            }>
-            Submit
-          </ButtonWithBackground>
+              <ButtonWithBackground
+                backgroundColor="#29aaf4"
+                onPress={this.submitHandler}
+                disabled={
+                  !(this.state.controls.email.valid
+                    && this.state.controls.password.valid
+                    && this.state.controls.confirmPassword.valid)
+                }>
+                Submit
+              </ButtonWithBackground>
+            </KeyboardAvoidingView>
+          </ImageBackground>
         </View>
-      </ImageBackground>
+      </TouchableWithoutFeedback>
     );
   }
 }

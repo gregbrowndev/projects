@@ -1,5 +1,16 @@
-import React, { Component } from 'react';
-import {View, Text, Button, TextInput, StyleSheet, ImageBackground, Dimensions} from 'react-native';
+import React, {Component} from 'react';
+import {
+  View,
+  Text,
+  Button,
+  TextInput,
+  StyleSheet,
+  ImageBackground,
+  Dimensions,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback
+} from 'react-native';
 
 import validate from '../../utility/validation';
 import ButtonWithBackground from '../UI/ButtonWithBackground/ButtonWithBackground';
@@ -103,43 +114,51 @@ class Login extends Component {
     }
 
     return (
-      <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-        <View style={styles.container}>
-          {headingText}
-          <ButtonWithBackground
-            onPress={this.props.onSwitchAuthMode}
-            backgroundColor="#29aaf4">
-            Switch to Login
-          </ButtonWithBackground>
-          <View style={styles.inputContainer}>
-            <DefaultInput
-              placeholder="Your Email Address"
-              style={styles.input}
-              value={this.state.controls.email.value}
-              onChangeText={(val) => this.updateInputState('email', val)}
-              valid={this.state.controls.email.valid}
-              touched={this.state.controls.email.touched}
-            />
-            <DefaultInput
-              placeholder="Password"
-              style={styles.input}
-              value={this.state.controls.password.value}
-              onChangeText={(val) => this.updateInputState('password', val)}
-              valid={this.state.controls.password.valid}
-              touched={this.state.controls.password.touched}
-            />
-          </View>
-          <ButtonWithBackground
-            backgroundColor="#29aaf4"
-            onPress={this.submitHandler}
-            disabled={
-              !(this.state.controls.email.valid
-                && this.state.controls.password.valid)
-            }>
-            Submit
-          </ButtonWithBackground>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{flex: 1}}>
+          <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+            <KeyboardAvoidingView behavior="padding" style={styles.container}>
+              {headingText}
+              <ButtonWithBackground
+                onPress={this.props.onSwitchAuthMode}
+                backgroundColor="#29aaf4">
+                Switch to Login
+              </ButtonWithBackground>
+              <View style={styles.inputContainer}>
+                <DefaultInput
+                  placeholder="Your Email Address"
+                  style={styles.input}
+                  value={this.state.controls.email.value}
+                  onChangeText={(val) => this.updateInputState('email', val)}
+                  valid={this.state.controls.email.valid}
+                  touched={this.state.controls.email.touched}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                />
+                <DefaultInput
+                  placeholder="Password"
+                  style={styles.input}
+                  value={this.state.controls.password.value}
+                  onChangeText={(val) => this.updateInputState('password', val)}
+                  valid={this.state.controls.password.valid}
+                  touched={this.state.controls.password.touched}
+                  secureTextEntry
+                />
+              </View>
+              <ButtonWithBackground
+                backgroundColor="#29aaf4"
+                onPress={this.submitHandler}
+                disabled={
+                  !(this.state.controls.email.valid
+                    && this.state.controls.password.valid)
+                }>
+                Submit
+              </ButtonWithBackground>
+            </KeyboardAvoidingView>
+          </ImageBackground>
         </View>
-      </ImageBackground>
+      </TouchableWithoutFeedback>
     );
   }
 }
