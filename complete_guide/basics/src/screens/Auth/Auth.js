@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View, Button} from 'react-native';
 import {connect} from 'react-redux';
 
 import startMainTabs from '../MainTabs/startMainTabs';
@@ -28,6 +28,7 @@ class AuthScreen extends Component {
 
   signupHandler = authData => {
     console.log('signup pressed', authData);
+    startMainTabs();
   };
 
   render() {
@@ -45,7 +46,7 @@ class AuthScreen extends Component {
       />
     );
 
-    return this.state.authMode === 'login' ? login : signup;
+    return this.state.authMode === 'login' ? login : signup
   }
 }
 
