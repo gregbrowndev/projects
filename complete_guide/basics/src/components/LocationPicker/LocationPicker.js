@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import {
   View,
   Image,
@@ -25,6 +25,12 @@ class PickLocation extends Component {
 
   pickLocationHandler = event => {
     const coords = event.nativeEvent.coordinate;
+    this.map.animateToRegion({
+      ...this.state.focusedLocation,
+      latitude: coords.latitude,
+      longitude: coords.longitude
+    });
+
     this.setState(prevState => {
       return {
         focusedLocation: {
@@ -37,25 +43,47 @@ class PickLocation extends Component {
     });
   };
 
+  getLocationHandler = () => {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const coordsEvent = {
+          nativeEvent: {
+            coordinate: {
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude
+            }
+          }
+        };
+        this.pickLocationHandler(coordsEvent);
+      },
+      err => {
+        console.log(err);
+        alert("Fetching the Position failed, please pick one manually!");
+      },
+      {
+        enableHighAccuracy: true
+      })
+  };
+
   render() {
     let marker = null;
 
     if (this.state.locationChosen) {
-      marker = <MapView.Marker coordinate={this.state.focusedLocation} />;
+      marker = <MapView.Marker coordinate={this.state.focusedLocation}/>;
     }
 
     return (
       <View style={styles.container}>
         <MapView
           initialRegion={this.state.focusedLocation}
-          region={this.state.focusedLocation}
           style={styles.map}
           onPress={this.pickLocationHandler}
+          ref={ref => this.map = ref}
         >
           {marker}
         </MapView>
         <View style={styles.button}>
-          <Button title="Locate Me" onPress={() => alert("Pick Location!")} />
+          <Button title="Locate Me" onPress={this.getLocationHandler}/>
         </View>
       </View>
     );
