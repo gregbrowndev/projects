@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Button} from 'react-native';
 import {connect} from 'react-redux';
 
-import startMainTabs from '../MainTabs/startMainTabs';
 import {tryAuth} from '../../store/actions';
 import Signup from '../../components/Auth/Signup';
 import Login from '../../components/Auth/Login';
