@@ -36,8 +36,14 @@ export const addPlace = (placeName, location, image) => {
 };
 
 export const getPlaces = () => {
-  return dispatch => {
-    fetch("https://awesome-places-1515966501374.firebaseio.com/places.json")
+  return (dispatch, getState) => {
+    const token = getState().auth.token;
+    if (!token) {
+      console.log("Error, no token was found");
+      return;
+    }
+
+    fetch(`https://awesome-places-1515966501374.firebaseio.com/places.json?auth=${token}`)
       .then(res => res.json())
       .then(parsedRes => {
         const places = [];
