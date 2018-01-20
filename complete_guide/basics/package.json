@@ -23,8 +23,10 @@
   "dependencies": {
     "react": "16.0.0",
     "react-native": "0.50.3",
-    "react-native-navigation": "^1.1.334",
-    "react-native-vector-icons": "^4.4.3",
+    "react-native-image-picker": "^0.26.7",
+    "react-native-maps": "^0.19.0",
+    "react-native-navigation": "^1.1.343",
+    "react-native-vector-icons": "^4.5.0",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2"
   }

@@ -1,13 +1,23 @@
-import React, {Component} from 'react';
-import {Platform, View, Image, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions} from 'react-native';
-import {connect} from 'react-redux';
+import React, { Component } from "react";
+import {
+  View,
+  Image,
+  Text,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+  Dimensions
+} from "react-native";
+import { connect } from "react-redux";
+import MapView from "react-native-maps";
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import {deletePlace} from '../../store/actions';
 
 class PlaceDetail extends Component {
   state = {
-    viewMode: Dimensions.get('window').height > 500 ? "portrait" : "landscape"
+    viewMode: "portrait"
   };
 
   constructor(props) {
@@ -23,9 +33,6 @@ class PlaceDetail extends Component {
     this.setState({
       viewMode: dims.window.height > 500 ? "portrait" : "landscape"
     });
-
-    console.log('updateViewMode', this.state.viewMode);
-    console.log('height', dims.height);
   };
 
   placeDeletedHandler = () => {
@@ -33,56 +40,115 @@ class PlaceDetail extends Component {
     this.props.navigator.pop();
   };
 
+  pickLocationHandler = event => {
+    const coords = event.nativeEvent.coordinate;
+    this.map.animateToRegion({
+      ...this.state.focusedLocation,
+      latitude: coords.latitude,
+      longitude: coords.longitude
+    });
+
+    this.setState(prevState => {
+      return {
+        focusedLocation: {
+          ...prevState.focusedLocation,
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        },
+        locationChosen: true
+      };
+    });
+  };
+
   render() {
+    const location = {
+      ...this.props.selectedPlace.location,
+      latitudeDelta: 0.0122,
+      longitudeDelta:
+      Dimensions.get("window").width
+      / Dimensions.get("window").height
+      * 0.0122
+    };
+
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
+      <View
+        style={[
+          styles.container,
+          this.state.viewMode === "portrait"
+            ? styles.portraitContainer
+            : styles.landscapeContainer
+        ]}
+      >
+        <View style={styles.placeDetailContainer}>
+          <View style={styles.subContainer}>
             <Image
               source={this.props.selectedPlace.image}
-              style={
-                this.state.viewMode === "portrait"
-                  ? styles.portraitPlaceImage
-                  : styles.landscapePlaceImage
-              }
+              style={styles.placeImage}
             />
-            <Text style={styles.placeName}>{this.props.selectedPlace.name}</Text>
+          </View>
+          <View style={styles.subContainer}>
+            <MapView
+              initialRegion={location}
+              style={styles.map}
+            >
+              <MapView.Marker coordinate={this.props.selectedPlace.location} />
+            </MapView>
+          </View>
+        </View>
+        <View style={styles.subContainer}>
+          <View>
+            <Text style={styles.placeName}>
+              {this.props.selectedPlace.name}
+            </Text>
           </View>
           <View>
             <TouchableOpacity onPress={this.placeDeletedHandler}>
               <View style={styles.deleteButton}>
-                <Icon size={30} name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'} color="red"/>
+                <Icon
+                  size={30}
+                  name={Platform.OS === "android" ? "md-trash" : "ios-trash"}
+                  color="red"
+                />
               </View>
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    margin: 22
+    margin: 22,
+    flex: 1
   },
-  headerContainer: {
-    alignItems: 'center'
+  portraitContainer: {
+    flexDirection: "column"
   },
-  portraitPlaceImage: {
+  landscapeContainer: {
+    flexDirection: "row"
+  },
+  placeDetailContainer: {
+    flex: 2
+  },
+  placeImage: {
     width: "100%",
-    height: 200
-  },
-  landscapePlaceImage: {
-    width: "60%",
-    height: 160
+    height: "100%"
   },
   placeName: {
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 28
   },
+  map: {
+    ...StyleSheet.absoluteFillObject
+  },
   deleteButton: {
-    alignItems: 'center'
+    alignItems: "center"
+  },
+  subContainer: {
+    flex: 1
   }
 });
 
