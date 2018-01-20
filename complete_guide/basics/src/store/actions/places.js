@@ -1,15 +1,22 @@
 import {REMOVE_PLACE, SET_PLACES} from './actionTypes';
 import {uiStartLoading, uiStopLoading} from './index';
+import {authGetToken} from './auth';
 
 export const addPlace = (placeName, location, image) => {
   return dispatch => {
     dispatch(uiStartLoading());
-    fetch("https://us-central1-awesome-places-1515966501374.cloudfunctions.net/storeImage", {
-      method: "POST",
-      body: JSON.stringify({
-        image: image.base64
+    dispatch(authGetToken())
+      .catch(() => {
+        alert("No valid token found!");
       })
-    })
+      .then(token => {
+        return fetch(`https://us-central1-awesome-places-1515966501374.cloudfunctions.net/storeImage`, {
+          method: "POST",
+          body: JSON.stringify({
+            image: image.base64
+          })
+        });
+      })
       .then(res => res.json())
       .then(parsedRes => {
         const placeData = {
@@ -36,14 +43,14 @@ export const addPlace = (placeName, location, image) => {
 };
 
 export const getPlaces = () => {
-  return (dispatch, getState) => {
-    const token = getState().auth.token;
-    if (!token) {
-      console.log("Error, no token was found");
-      return;
-    }
-
-    fetch(`https://awesome-places-1515966501374.firebaseio.com/places.json?auth=${token}`)
+  return dispatch => {
+    dispatch(authGetToken())
+      .catch(() => {
+        alert("No valid token found!");
+      })
+      .then(token => {
+        return fetch(`https://awesome-places-1515966501374.firebaseio.com/places.json?auth=${token}`);
+      })
       .then(res => res.json())
       .then(parsedRes => {
         const places = [];
@@ -76,9 +83,15 @@ export const setPlaces = places => {
 
 export const deletePlace = (key) => {
   return dispatch => {
-    fetch("https://awesome-places-1515966501374.firebaseio.com/places/" + key + "/.json", {
-      method: "DELETE"
-    })
+    dispatch(authGetToken())
+      .catch(() => {
+        alert("No valid token found!");
+      })
+      .then(token => {
+        return fetch(`https://awesome-places-1515966501374.firebaseio.com/places/${key}/.json?auth=${token}`, {
+          method: "DELETE"
+        });
+      })
       .then(res => res.json())
       .then(parsedRes => {
         console.log("deleted response", parsedRes);

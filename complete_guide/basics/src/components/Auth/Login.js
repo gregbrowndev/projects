@@ -118,10 +118,10 @@ class Login extends Component {
       <ButtonWithBackground
         backgroundColor="#29aaf4"
         onPress={this.submitHandler}
-        // disabled={
-        //   !(this.state.controls.email.valid
-        //     && this.state.controls.password.valid)
-        // }
+        disabled={
+          !(this.state.controls.email.valid
+            && this.state.controls.password.valid)
+        }
       >
         Submit
       </ButtonWithBackground>
