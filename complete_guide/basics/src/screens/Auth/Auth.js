@@ -20,20 +20,15 @@ class AuthScreen extends Component {
     })
   };
 
-  loginHandler = authData => {
-    console.log('login pressed', authData);
-    this.props.onLogin(authData);
-  };
-
-  signupHandler = authData => {
-    console.log('signup pressed', authData);
+  authHandler = authData => {
+    this.props.onTryAuth(authData, this.state.authMode);
   };
 
   render() {
     const login = (
       <Login
         isLoading={this.props.isLoading}
-        onSubmit={this.loginHandler}
+        onSubmit={this.authHandler}
         onSwitchAuthMode={this.switchAuthModeHandler}
       />
     );
@@ -41,7 +36,7 @@ class AuthScreen extends Component {
     const signup = (
       <Signup
         isLoading={this.props.isLoading}
-        onSubmit={this.signupHandler}
+        onSubmit={this.authHandler}
         onSwitchAuthMode={this.switchAuthModeHandler}
       />
     );
@@ -58,7 +53,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onLogin: authData => dispatch(tryAuth(authData))
+    onTryAuth: (authData, authMode) => dispatch(tryAuth(authData, authMode))
   };
 };
 
