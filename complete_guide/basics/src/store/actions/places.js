@@ -10,11 +10,6 @@ export const addPlace = (placeName, location, image) => {
         image: image.base64
       })
     })
-      .catch(err => {
-        console.log(err);
-        alert("Something went wrong, please try again!");
-        dispatch(uiStopLoading());
-      })
       .then(res => res.json())
       .then(parsedRes => {
         const placeData = {
@@ -27,14 +22,14 @@ export const addPlace = (placeName, location, image) => {
           body: JSON.stringify(placeData)
         })
       })
-      .catch(err => {
-        console.log(err);
-        alert("Something went wrong, please try again!");
-        dispatch(uiStopLoading());
-      })
       .then(res => res.json())
       .then(parsedRes => {
         console.log(parsedRes);
+        dispatch(uiStopLoading());
+      })
+      .catch(err => {
+        console.log(err);
+        alert("Something went wrong, please try again!");
         dispatch(uiStopLoading());
       });
   };
@@ -43,10 +38,6 @@ export const addPlace = (placeName, location, image) => {
 export const getPlaces = () => {
   return dispatch => {
     fetch("https://awesome-places-1515966501374.firebaseio.com/places.json")
-      .catch(err => {
-        console.log(err);
-        alert("Something went wrong, please try again!");
-      })
       .then(res => res.json())
       .then(parsedRes => {
         const places = [];
@@ -62,6 +53,10 @@ export const getPlaces = () => {
           }
         }
         dispatch(setPlaces(places))
+      })
+      .catch(err => {
+        console.log(err);
+        alert("Something went wrong, please try again!");
       });
   };
 };
@@ -78,14 +73,14 @@ export const deletePlace = (key) => {
     fetch("https://awesome-places-1515966501374.firebaseio.com/places/" + key + "/.json", {
       method: "DELETE"
     })
-      .catch(err => {
-        console.log(err);
-        alert("Something went wrong, please try again!");
-      })
       .then(res => res.json())
       .then(parsedRes => {
         console.log("deleted response", parsedRes);
         dispatch(removePlace(key));
+      })
+      .catch(err => {
+        console.log(err);
+        alert("Something went wrong, please try again!");
       });
   };
 };
