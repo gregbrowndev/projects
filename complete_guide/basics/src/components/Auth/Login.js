@@ -9,7 +9,8 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  ActivityIndicator
 } from 'react-native';
 
 import validate from '../../utility/validation';
@@ -113,6 +114,23 @@ class Login extends Component {
       );
     }
 
+    let submitButton = (
+      <ButtonWithBackground
+        backgroundColor="#29aaf4"
+        onPress={this.submitHandler}
+        // disabled={
+        //   !(this.state.controls.email.valid
+        //     && this.state.controls.password.valid)
+        // }
+      >
+        Submit
+      </ButtonWithBackground>
+    );
+
+    if (this.props.isLoading) {
+      submitButton = <ActivityIndicator/>;
+    }
+
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{flex: 1}}>
@@ -146,16 +164,7 @@ class Login extends Component {
                   secureTextEntry
                 />
               </View>
-              <ButtonWithBackground
-                backgroundColor="#29aaf4"
-                onPress={this.submitHandler}
-                // disabled={
-                //   !(this.state.controls.email.valid
-                //     && this.state.controls.password.valid)
-                // }
-              >
-                Submit
-              </ButtonWithBackground>
+              {submitButton}
             </KeyboardAvoidingView>
           </ImageBackground>
         </View>

@@ -23,17 +23,16 @@ class AuthScreen extends Component {
   loginHandler = authData => {
     console.log('login pressed', authData);
     this.props.onLogin(authData);
-    startMainTabs();
   };
 
   signupHandler = authData => {
     console.log('signup pressed', authData);
-    startMainTabs();
   };
 
   render() {
     const login = (
       <Login
+        isLoading={this.props.isLoading}
         onSubmit={this.loginHandler}
         onSwitchAuthMode={this.switchAuthModeHandler}
       />
@@ -41,6 +40,7 @@ class AuthScreen extends Component {
 
     const signup = (
       <Signup
+        isLoading={this.props.isLoading}
         onSubmit={this.signupHandler}
         onSwitchAuthMode={this.switchAuthModeHandler}
       />
@@ -50,10 +50,16 @@ class AuthScreen extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    isLoading: state.ui.isLoading
+  }
+};
+
 const mapDispatchToProps = dispatch => {
   return {
     onLogin: authData => dispatch(tryAuth(authData))
   };
 };
 
-export default connect(null, mapDispatchToProps)(AuthScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(AuthScreen);

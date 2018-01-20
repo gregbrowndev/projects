@@ -136,6 +136,24 @@ class Signup extends Component {
       );
     }
 
+    let submitButton = (
+      <ButtonWithBackground
+        backgroundColor="#29aaf4"
+        onPress={this.submitHandler}
+        disabled={
+          !(this.state.controls.email.valid
+            && this.state.controls.password.valid
+            && this.state.controls.confirmPassword.valid)
+        }
+      >
+        Submit
+      </ButtonWithBackground>
+    );
+
+    if (this.props.isLoading) {
+      submitButton = <ActivityIndicator/>
+    }
+
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{flex: 1}}>
@@ -196,17 +214,7 @@ class Signup extends Component {
                   </View>
                 </View>
               </View>
-              <ButtonWithBackground
-                backgroundColor="#29aaf4"
-                onPress={this.submitHandler}
-                disabled={
-                  !(this.state.controls.email.valid
-                    && this.state.controls.password.valid
-                    && this.state.controls.confirmPassword.valid)
-                }
-              >
-                Submit
-              </ButtonWithBackground>
+              {submitButton}
             </KeyboardAvoidingView>
           </ImageBackground>
         </View>
