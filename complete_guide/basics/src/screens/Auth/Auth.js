@@ -4,8 +4,8 @@ import {connect} from 'react-redux';
 
 import startMainTabs from '../MainTabs/startMainTabs';
 import {tryAuth} from '../../store/actions';
-import Login from '../../components/Auth/Login';
 import Signup from '../../components/Auth/Signup';
+import Login from '../../components/Auth/Login';
 
 class AuthScreen extends Component {
   state = {

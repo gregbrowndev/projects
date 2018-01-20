@@ -20,7 +20,7 @@ import MainText from '../UI/MainText/MainText';
 import backgroundImage from '../../assets/background.jpg';
 
 
-class Login extends Component {
+class Signup extends Component {
   state = {
     viewMode: Dimensions.get('window').height > 500 ? "portrait" : "landscape",
     controls: {
@@ -37,6 +37,14 @@ class Login extends Component {
         valid: false,
         validationRules: {
           minLength: 6
+        },
+        touched: false
+      },
+      confirmPassword: {
+        value: "",
+        valid: false,
+        validationRules: {
+          equalTo: 'password'
         },
         touched: false
       }
@@ -73,12 +81,27 @@ class Login extends Component {
       }
     }
 
+    // Need to make sure we can re-validate confirmPassword if updating password, so pass connectedValue
+    if (key === "password") {
+      connectedValue = {
+        ...connectedValue,
+        equalTo: val
+      }
+    }
+
     this.setState(prevState => {
       const prevControls = prevState.controls;
 
-      // Get state of previous controls
+      // Get state of previous controls and always do check that password and confirmPassword match
+      const prevConfirmPassword = prevControls.confirmPassword;
       let controls = {
-        ...prevControls
+        ...prevControls,
+        confirmPassword: {
+          ...prevConfirmPassword,
+          valid: key === 'password'
+            ? validate(prevConfirmPassword.value, prevConfirmPassword.validationRules, connectedValue)
+            : prevConfirmPassword.valid
+        }
       };
 
       // Now update state of control being changed
@@ -117,7 +140,7 @@ class Login extends Component {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{flex: 1}}>
           <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-            <KeyboardAvoidingView behavior="padding" style={styles.container}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding">
               {headingText}
               <ButtonWithBackground
                 onPress={this.props.onSwitchAuthMode}
@@ -136,23 +159,52 @@ class Login extends Component {
                   autoCorrect={false}
                   keyboardType="email-address"
                 />
-                <DefaultInput
-                  placeholder="Password"
-                  style={styles.input}
-                  value={this.state.controls.password.value}
-                  onChangeText={(val) => this.updateInputState('password', val)}
-                  valid={this.state.controls.password.valid}
-                  touched={this.state.controls.password.touched}
-                  secureTextEntry
-                />
+                <View style={
+                  this.state.viewMode === "portrait"
+                    ? styles.portraitPasswordContainer
+                    : styles.landscapePasswordContainer
+                }>
+                  <View style={
+                    this.state.viewMode === "portrait"
+                      ? styles.portraitPasswordWrapper
+                      : styles.landscapePasswordWrapper
+                  }>
+                    <DefaultInput
+                      placeholder="Password"
+                      style={styles.input}
+                      value={this.state.controls.password.value}
+                      onChangeText={(val) => this.updateInputState('password', val)}
+                      valid={this.state.controls.password.valid}
+                      touched={this.state.controls.password.touched}
+                      secureTextEntry
+                    />
+                  </View>
+                  <View style={
+                    this.state.viewMode === "portrait"
+                      ? styles.portraitPasswordWrapper
+                      : styles.landscapePasswordWrapper
+                  }>
+                    <DefaultInput
+                      placeholder="Confirm Password"
+                      style={styles.input}
+                      value={this.state.controls.confirmPassword.value}
+                      onChangeText={(val) => this.updateInputState('confirmPassword', val)}
+                      valid={this.state.controls.confirmPassword.valid}
+                      touched={this.state.controls.confirmPassword.touched}
+                      secureTextEntry
+                    />
+                  </View>
+                </View>
               </View>
               <ButtonWithBackground
                 backgroundColor="#29aaf4"
                 onPress={this.submitHandler}
                 disabled={
                   !(this.state.controls.email.valid
-                    && this.state.controls.password.valid)
-                }>
+                    && this.state.controls.password.valid
+                    && this.state.controls.confirmPassword.valid)
+                }
+              >
                 Submit
               </ButtonWithBackground>
             </KeyboardAvoidingView>
@@ -179,7 +231,21 @@ const styles = StyleSheet.create({
   backgroundImage: {
     width: "100%",
     flex: 1
+  },
+  portraitPasswordContainer: {
+    flexDirection: "column",
+    justifyContent: "flex-start"
+  },
+  landscapePasswordContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  portraitPasswordWrapper: {
+    width: "100%"
+  },
+  landscapePasswordWrapper: {
+    width: "45%"
   }
 });
 
-export default Login;
+export default Signup;
