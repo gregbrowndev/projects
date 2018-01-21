@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Button} from 'react-native';
 import {connect} from 'react-redux';
 
-import {tryAuth} from '../../store/actions';
+import {tryAuth, authAutoSignIn} from '../../store/actions';
 import Signup from '../../components/Auth/Signup';
 import Login from '../../components/Auth/Login';
 
@@ -10,6 +10,10 @@ class AuthScreen extends Component {
   state = {
     authMode: 'login',
   };
+
+  componentDidMount() {
+    this.props.onAutoSignin();
+  }
 
   switchAuthModeHandler = () => {
     this.setState(prevState => {
@@ -52,7 +56,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onTryAuth: (authData, authMode) => dispatch(tryAuth(authData, authMode))
+    onTryAuth: (authData, authMode) => dispatch(tryAuth(authData, authMode)),
+    onAutoSignin: () => dispatch(authAutoSignIn())
   };
 };
 
