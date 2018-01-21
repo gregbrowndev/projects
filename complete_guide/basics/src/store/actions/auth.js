@@ -85,7 +85,10 @@ export const authGetToken = () => {
       } else {
         resolve(token);
       }
-    });
+    })
+      .catch(err => {
+        dispatch(authClearStorage());
+      });
   }
 };
 
@@ -97,4 +100,11 @@ export const authAutoSignIn = () => {
       })
       .catch(err => console.log("Failed to fetch token"));
   }
+};
+
+export const authClearStorage = () => {
+  return dispatch => {
+    AsyncStorage.removeItem("ap:auth:token");
+    AsyncStorage.removeItem("ap:auth:expiryDate");
+  };
 };
