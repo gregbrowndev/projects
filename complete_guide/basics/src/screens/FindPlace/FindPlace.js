@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet, Animated, Button} from 'react-
 import {connect} from 'react-redux';
 
 import PlaceList from '../../components/PlaceList/PlaceList';
-import {getPlaces, removeToken} from '../../store/actions';
+import {getPlaces} from '../../store/actions';
 
 
 class FindPlaceScreen extends Component {
@@ -90,12 +90,6 @@ class FindPlaceScreen extends Component {
               onPress={() => this.props.getPlaces()}
             />
           </View>
-          <View>
-            <Button
-              title="Clear Token"
-              onPress={() => this.props.removeToken()}
-            />
-          </View>
           <PlaceList
             places={this.props.places}
             onItemSelected={this.itemSelectedHandler}
@@ -158,7 +152,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     getPlaces: () => dispatch(getPlaces()),
-    removeToken: () => dispatch(removeToken())
+    // removeToken: () => dispatch(removeToken())
   }
 };
 
