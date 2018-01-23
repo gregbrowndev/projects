@@ -18,31 +18,38 @@ import validate from '../../utility/validation';
 
 
 class SharePlaceScreen extends Component {
-  state = {
-    controls: {
-      placeName: {
-        value: "",
-        valid: false,
-        validationRules: {
-          notEmpty: true
-        },
-        touched: false
-      },
-      location: {
-        value: null,
-        valid: false
-      },
-      image: {
-        value: null,
-        valid: false
-      }
-    },
-  };
 
   constructor(props) {
     super(props);
     console.log('constructor called');
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
+  }
+
+  componentWillMount() {
+    this.reset();
+  }
+
+  reset() {
+    this.setState({
+      controls: {
+        placeName: {
+          value: "",
+            valid: false,
+            validationRules: {
+            notEmpty: true
+          },
+          touched: false
+        },
+        location: {
+          value: null,
+            valid: false
+        },
+        image: {
+          value: null,
+            valid: false
+        }
+      }
+    });
   }
 
   onNavigatorEvent = event => {
@@ -113,6 +120,9 @@ class SharePlaceScreen extends Component {
         }
       };
     });
+    this.reset();
+    this.imagePicker.reset();
+    this.locationPicker.reset();
   };
 
   render() {
@@ -138,8 +148,14 @@ class SharePlaceScreen extends Component {
           <MainText>
             <HeadingText>Share a Place with us!</HeadingText>
           </MainText>
-          <ImagePickerWithPreview onImagePick={this.imagePickHandler}/>
-          <LocationPicker onLocationPick={this.locationPickHandler}/>
+          <ImagePickerWithPreview
+            onImagePick={this.imagePickHandler}
+            ref={ref => this.imagePicker = ref}
+          />
+          <LocationPicker
+            onLocationPick={this.locationPickHandler}
+            ref={ref => this.locationPicker = ref}
+          />
           <PlaceInput
             placeName={this.state.controls.placeName.value}
             onChangeText={this.placeNameChangedHandler}
