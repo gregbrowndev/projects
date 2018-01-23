@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Animated, Button} from 'react-native';
 import {connect} from 'react-redux';
 
 import PlaceList from '../../components/PlaceList/PlaceList';
-import {getPlaces} from '../../store/actions';
+import {getPlaces, removeToken} from '../../store/actions';
 
 
 class FindPlaceScreen extends Component {
@@ -21,11 +21,12 @@ class FindPlaceScreen extends Component {
   }
 
   componentDidMount() {
+    console.log("FindPlaces did mount");
     this.props.getPlaces();
   }
 
   onNavigatorEvent = event => {
-    console.log(event);
+    // console.log(event);
     if (event.type === "NavBarButtonPress") {
       if (event.id === "sideDrawerToggle") {
         this.props.navigator.toggleDrawer({
@@ -83,6 +84,18 @@ class FindPlaceScreen extends Component {
             },
           ]
         }}>
+          <View>
+            <Button
+              title="Refresh Places"
+              onPress={() => this.props.getPlaces()}
+            />
+          </View>
+          <View>
+            <Button
+              title="Clear Token"
+              onPress={() => this.props.removeToken()}
+            />
+          </View>
           <PlaceList
             places={this.props.places}
             onItemSelected={this.itemSelectedHandler}
@@ -144,7 +157,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getPlaces: () => dispatch(getPlaces())
+    getPlaces: () => dispatch(getPlaces()),
+    removeToken: () => dispatch(removeToken())
   }
 };
 

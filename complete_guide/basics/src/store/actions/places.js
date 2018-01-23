@@ -49,6 +49,7 @@ export const addPlace = (placeName, location, image) => {
 
 export const getPlaces = () => {
   return dispatch => {
+    console.log("getPlaces dispatched");
     dispatch(authGetToken())
       .catch(() => {
         alert("No valid token found!");
