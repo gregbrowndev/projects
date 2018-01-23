@@ -2,15 +2,18 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Button} from 'react-native';
 import {connect} from 'react-redux';
 
-import startMainTabs from '../MainTabs/startMainTabs';
-import {tryAuth} from '../../store/actions';
-import Login from '../../components/Auth/Login';
+import {tryAuth, authAutoSignIn} from '../../store/actions';
 import Signup from '../../components/Auth/Signup';
+import Login from '../../components/Auth/Login';
 
 class AuthScreen extends Component {
   state = {
     authMode: 'login',
   };
+
+  componentDidMount() {
+    this.props.onAutoSignin();
+  }
 
   switchAuthModeHandler = () => {
     this.setState(prevState => {
@@ -20,28 +23,23 @@ class AuthScreen extends Component {
     })
   };
 
-  loginHandler = authData => {
-    console.log('login pressed', authData);
-    this.props.onLogin(authData);
-    startMainTabs();
-  };
-
-  signupHandler = authData => {
-    console.log('signup pressed', authData);
-    startMainTabs();
+  authHandler = authData => {
+    this.props.onTryAuth(authData, this.state.authMode);
   };
 
   render() {
     const login = (
       <Login
-        onSubmit={this.loginHandler}
+        isLoading={this.props.isLoading}
+        onSubmit={this.authHandler}
         onSwitchAuthMode={this.switchAuthModeHandler}
       />
     );
 
     const signup = (
       <Signup
-        onSubmit={this.signupHandler}
+        isLoading={this.props.isLoading}
+        onSubmit={this.authHandler}
         onSwitchAuthMode={this.switchAuthModeHandler}
       />
     );
@@ -50,10 +48,17 @@ class AuthScreen extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    isLoading: state.ui.isLoading
+  }
+};
+
 const mapDispatchToProps = dispatch => {
   return {
-    onLogin: authData => dispatch(tryAuth(authData))
+    onTryAuth: (authData, authMode) => dispatch(tryAuth(authData, authMode)),
+    onAutoSignin: () => dispatch(authAutoSignIn())
   };
 };
 
-export default connect(null, mapDispatchToProps)(AuthScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(AuthScreen);
