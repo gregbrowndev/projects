@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ca1ab016-f2ed-4c50-a085-5a9f466e4584" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../src/store/actions/auth.js" afterPath="$PROJECT_DIR$/../src/store/actions/auth.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../src/screens/SharePlace/SharePlace.js" afterPath="$PROJECT_DIR$/../src/screens/SharePlace/SharePlace.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../src/store/actions/actionTypes.js" afterPath="$PROJECT_DIR$/../src/store/actions/actionTypes.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../src/store/actions/index.js" afterPath="$PROJECT_DIR$/../src/store/actions/index.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../src/store/actions/places.js" afterPath="$PROJECT_DIR$/../src/store/actions/places.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../src/store/reducers/places.js" afterPath="$PROJECT_DIR$/../src/store/reducers/places.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -5383,7 +5387,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1516573559903" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1516747942197" />
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -5431,7 +5435,7 @@
       </Profilers>
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1516573559903" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1516747942197" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -5593,7 +5597,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1516573559906" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1516747942198" />
       </method>
     </configuration>
     <list size="1">
@@ -5630,7 +5634,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="601" width="1853" height="1055" extended-state="7" />
+    <frame x="67" y="601" width="1853" height="1055" extended-state="6" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
