@@ -1,4 +1,4 @@
-import {REMOVE_PLACE, SET_PLACES} from './actionTypes';
+import {PLACE_ADDED, REMOVE_PLACE, SET_PLACES, START_ADD_PLACE} from './actionTypes';
 import {uiStartLoading, uiStopLoading} from './index';
 import {authGetToken} from './auth';
 
@@ -22,22 +22,36 @@ export const addPlace = (placeName, location, image) => {
           }
         });
       })
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        } else {
+          throw(new Error());
+        }
+      })
       .then(parsedRes => {
         const placeData = {
           name: placeName,
           location: location,
-          image: parsedRes.imageUrl
+          image: parsedRes.imageUrl,
+          imagePath: parsedRes.imagePath
         };
         return fetch(`https://awesome-places-1515966501374.firebaseio.com/places.json?auth=${authToken}`, {
           method: "POST",
           body: JSON.stringify(placeData)
         })
       })
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        } else {
+          throw(new Error());
+        }
+      })
       .then(parsedRes => {
         console.log(parsedRes);
         dispatch(uiStopLoading());
+        dispatch(placeAdded());
       })
       .catch(err => {
         console.log(err);
@@ -45,6 +59,18 @@ export const addPlace = (placeName, location, image) => {
         dispatch(uiStopLoading());
       });
   };
+};
+
+export const placeAdded = () => {
+  return {
+    type: PLACE_ADDED
+  }
+};
+
+export const startAddPlace = () => {
+  return {
+    type: START_ADD_PLACE
+  }
 };
 
 export const getPlaces = () => {
@@ -57,7 +83,13 @@ export const getPlaces = () => {
       .then(token => {
         return fetch(`https://awesome-places-1515966501374.firebaseio.com/places.json?auth=${token}`);
       })
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        } else {
+          throw(new Error());
+        }
+      })
       .then(parsedRes => {
         const places = [];
         for (const key in parsedRes) {
@@ -98,7 +130,13 @@ export const deletePlace = (key) => {
           method: "DELETE"
         });
       })
-      .then(res => res.json())
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        } else {
+          throw(new Error());
+        }
+      })
       .then(parsedRes => {
         console.log("deleted response", parsedRes);
         dispatch(removePlace(key));

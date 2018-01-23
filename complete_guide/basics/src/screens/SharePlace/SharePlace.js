@@ -1,14 +1,8 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Button,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator
-} from 'react-native';
+import {ActivityIndicator, Button, ScrollView, StyleSheet, View} from 'react-native';
 import {connect} from 'react-redux';
 
-import {addPlace} from '../../store/actions';
+import {addPlace, startAddPlace} from '../../store/actions';
 import MainText from '../../components/UI/MainText/MainText';
 import HeadingText from '../../components/UI/HeadingText/HeadingText';
 import ImagePickerWithPreview from '../../components/ImagePickerWithPreview/ImagePickerWithPreview';
@@ -18,26 +12,6 @@ import validate from '../../utility/validation';
 
 
 class SharePlaceScreen extends Component {
-  state = {
-    controls: {
-      placeName: {
-        value: "",
-        valid: false,
-        validationRules: {
-          notEmpty: true
-        },
-        touched: false
-      },
-      location: {
-        value: null,
-        valid: false
-      },
-      image: {
-        value: null,
-        valid: false
-      }
-    },
-  };
 
   constructor(props) {
     super(props);
@@ -45,8 +19,47 @@ class SharePlaceScreen extends Component {
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
   }
 
+  componentWillMount() {
+    this.reset();
+  }
+
+  reset() {
+    this.setState({
+      controls: {
+        placeName: {
+          value: "",
+            valid: false,
+            validationRules: {
+            notEmpty: true
+          },
+          touched: false
+        },
+        location: {
+          value: null,
+            valid: false
+        },
+        image: {
+          value: null,
+            valid: false
+        }
+      }
+    });
+  }
+
+  componentDidUpdate() {
+    if (this.props.placeAdded) {
+      this.props.navigator.switchToTab({tabIndex: 0});
+    }
+  }
+
   onNavigatorEvent = event => {
     // console.log(event);
+    if (event.type === "ScreenChangedEvent") {
+      if (event.id === "willAppear") {
+        this.props.onStartAddPlace();
+      }
+    }
+
     if (event.type === "NavBarButtonPress") {
       if (event.id === "sideDrawerToggle") {
         this.props.navigator.toggleDrawer({
@@ -113,6 +126,9 @@ class SharePlaceScreen extends Component {
         }
       };
     });
+    this.reset();
+    this.imagePicker.reset();
+    this.locationPicker.reset();
   };
 
   render() {
@@ -138,8 +154,14 @@ class SharePlaceScreen extends Component {
           <MainText>
             <HeadingText>Share a Place with us!</HeadingText>
           </MainText>
-          <ImagePickerWithPreview onImagePick={this.imagePickHandler}/>
-          <LocationPicker onLocationPick={this.locationPickHandler}/>
+          <ImagePickerWithPreview
+            onImagePick={this.imagePickHandler}
+            ref={ref => this.imagePicker = ref}
+          />
+          <LocationPicker
+            onLocationPick={this.locationPickHandler}
+            ref={ref => this.locationPicker = ref}
+          />
           <PlaceInput
             placeName={this.state.controls.placeName.value}
             onChangeText={this.placeNameChangedHandler}
@@ -167,13 +189,15 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
-    isLoading: state.ui.isLoading
+    isLoading: state.ui.isLoading,
+    placeAdded: state.places.placeAdded
   }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image))
+    onAddPlace: (placeName, location, image) => dispatch(addPlace(placeName, location, image)),
+    onStartAddPlace: () => dispatch(startAddPlace())
   }
 };
 
