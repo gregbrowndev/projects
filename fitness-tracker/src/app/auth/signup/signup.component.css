@@ -1,0 +1,31 @@
+#container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: 700px;
+  width: 100%;
+  border: 1px solid black;
+}
+
+.child {
+  width: 200px;
+  height: 200px;
+  border: 1px solid black;
+}
+
+#child1 {
+  /*flex: 1;*/
+  background-color: red;
+}
+
+#child2 {
+  /*flex: 1;*/
+  background-color: green;
+}
+
+#child3 {
+  /*flex: 1;*/
+  background-color: blue;
+}
+
