@@ -4,7 +4,7 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar color="primary">
-      <div>
+      <div fxHide.gt-xs>
         <button mat-icon-button (click)="sidenav.toggle()">
           <mat-icon>menu</mat-icon>
         </button>
@@ -14,7 +14,7 @@
           <h1>LOGO</h1>
         </a>
       </div>
-      <div fxFlex fxLayout fxLayoutAlign="flex-end">
+      <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
         <ul fxLayout fxLayoutGap="10px" class="navigation-items">
           <li><a routerLink="/signup">Signup</a></li>
           <li><a routerLink="/login">Login</a></li>
