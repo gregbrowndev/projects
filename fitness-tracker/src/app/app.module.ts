@@ -14,6 +14,8 @@ import {PastTrainingComponent} from './training/past-training/past-training.comp
 import {HomeComponent} from './home/home.component';
 import {AppRoutingModule} from './app-routing.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { HeaderComponent } from './navigation/header/header.component';
+import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 
 
 @NgModule({
@@ -25,7 +27,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     NewTrainingComponent,
     CurrentTrainingComponent,
     PastTrainingComponent,
-    HomeComponent
+    HomeComponent,
+    HeaderComponent,
+    SidenavListComponent
   ],
   imports: [
     BrowserModule,
