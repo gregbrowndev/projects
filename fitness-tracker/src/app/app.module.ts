@@ -16,6 +16,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
+import {TrainingService} from './training/training.service';
 
 
 @NgModule({
@@ -40,7 +41,9 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
     FlexLayoutModule,
     AppRoutingModule,
   ],
-  providers: [],
+  providers: [
+    TrainingService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
