@@ -3,13 +3,17 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class TrainingService {
-  onGoingTraining = new BehaviorSubject<boolean>(false);
+  trainingStart = new BehaviorSubject<boolean>(false);
 
   constructor() {
   }
 
   startTraining() {
-    this.onGoingTraining.next(true);
+    this.trainingStart.next(true);
+  }
+
+  stopTraining() {
+    this.trainingStart.next(false);
   }
 
 }

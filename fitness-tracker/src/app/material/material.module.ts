@@ -3,12 +3,12 @@ import {NgModule} from '@angular/core';
 import {
   MatButtonModule,
   MatCardModule, MatCheckboxModule,
-  MatDatepickerModule,
+  MatDatepickerModule, MatDialogModule,
   MatFormFieldModule,
   MatIconModule,
   MatInputModule, MatListModule,
   MatMenuModule,
-  MatNativeDateModule, MatSelectModule, MatSidenavModule, MatTabsModule,
+  MatNativeDateModule, MatProgressSpinnerModule, MatSelectModule, MatSidenavModule, MatTabsModule,
   MatToolbarModule
 } from '@angular/material';
 
@@ -28,6 +28,8 @@ import {
     MatSidenavModule,
     MatListModule,
     MatTabsModule,
+    MatProgressSpinnerModule,
+    MatDialogModule
   ],
   exports: [
     MatButtonModule,
@@ -43,7 +45,10 @@ import {
     MatCheckboxModule,
     MatSidenavModule,
     MatListModule,
-    MatTabsModule
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatDialogModule
   ]
 })
-export class MaterialModule {}
+export class MaterialModule {
+}

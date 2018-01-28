@@ -17,6 +17,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import {TrainingService} from './training/training.service';
+import {StopTrainingComponent} from './training/current-training/stop-training.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import {TrainingService} from './training/training.service';
     PastTrainingComponent,
     HomeComponent,
     HeaderComponent,
-    SidenavListComponent
+    SidenavListComponent,
+    StopTrainingComponent
   ],
   imports: [
     BrowserModule,
@@ -43,6 +45,9 @@ import {TrainingService} from './training/training.service';
   ],
   providers: [
     TrainingService,
+  ],
+  entryComponents: [
+    StopTrainingComponent
   ],
   bootstrap: [AppComponent]
 })

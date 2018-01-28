@@ -1,19 +1,27 @@
-<nav mat-tab-nav-bar>
-  <a mat-tab-link
-     [routerLink]="['new']"
-     routerLinkActive #rla1="routerLinkActive"
-     [active]="rla1.isActive">
-    New Exercises
-  </a>
-  <a mat-tab-link
-     [routerLink]="'past'"
-     routerLinkActive #rla2="routerLinkActive"
-     [active]="rla2.isActive">
-    Past Exercises
-  </a>
-</nav>
+<!--<nav mat-tab-nav-bar>-->
+    <!--<a mat-tab-link-->
+       <!--[routerLink]="'new'"-->
+       <!--routerLinkActive #rla1="routerLinkActive"-->
+       <!--[active]="rla1.isActive">-->
+      <!--New Exercises-->
+    <!--</a>-->
+    <!--<a mat-tab-link-->
+       <!--[routerLink]="'past'"-->
+       <!--routerLinkActive #rla2="routerLinkActive"-->
+       <!--[active]="rla2.isActive">-->
+      <!--Past Exercises-->
+    <!--</a>-->
+<!--</nav>-->
+<!--<router-outlet></router-outlet>-->
 
-<router-outlet></router-outlet>
-
-<app-current-training></app-current-training>
-<p>{{ onGoingTraining ? 'Training' : 'Not Training'}}</p>
+<mat-tab-group *ngIf="!onGoingTraining; else currentTraining">
+  <mat-tab label="New Exercises">
+    <app-new-training></app-new-training>
+  </mat-tab>
+  <mat-tab label="Past Exercises">
+    <app-past-training></app-past-training>
+  </mat-tab>
+</mat-tab-group>
+<ng-template #currentTraining>
+  <app-current-training></app-current-training>
+</ng-template>
