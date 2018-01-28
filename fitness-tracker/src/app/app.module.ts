@@ -14,6 +14,10 @@ import {PastTrainingComponent} from './training/past-training/past-training.comp
 import {HomeComponent} from './home/home.component';
 import {AppRoutingModule} from './app-routing.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { HeaderComponent } from './navigation/header/header.component';
+import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
+import {TrainingService} from './training/training.service';
+import {StopTrainingComponent} from './training/current-training/stop-training.component';
 
 
 @NgModule({
@@ -25,7 +29,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     NewTrainingComponent,
     CurrentTrainingComponent,
     PastTrainingComponent,
-    HomeComponent
+    HomeComponent,
+    HeaderComponent,
+    SidenavListComponent,
+    StopTrainingComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +43,12 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     FlexLayoutModule,
     AppRoutingModule,
   ],
-  providers: [],
+  providers: [
+    TrainingService,
+  ],
+  entryComponents: [
+    StopTrainingComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
