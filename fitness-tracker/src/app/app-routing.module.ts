@@ -7,12 +7,13 @@ import {TrainingComponent} from './training/training.component';
 import {NewTrainingComponent} from './training/new-training/new-training.component';
 import {PastTrainingComponent} from './training/past-training/past-training.component';
 import {CurrentTrainingComponent} from './training/current-training/current-training.component';
+import {AuthGuard} from './auth/auth.guard';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'signup', component: SignupComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'training', component: TrainingComponent,
+  {path: 'training', component: TrainingComponent, canActivate: [AuthGuard]
     // children: [
     //   {path: '', pathMatch: 'full', component: CurrentTrainingComponent},
     //   {path: 'new', component: NewTrainingComponent},
@@ -27,6 +28,9 @@ const routes: Routes = [
   ],
   exports: [
     RouterModule
+  ],
+  providers: [
+    AuthGuard
   ]
 })
 export class AppRoutingModule {
