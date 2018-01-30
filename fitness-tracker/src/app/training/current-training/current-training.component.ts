@@ -39,7 +39,7 @@ export class CurrentTrainingComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.trainingService.stopTraining();
+        this.trainingService.stopExercise();
       } else {
         this.startOrResumeTimer();
       }
