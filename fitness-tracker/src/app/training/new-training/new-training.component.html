@@ -10,7 +10,7 @@
             [formControl]="control"
             placeholder="Choose Exercise">
             <mat-option
-              *ngFor="let exercise of exercises"
+              *ngFor="let exercise of exercises | async"
               [value]="exercise.id">
               {{exercise.name}}
             </mat-option>
