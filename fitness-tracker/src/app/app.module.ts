@@ -18,6 +18,7 @@ import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import {TrainingService} from './training/training.service';
 import {StopTrainingComponent} from './training/current-training/stop-training.component';
+import {AuthService} from './auth/auth.service';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import {StopTrainingComponent} from './training/current-training/stop-training.c
   ],
   providers: [
     TrainingService,
+    AuthService
   ],
   entryComponents: [
     StopTrainingComponent

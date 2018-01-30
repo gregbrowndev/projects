@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TrainingService} from './training.service';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs/Subject';
+import {ExerciseModel} from './exercise.model';
 
 @Component({
   selector: 'app-training',
@@ -10,15 +11,16 @@ import {Subject} from 'rxjs/Subject';
 })
 export class TrainingComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject<void>();
-  onGoingTraining: boolean;
+  onGoingTraining = false;
 
   constructor(private trainingService: TrainingService) { }
 
   ngOnInit() {
-    this.trainingService.trainingStart.pipe(
+    this.trainingService.exerciseChanged.pipe(
       takeUntil(this.unsubscribe)
-    )
-      .subscribe((trainingStart: boolean) => this.onGoingTraining = trainingStart);
+    ).subscribe((exercise: ExerciseModel) => {
+      this.onGoingTraining = exercise != null;
+    });
   }
 
   ngOnDestroy() {
