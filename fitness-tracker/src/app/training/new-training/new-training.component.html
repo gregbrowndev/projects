@@ -5,7 +5,7 @@
         Time to start a workout!
       </mat-card-title>
       <mat-card-content fxLayoutAlign="center">
-        <mat-form-field *ngIf="!isLoading">
+        <mat-form-field *ngIf="!isLoading && exercises">
           <mat-select
             [formControl]="control"
             placeholder="Choose Exercise">
@@ -20,6 +20,15 @@
       </mat-card-content>
       <mat-card-actions fxLayoutAlign="center"  *ngIf="!isLoading">
         <button
+          *ngIf="!exercises"
+          type="button"
+          mat-raised-button
+          color="primary"
+          (click)="fetchExercises()">
+          Fetch Again
+        </button>
+        <button
+          *ngIf="exercises"
           type="submit"
           mat-raised-button
           color="primary"

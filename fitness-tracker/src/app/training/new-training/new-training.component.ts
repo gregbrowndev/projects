@@ -32,18 +32,25 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
       takeUntil(this.ngUnsubscribe)
     ).subscribe(loading => this.isLoading = loading);
 
-    // Get data
-    this.trainingService.fetchAvailableExercises();
+    // React to changes in exercises
     this.trainingService.exercisesChanged.pipe(
       takeUntil(this.ngUnsubscribe)
     ).subscribe((exercises: ExerciseModel[]) => {
       this.exercises = exercises;
     });
+
+    // Fetch exercises
+    this.fetchExercises();
   }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  fetchExercises() {
+    // Get data
+    this.trainingService.fetchAvailableExercises();
   }
 
   onTrainingStart() {
