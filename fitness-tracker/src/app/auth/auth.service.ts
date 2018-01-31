@@ -17,14 +17,26 @@ export class AuthService {
               private trainingService: TrainingService) {
   }
 
+  initAuthListener() {
+    this.fireAuth.authState.subscribe(user => {
+      if (user) {
+        this.isAuth = true;
+        this.authChange.next(true);
+        this.router.navigate(['/training']);
+      } else {
+        this.trainingService.cancelSubscriptions();
+        this.isAuth = false;
+        this.authChange.next(false);
+        this.router.navigate(['/login']);
+      }
+    });
+  }
+
   registerUser(authData: AuthDataModel) {
     this.fireAuth.auth.createUserWithEmailAndPassword(
       authData.email,
       authData.password
     )
-      .then(result => {
-        this.onAuthSuccessful();
-      })
       .catch(error => {
         console.log(error);
       });
@@ -35,29 +47,17 @@ export class AuthService {
       authData.email,
       authData.password
     )
-      .then(result => {
-        this.onAuthSuccessful();
-      })
       .catch(error => {
         console.log(error);
       });
   }
 
   logout() {
-    this.trainingService.cancelSubscriptions();
     this.fireAuth.auth.signOut();
-    this.isAuth = false;
-    this.authChange.next(false);
-    this.router.navigate(['/login']);
   }
 
   isAuthenticated() {
     return this.isAuth;
   }
 
-  onAuthSuccessful() {
-    this.isAuth = true;
-    this.authChange.next(true);
-    this.router.navigate(['/training']);
-  }
 }
