@@ -31,6 +31,12 @@ export class TrainingService {
   }
 
   startExercise(exerciseId: string) {
+
+    // Increment exercise count in Firestore
+    this.db.doc('availableExercises/' + exerciseId).update({
+      lastSelected: new Date()
+    });
+
     this.runningExercise = this.availableExercises.find(ex => ex.id === exerciseId);
     this.exerciseChanged.next({...this.runningExercise});
   }
