@@ -15,16 +15,21 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
   exercises: ExerciseModel[];
   control: FormControl;
+  isLoading = true;
 
   constructor(private trainingService: TrainingService,
-              private fb: FormBuilder) { }
+              private fb: FormBuilder) {
+  }
 
   ngOnInit() {
     this.control = this.fb.control(null, Validators.required);
     this.trainingService.fetchAvailableExercises();
     this.trainingService.exercisesChanged.pipe(
       takeUntil(this.ngUnsubscribe)
-    ).subscribe((exercises: ExerciseModel[]) => this.exercises = exercises);
+    ).subscribe((exercises: ExerciseModel[]) => {
+      this.exercises = exercises;
+      this.isLoading = false;
+    });
   }
 
   ngOnDestroy() {

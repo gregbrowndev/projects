@@ -23,6 +23,7 @@ import {AuthService} from './auth/auth.service';
 import {environment} from '../environments/environment';
 import {AngularFirestoreModule} from 'angularfire2/firestore';
 import {AngularFireAuthModule} from 'angularfire2/auth';
+import {UIService} from './shared/ui.service';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import {AngularFireAuthModule} from 'angularfire2/auth';
   ],
   providers: [
     TrainingService,
-    AuthService
+    AuthService,
+    UIService
   ],
   entryComponents: [
     StopTrainingComponent
