@@ -5,6 +5,7 @@ import {takeUntil} from 'rxjs/operators';
 
 import {TrainingService} from '../training.service';
 import {ExerciseModel} from '../exercise.model';
+import {UIService} from '../../shared/ui.service';
 
 @Component({
   selector: 'app-new-training',
@@ -18,17 +19,25 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   isLoading = true;
 
   constructor(private trainingService: TrainingService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private uiService: UIService) {
   }
 
   ngOnInit() {
+    // initialise control
     this.control = this.fb.control(null, Validators.required);
+
+    // subscribe to loading events
+    this.uiService.loadingStateChanged.pipe(
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe(loading => this.isLoading = loading);
+
+    // Get data
     this.trainingService.fetchAvailableExercises();
     this.trainingService.exercisesChanged.pipe(
       takeUntil(this.ngUnsubscribe)
     ).subscribe((exercises: ExerciseModel[]) => {
       this.exercises = exercises;
-      this.isLoading = false;
     });
   }
 
