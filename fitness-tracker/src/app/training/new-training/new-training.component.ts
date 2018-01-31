@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
-import {AngularFirestore} from 'angularfire2/firestore';
-import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
+import {takeUntil} from 'rxjs/operators';
 
 import {TrainingService} from '../training.service';
 import {ExerciseModel} from '../exercise.model';
@@ -11,18 +11,25 @@ import {ExerciseModel} from '../exercise.model';
   templateUrl: './new-training.component.html',
   styleUrls: ['./new-training.component.css']
 })
-export class NewTrainingComponent implements OnInit {
-  exercises: Observable<any>;
+export class NewTrainingComponent implements OnInit, OnDestroy {
+  private ngUnsubscribe = new Subject<void>();
+  exercises: ExerciseModel[];
   control: FormControl;
 
   constructor(private trainingService: TrainingService,
-              private fb: FormBuilder,
-              private db: AngularFirestore) { }
+              private fb: FormBuilder) { }
 
   ngOnInit() {
     this.control = this.fb.control(null, Validators.required);
-    this.exercises = this.db.collection('availableExercises')
-      .valueChanges();
+    this.trainingService.fetchAvailableExercises();
+    this.trainingService.exercisesChanged.pipe(
+      takeUntil(this.ngUnsubscribe)
+    ).subscribe((exercises: ExerciseModel[]) => this.exercises = exercises);
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   onTrainingStart() {
