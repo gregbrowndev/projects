@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {ExerciseModel} from './exercise.model';
 import {Subject} from 'rxjs/Subject';
 import {AngularFirestore} from 'angularfire2/firestore';
+import {Subscription} from 'rxjs/Subscription';
 
 @Injectable()
 export class TrainingService {
@@ -10,24 +11,28 @@ export class TrainingService {
   finishedExercisesChanged = new Subject<ExerciseModel[]>();
   private availableExercises: ExerciseModel[] = [];
   private runningExercise: ExerciseModel;
+  private fireSubs: Subscription[] = [];
 
   constructor(private db: AngularFirestore) {
   }
 
   fetchAvailableExercises() {
-    this.db.collection('availableExercises')
-      .snapshotChanges()
-      .map(docArray => {
-        return docArray.map(doc => {
-          return {
-            id: doc.payload.doc.id,
-            ...(doc.payload.doc.data() as ExerciseModel)
-          };
-        });
-      }).subscribe((exercises: ExerciseModel[]) => {
-        this.availableExercises = exercises;
-        this.exercisesChanged.next([...this.availableExercises]);
-    });
+    this.fireSubs.push(
+      this.db.collection('availableExercises')
+        .snapshotChanges()
+        .map(docArray => {
+          return docArray.map(doc => {
+            return {
+              id: doc.payload.doc.id,
+              ...(doc.payload.doc.data() as ExerciseModel)
+            };
+          });
+        }).subscribe(
+        (exercises: ExerciseModel[]) => {
+          this.availableExercises = exercises;
+          this.exercisesChanged.next([...this.availableExercises]);
+        })
+    );
   }
 
   startExercise(exerciseId: string) {
@@ -68,11 +73,18 @@ export class TrainingService {
   }
 
   fetchFinishedExercises() {
-    this.db.collection('finishedExercises')
-      .valueChanges()
-      .subscribe((exercises: ExerciseModel[]) => {
-        this.finishedExercisesChanged.next(exercises);
-      });
+    this.fireSubs.push(
+      this.db.collection('finishedExercises')
+        .valueChanges()
+        .subscribe(
+          (exercises: ExerciseModel[]) => {
+            this.finishedExercisesChanged.next(exercises);
+          })
+    );
+  }
+
+  cancelSubscriptions() {
+    this.fireSubs.forEach(sub => sub.unsubscribe());
   }
 
   private postData(exercise: ExerciseModel) {

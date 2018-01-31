@@ -24,8 +24,7 @@
       <mat-error>{{getErrorMessage('password')}}</mat-error>
     </mat-form-field>
 
-    <!--[disabled]="form.invalid"-->
-    <button mat-raised-button type="submit" color="primary" >Submit</button>
+    <button mat-raised-button type="submit" color="primary" [disabled]="form.invalid">Submit</button>
 
   </form>
 </section>
