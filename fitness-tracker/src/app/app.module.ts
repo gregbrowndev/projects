@@ -22,6 +22,7 @@ import {StopTrainingComponent} from './training/current-training/stop-training.c
 import {AuthService} from './auth/auth.service';
 import {environment} from '../environments/environment';
 import {AngularFirestoreModule} from 'angularfire2/firestore';
+import {AngularFireAuthModule} from 'angularfire2/auth';
 
 
 @NgModule({
@@ -47,6 +48,7 @@ import {AngularFirestoreModule} from 'angularfire2/firestore';
     FlexLayoutModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
+    AngularFireAuthModule,
 
     AppRoutingModule,
   ],
