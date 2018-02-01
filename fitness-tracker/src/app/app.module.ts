@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFirestoreModule} from 'angularfire2/firestore';
+import {StoreModule} from '@ngrx/store';
 
 import {AppComponent} from './app.component';
 import {HomeComponent} from './home/home.component';
@@ -16,6 +17,7 @@ import {environment} from '../environments/environment';
 import {UIService} from './shared/ui.service';
 import {AuthModule} from './auth/auth.module';
 import {SharedModule} from './shared/shared.module';
+import {appReducer} from './app.reducer';
 
 
 @NgModule({
@@ -31,6 +33,11 @@ import {SharedModule} from './shared/shared.module';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     ReactiveFormsModule,
+
+    // NgRx
+    StoreModule.forRoot({
+      ui: appReducer
+    }),
 
     AppRoutingModule,
     SharedModule,
