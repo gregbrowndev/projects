@@ -14,7 +14,7 @@
 <!--</nav>-->
 <!--<router-outlet></router-outlet>-->
 
-<mat-tab-group *ngIf="!onGoingTraining; else currentTraining">
+<mat-tab-group *ngIf="!(isTraining$ | async); else currentTraining">
   <mat-tab label="New Exercises">
     <app-new-training></app-new-training>
   </mat-tab>

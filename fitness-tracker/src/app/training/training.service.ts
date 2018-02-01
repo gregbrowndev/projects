@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {AngularFirestore} from 'angularfire2/firestore';
-import {Subject} from 'rxjs/Subject';
 import {Subscription} from 'rxjs/Subscription';
 import {Store} from '@ngrx/store';
 
@@ -9,10 +8,10 @@ import {UIService} from '../shared/ui.service';
 import * as fromTraining from '../training/training.reducer';
 import * as Training from '../training/training.actions';
 import * as UI from '../shared/ui.actions';
+import {take} from 'rxjs/operators';
 
 @Injectable()
 export class TrainingService {
-  private runningExercise: ExerciseModel;
   private fireSubs: Subscription[] = [];
 
   constructor(private db: AngularFirestore,
@@ -51,29 +50,31 @@ export class TrainingService {
   }
 
   completeExercise() {
-    this.postData({
-      ...this.runningExercise,
-      date: new Date(),
-      state: 'completed'
+    this.store.select(fromTraining.getActiveExercise).pipe(
+      take(1)
+    ).subscribe(activeExercise => {
+      this.postData({
+        ...activeExercise,
+        date: new Date(),
+        state: 'completed'
+      });
+      this.store.dispatch(new Training.StopExercise());
     });
-    this.runningExercise = null;
-    this.store.dispatch(new Training.StopExercise());
   }
 
   cancelExercise(progress) {
-    this.postData({
-      ...this.runningExercise,
-      duration: this.runningExercise.duration * (progress / 100),
-      calories: this.runningExercise.calories * (progress / 100),
-      date: new Date(),
-      state: 'cancelled'
+    this.store.select(fromTraining.getActiveExercise).pipe(
+      take(1)
+    ).subscribe(activeExercise => {
+      this.postData({
+        ...activeExercise,
+        duration: activeExercise.duration * (progress / 100),
+        calories: activeExercise.calories * (progress / 100),
+        date: new Date(),
+        state: 'cancelled'
+      });
+      this.store.dispatch(new Training.StopExercise());
     });
-    this.runningExercise = null;
-    this.store.dispatch(new Training.StopExercise());
-  }
-
-  getRunningExercise() {
-    return {...this.runningExercise};
   }
 
   fetchFinishedExercises() {
