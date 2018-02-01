@@ -1,12 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
-import {takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {Observable} from 'rxjs/Observable';
 
 import {AuthService} from '../auth.service';
-import {UIService} from '../../shared/ui.service';
 import * as fromRoot from '../../app.reducer';
 
 @Component({
@@ -14,15 +11,13 @@ import * as fromRoot from '../../app.reducer';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
+export class LoginComponent implements OnInit {
   form: FormGroup;
   isLoading$: Observable<boolean>;
 
   constructor(private store: Store<{ui: fromRoot.State}>,
               private fb: FormBuilder,
-              private authService: AuthService,
-              private uiService: UIService) { }
+              private authService: AuthService) { }
 
   ngOnInit() {
     this.isLoading$ = this.store.select(fromRoot.getIsLoading);
@@ -32,10 +27,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
 
   onSubmit() {
     this.authService.login({

@@ -2,10 +2,14 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {takeUntil} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {Observable} from 'rxjs/Observable';
 
 import {TrainingService} from '../training.service';
 import {ExerciseModel} from '../exercise.model';
 import {UIService} from '../../shared/ui.service';
+
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-new-training',
@@ -16,9 +20,10 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   private ngUnsubscribe = new Subject<void>();
   exercises: ExerciseModel[];
   control: FormControl;
-  isLoading = true;
+  isLoading$: Observable<boolean>;
 
-  constructor(private trainingService: TrainingService,
+  constructor(private store: Store<fromRoot.State>,
+              private trainingService: TrainingService,
               private fb: FormBuilder,
               private uiService: UIService) {
   }
@@ -28,9 +33,7 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
     this.control = this.fb.control(null, Validators.required);
 
     // subscribe to loading events
-    this.uiService.loadingStateChanged.pipe(
-      takeUntil(this.ngUnsubscribe)
-    ).subscribe(loading => this.isLoading = loading);
+    this.isLoading$ = this.store.select(fromRoot.getIsLoading);
 
     // React to changes in exercises
     this.trainingService.exercisesChanged.pipe(

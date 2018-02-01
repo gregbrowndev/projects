@@ -1,38 +1,31 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {AuthService} from '../auth.service';
-import {UIService} from '../../shared/ui.service';
-import {takeUntil} from 'rxjs/operators';
-import {Subject} from 'rxjs/Subject';
+import {Store} from '@ngrx/store';
+import {Observable} from 'rxjs/Observable';
+
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
-export class SignupComponent implements OnInit, OnDestroy {
-  private ngUnsubscribe = new Subject<void>();
+export class SignupComponent implements OnInit {
   maxDate;
-  isLoading = false;
+  isLoading$: Observable<boolean>;
 
   constructor(private authService: AuthService,
-              private uiService: UIService) {
+              private store: Store<fromRoot.State>) {
   }
 
   ngOnInit() {
-    this.uiService.loadingStateChanged.pipe(
-      takeUntil(this.ngUnsubscribe)
-    ).subscribe(loading => this.isLoading = loading);
-
+    this.isLoading$ = this.store.select(fromRoot.getIsLoading);
 
     this.maxDate = new Date();
     this.maxDate.setFullYear(this.maxDate.getFullYear() - 18);
   }
 
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
 
   onSubmit(form: NgForm) {
     this.authService.registerUser({
