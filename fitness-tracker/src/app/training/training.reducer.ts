@@ -1,0 +1,53 @@
+import {ExerciseModel} from './exercise.model';
+import * as fromRoot from '../app.reducer';
+import {
+  STOP_EXERCISE, SET_AVAILABLE_EXERCISES, SET_FINISHED_EXERCISES, START_EXERCISE,
+  TrainingActions
+} from './training.actions';
+
+export interface TrainingState {
+  availableExercises: ExerciseModel[];
+  finishedExercises: ExerciseModel[];
+  activeExercise: ExerciseModel;
+}
+
+export interface State extends fromRoot.State {
+  training: TrainingState;
+}
+
+const initialState: TrainingState = {
+  availableExercises: [],
+  finishedExercises: [],
+  activeExercise: null
+};
+
+export function authReducer(state = initialState, action: TrainingActions) {
+  switch (action.type) {
+    case SET_AVAILABLE_EXERCISES:
+      return {
+        ...state,
+        availableExercises: action.payload
+      };
+    case SET_FINISHED_EXERCISES:
+      return {
+        ...state,
+        finishedExercises: action.payload
+      };
+    case START_EXERCISE:
+      return {
+        ...state,
+        activeExercise: action.payload
+      };
+    case STOP_EXERCISE:
+      return {
+        ...state,
+        activeExercise: null
+      };
+    default:
+      return state;
+  }
+}
+
+export const getAvailableExercises = (state: TrainingState) => state.availableExercises;
+export const getFinishedExercises = (state: TrainingState) => state.finishedExercises;
+export const getActiveExercise = (state: TrainingState) => state.activeExercise;
