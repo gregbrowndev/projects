@@ -17,7 +17,7 @@ import {environment} from '../environments/environment';
 import {UIService} from './shared/ui.service';
 import {AuthModule} from './auth/auth.module';
 import {SharedModule} from './shared/shared.module';
-import {appReducer} from './app.reducer';
+import {reducers} from './app.reducer';
 
 
 @NgModule({
@@ -35,9 +35,7 @@ import {appReducer} from './app.reducer';
     ReactiveFormsModule,
 
     // NgRx
-    StoreModule.forRoot({
-      ui: appReducer
-    }),
+    StoreModule.forRoot(reducers),
 
     AppRoutingModule,
     SharedModule,

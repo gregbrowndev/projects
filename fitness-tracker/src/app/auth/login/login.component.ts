@@ -3,11 +3,11 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {takeUntil} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
+import {Observable} from 'rxjs/Observable';
 
 import {AuthService} from '../auth.service';
 import {UIService} from '../../shared/ui.service';
-import * as fromApp from '../../app.reducer';
-import {Observable} from 'rxjs/Observable';
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-login',
@@ -19,13 +19,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   form: FormGroup;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store<{ui: fromApp.State}>,
+  constructor(private store: Store<{ui: fromRoot.State}>,
               private fb: FormBuilder,
               private authService: AuthService,
               private uiService: UIService) { }
 
   ngOnInit() {
-    this.isLoading$ = this.store.map(state => state.ui.isLoading);
+    this.isLoading$ = this.store.select(fromRoot.getIsLoading);
     this.form = this.fb.group({
       'email': this.fb.control('', [Validators.required, Validators.email]),
       'password': this.fb.control('', [Validators.required, Validators.minLength(6)]),

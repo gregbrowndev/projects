@@ -7,7 +7,8 @@ import {Store} from '@ngrx/store';
 import {AuthDataModel} from './auth-data.model';
 import {TrainingService} from '../training/training.service';
 import {UIService} from '../shared/ui.service';
-import * as fromApp from '../app.reducer';
+import * as fromRoot from '../app.reducer';
+import * as UI from '../shared/ui.actions';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
   authChange = new Subject<boolean>();
 
   constructor(private router: Router,
-              private store: Store<{ui: fromApp.State}>,
+              private store: Store<{ui: fromRoot.State}>,
               private fireAuth: AngularFireAuth,
               private trainingService: TrainingService,
               private uiService: UIService) {
@@ -37,13 +38,13 @@ export class AuthService {
   }
 
   registerUser(authData: AuthDataModel) {
-    this.store.dispatch({type: 'START_LOADING'});
+    this.store.dispatch(new UI.StartLoading());
 
     this.fireAuth.auth.createUserWithEmailAndPassword(
       authData.email,
       authData.password
     ).then(result => {
-      this.store.dispatch({type: 'STOP_LOADING'});
+      this.store.dispatch(new UI.StopLoading());
     })
       .catch(error => {
         this.store.dispatch({type: 'STOP_LOADING'});
@@ -52,16 +53,16 @@ export class AuthService {
   }
 
   login(authData: AuthDataModel) {
-    this.store.dispatch({type: 'START_LOADING'});
+    this.store.dispatch(new UI.StartLoading());
     this.fireAuth.auth.signInWithEmailAndPassword(
       authData.email,
       authData.password
     )
       .then(result => {
-        this.store.dispatch({type: 'STOP_LOADING'});
+        this.store.dispatch(new UI.StopLoading());
       })
       .catch(error => {
-        this.store.dispatch({type: 'STOP_LOADING'});
+        this.store.dispatch(new UI.StopLoading());
         this.uiService.showSnackbar(error.message, null, 3000);
       });
   }
