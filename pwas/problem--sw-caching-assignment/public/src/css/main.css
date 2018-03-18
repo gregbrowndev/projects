@@ -2,7 +2,8 @@
   margin: auto;
   width: 100px;
   height: 100px;
-  background-color: #fa923f;
+  /*background-color: #fa923f;*/
+  background-color: blue;
   display: none;
 }
 

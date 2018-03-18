@@ -1,3 +1,10 @@
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/sw.js')
+    .then(function() {
+      console.log('Service worker registered!');
+    });
+}
 
 var box = document.querySelector('.box');
 var button = document.querySelector('button');
