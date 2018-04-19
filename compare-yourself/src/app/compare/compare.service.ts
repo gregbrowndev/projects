@@ -49,36 +49,42 @@ export class CompareService {
   onRetrieveData(all = true) {
     this.dataLoaded.next(null);
     this.dataLoadFailed.next(false);
-    let queryParam = '';
-    let urlParam = 'all';
-    if (!all) {
-      urlParam = 'single';
-    }
-    this.http.get('https://API_ID.execute-api.REGION.amazonaws.com/dev/' + urlParam + queryParam, {
-      headers: new Headers({'Authorization': 'XXX'})
-    })
-      .map(
-        (response: Response) => response.json()
-      )
-      .subscribe(
-        (data) => {
-          if (all) {
-            this.dataLoaded.next(data);
-          } else {
-            console.log(data);
-            if (!data) {
-              this.dataLoadFailed.next(true);
-              return;
-            }
-            this.userData = data[0];
-            this.dataEdited.next(true);
-          }
-        },
-        (error) => {
-          this.dataLoadFailed.next(true);
-          this.dataLoaded.next(null);
+    this.authService.getAuthenticatedUser().getSession((err, session) => {
+      if (err) {
+        console.log(err);
+      } else {
+        const queryParam = '?accessToken=' + session.getAccessToken().getJwtToken();
+        let urlParam = 'all';
+        if (!all) {
+          urlParam = 'single';
         }
-      );
+        this.http.get('https://fwg8uwpny2.execute-api.eu-west-2.amazonaws.com/dev/compare-yourself/' + urlParam + queryParam, {
+          headers: new Headers({'Authorization': session.getIdToken().getJwtToken()})
+        })
+          .map(
+            (response: Response) => response.json()
+          )
+          .subscribe(
+            (data) => {
+              if (all) {
+                this.dataLoaded.next(data);
+              } else {
+                console.log(data);
+                if (!data) {
+                  this.dataLoadFailed.next(true);
+                  return;
+                }
+                this.userData = data[0];
+                this.dataEdited.next(true);
+              }
+            },
+            (error) => {
+              this.dataLoadFailed.next(true);
+              this.dataLoaded.next(null);
+            }
+          );
+      }
+    });
   }
 
   onDeleteData() {
