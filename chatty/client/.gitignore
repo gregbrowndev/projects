@@ -21,26 +21,25 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-ios/Pods
 
 # Android/IntelliJ
 #
 build/
 .idea
-**.gradle
-**/local.properties
-**.iml
+.gradle
+local.properties
+*.iml
 
 # node.js
 #
-**/node_modules/
-**/npm-debug.log
-**/yarn-error.log
+node_modules/
+npm-debug.log
+yarn-error.log
 
 # BUCK
-**/buck-out/
-**/\.buckd/
-**.keystore
+buck-out/
+\.buckd/
+*.keystore
 
 # fastlane
 #
@@ -49,9 +48,9 @@ build/
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/
 
-**/fastlane/report.xml
-**/fastlane/Preview.html
-**/fastlane/screenshots
+*/fastlane/report.xml
+*/fastlane/Preview.html
+*/fastlane/screenshots
 
-**/artifacts/
-**/coverage/
+# Bundle artifact
+*.jsbundle
