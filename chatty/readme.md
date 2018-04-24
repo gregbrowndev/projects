@@ -8,6 +8,19 @@ with a Node Express backend app and GraphQL.
 
 ## Getting Started
 
+Install packages:
+
+```bash
+# JS Linter
+yarn global add eslint-cli
+
+# RN CLI
+yarn global add react-native-cli
+
+# RN debugger
+brew update && brew cask install react-native-debugger
+```
+
 Run Express App:
 
 ```bash
@@ -21,4 +34,10 @@ Run React Native App:
 # From client directory
 yarn install
 react-native run-ios
+```
+
+Run Debugger:
+
+```bash
+open "rndebugger://set-debugger-loc?host=localhost&port=8081"
 ```
