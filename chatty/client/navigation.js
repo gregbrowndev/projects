@@ -9,6 +9,7 @@ import { Text, View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
 import Groups from './src/screens/groups.screen';
+import Messages from './src/screens/messages.screen';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,11 +22,13 @@ const styles = StyleSheet.create({
     color: '#777',
     fontSize: 10,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   selected: {
     color: 'blue',
   },
 });
+
 const TestScreen = title => () => (
   <View style={styles.container}>
     <Text>
@@ -33,6 +36,7 @@ const TestScreen = title => () => (
     </Text>
   </View>
 );
+
 // tabs in main screen
 const MainScreenNavigator = TabNavigator({
   Chats: { screen: Groups },
@@ -40,9 +44,14 @@ const MainScreenNavigator = TabNavigator({
 }, {
   initialRouteName: 'Chats',
 });
+
 const AppNavigator = StackNavigator({
   Main: { screen: MainScreenNavigator },
+  Messages: { screen: Messages },
+}, {
+  mode: 'modal',
 });
+
 // reducer initialization code
 const initialState = AppNavigator.router.getStateForAction(NavigationActions.reset({
   index: 0,
