@@ -1,21 +1,22 @@
+import React, { Component } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, View, } from 'react-native';
 import { _ } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { FlatList, StyleSheet, View, } from 'react-native';
+import { graphql, compose } from 'react-apollo';
+
 import Group from "../components/group.component";
+import { USER_QUERY } from "../graphql/user.query";
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
+  },
+  loading: {
+    justifyContent: 'center',
+    flex: 1
   }
 });
-
-// create fake data to populate our ListView
-const fakeData = () => _.times(100, i => ({
-  id: i,
-  name: `Group ${i}`,
-}));
 
 class Groups extends Component {
   static navigationOptions = {
@@ -37,11 +38,22 @@ class Groups extends Component {
   renderItem = ({ item }) => <Group group={item} goToMessages={this.goToMessages} />;
 
   render() {
+    const { loading, user } = this.props;
+
+    // render placeholder while loading
+    if (loading) {
+      return (
+        <View style={[styles.loading, styles.container]}>
+          <ActivityIndicator/>
+        </View>
+      )
+    }
+
     // render list of groups for user
     return (
       <View style={styles.container}>
         <FlatList
-          data={fakeData()}
+          data={user.groups}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
         />
@@ -54,6 +66,27 @@ Groups.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }),
+  data: PropTypes.shape({
+    loading: PropTypes.bool,
+    user: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      email: PropTypes.string.isRequired,
+      groups: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.number.isRequired,
+          name: PropTypes.string.isRequired
+        })
+      )
+    })
+  })
 };
 
-export default Groups;
+// GraphQL query - used to wrap Groups component as a HOC
+const userQuery = graphql(USER_QUERY, {
+  options: (ownProps) => ({ variables: { id: 1 }}), // ownProps.id - hard coded to userId 1 in section 7 we add auth
+  props: ({ data: { loading, user }}) => ({
+    loading, user
+  })
+});
+
+export default userQuery(Groups);
