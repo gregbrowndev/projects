@@ -6,7 +6,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --watch server --watch package.json server/index.js --exec babel-node --presets es2015,stage-2"
+    "start": "nodemon --watch server --watch package.json server/index.js --exec babel-node --presets es2015,stage-2",
+    "run-ios": "cd client && react-native run-ios",
+    "packager:kill": "cd client && react-native-kill-packager",
+    "packager:restart": "cd client && react-native-kill-packager; cd client && npm start"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
