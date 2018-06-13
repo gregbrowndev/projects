@@ -1,11 +1,12 @@
 import { _ } from 'lodash';
-import { ActivityIndicator, FlatList, StyleSheet, View, } from 'react-native';
+import { ActivityIndicator, FlatList, KeyboardAvoidingView, StyleSheet, View, } from 'react-native';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import { graphql, compose } from 'react-apollo';
 
 import Message from '../components/message.component';
+import MessageInput from '../components/message-input.component';
 import GROUP_QUERY from '../graphql/group.query';
 
 const styles = StyleSheet.create({
@@ -42,6 +43,7 @@ class Messages extends Component {
     };
 
     this.renderItem = this.renderItem.bind(this);
+    this.send = this.send.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -59,6 +61,11 @@ class Messages extends Component {
         usernameColors
       });
     }
+  }
+
+  send(text) {
+    // TODO: send the message
+    console.log(`sending message: ${text}`);
   }
 
   keyExtractor = item => item.id.toString();
@@ -84,14 +91,20 @@ class Messages extends Component {
 
     // render list of messages for group
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={'position'}
+        contentContainerStyle={styles.container}
+        keyboardVerticalOffset={64}
+      >
         <FlatList
           data={group.messages.slice().reverse()}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
           ListEmptyComponent={<View/>}
         />
-      </View>
+        <MessageInput send={this.send}/>
+      </KeyboardAvoidingView>
     );
   }
 }
