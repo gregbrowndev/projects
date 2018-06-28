@@ -1,4 +1,0 @@
-{"description": " For service to/from these stations, take the (4)* instead. Transfer between trains at Franklin Av.  *Please review (4) advisories for additional information that may affect your trip Jun 25 - 29. _______________________________ "}
-{"description": " For service to/from these stations, take the (4)* instead. Transfer between trains at Franklin Av.  *Please review (4) advisories for additional information that may affect your trip Jun 25 - 29.  "}
-{"description": "For serviceto/fromthese stations, take the(4)* instead. Transfer between trains at Franklin Av.*Please review(4)advisories for additional information that may affect your trip Jun 25 - 29."}
-{"description": "For service to/from these stations, take the (4)* instead. Transfer between trains at Franklin Av. *Please review (4) advisories for additional information that may affect your trip Jun 25 - 29."}
