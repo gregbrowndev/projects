@@ -373,3 +373,5 @@ pip-selfcheck.json
 
 
 *.jl
+
+*.json

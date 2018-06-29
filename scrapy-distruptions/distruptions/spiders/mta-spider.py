@@ -1,4 +1,3 @@
-from string import punctuation
 import re
 import scrapy
 from bs4 import BeautifulSoup
@@ -7,11 +6,13 @@ from bs4 import BeautifulSoup
 class MTASpider(scrapy.Spider):
     name = "mta"
     start_urls = [
-        'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=2&date=6/28/2018&time=&method=getstatus4',
+        #'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=2&date=6/28/2018&time=&method=getstatus4',
+        'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=ALL&date=6/28/2018&time=&method=getstatus4'
     ]
 
     image_regex = re.compile(r'<img src=\"images/(.+).png\"/?>')
-    onclick_regex = re.compile(r'ShowHide\((\d)\)')
+    onclick_regex = re.compile(r'ShowHide\((\d+)\)')
+    underline_regex = re.compile(r'_{4,}')
 
     def parse(self, response):
         soup = BeautifulSoup(response.text, 'lxml')
@@ -33,17 +34,17 @@ class MTASpider(scrapy.Spider):
             # extract 'id' from onclick handler (this opens the description so can be used to select that later)
             id = re.match(self.onclick_regex, item['onclick']).group(1)
 
-            # get heading
-            heading = item.find('b')
+            # get heading text
+            heading = self.get_text(item)
 
             # find description
             description = soup.find('div', id=id)
 
             # remove underscore (matches at least 4 underscores to prevent legit mistake)
-            description.find(string=re.compile(r'_{4,}')).replace_with('')
+            description.find(string=self.underline_regex).replace_with('')
 
             yield {
-                'header': self.get_text(heading),
+                'header': heading,
                 'description': self.get_text(description)
             }
 
