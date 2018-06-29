@@ -17,9 +17,9 @@ class TorontoSpider(scrapy.Spider):
             if (link == 'York_U_Strike.jsp'):
                 continue
             next_page = response.urljoin(link)
-            yield scrapy.Request(next_page, callback=self.parse_diversion)
+            yield scrapy.Request(next_page, callback=self.parse_item)
 
-    def parse_diversion(self, response):
+    def parse_item(self, response):
         title = response.css('h1::text').extract_first()
 
         content = response.css('div#content-advisory')
