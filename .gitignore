@@ -371,3 +371,7 @@ pip-selfcheck.json
 # See issue https://github.com/pydanny/cookiecutter-django/issues/1321
 !/compose/local/
 
+
+*.jl
+
+*.json
