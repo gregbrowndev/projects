@@ -4,7 +4,7 @@ import scrapy
 from bs4 import BeautifulSoup
 
 from distruptions.items import SituationItem, Reason, Effect
-from distruptions.utils import clean
+from distruptions.utils import clean, get_text
 
 
 # TODO - add validation using voluptuous or scrapy-jsonschema
@@ -83,7 +83,7 @@ class MTASpider(scrapy.Spider):
                 # TODO - add timestamps
 
                 # get title text
-                title = self.get_text(item)
+                title = get_text(item)
 
                 # ignore duplicate disruption by checking heading text
                 if (title in self.seen_titles):
@@ -105,13 +105,11 @@ class MTASpider(scrapy.Spider):
                 description.find(string=self.underline_regex).replace_with('')
 
                 yield SituationItem({
-                    'source_id': id,  # TODO - remove as this is not really an id
-                    'source_type': 'MTA',
+                    'source_type': 'HTML',
                     'source_location': response.url,
                     # could pass the request url? But this won't ever be unique due to de-duping
                     'title': title,
-                    'description': self.get_text(description),
-                    'is_public': True,
+                    'description': get_text(description),
                     'reason': reason,
                     'effect': effect
                 })
@@ -120,12 +118,4 @@ class MTASpider(scrapy.Spider):
                 # inspect_response(item, self)
                 continue
 
-    def get_text(self, soup):
-        '''
-        Wrapper around BeautifulSoup get_text, which does take a 'strip=True' arg, but this appeared to join words
-        together in some cases
-        :param soup: BeautifulSoup soup
-        :return: string stripped of excess whitespace. Note all whitespace characters are included
-        '''
-        text = soup.get_text()
-        return clean(text)
+
