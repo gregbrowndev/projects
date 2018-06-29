@@ -11,9 +11,9 @@ class WestMidlandsSpider(scrapy.Spider):
     name = 'west-midlands'
 
     def start_requests(self):
-        # Url to AngularJS page with Network West Midlands disruptions data
+        # Process AngularJS page with Network West Midlands disruptions data using Splash
         base_url = 'https://www.networkwestmidlands.com/plan-your-journey/disruptions/#/params?DisruptionType=&when=All&TransportModeA=5&TransportModeB=0&TransportModeC=4'
-        yield SplashRequest(url=base_url, callback=self.parse, args={'wait': 0.8})
+        yield SplashRequest(url=base_url, callback=self.parse, args={'wait': 1.0})
 
     def parse(self, response):
         # Convert to BeautifulSoup as its easier to convert inline <i>, <b>, etc. to text
