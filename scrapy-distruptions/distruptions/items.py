@@ -28,6 +28,19 @@ class Reason(Enum):
     MEDICAL_ACTIVITY = 'MEDICAL_ACTIVITY'
 
 
+class Effect(Enum):
+    UNKNOWN = 'UNKNOWN'
+    OTHER = 'OTHER'
+    NO_SERVICE = 'NO_SERVICE'
+    REDUCED_SERVICE = 'REDUCED_SERVICE'
+    ADDITIONAL_SERVICE = 'ADDITIONAL_SERVICE'
+    MODIFIED_SERVICE = 'MODIFIED_SERVICE'
+    DELAYS = 'DELAYS'
+    DIVERSION = 'DIVERSION'
+    ACCESSIBILITY_REDUCED = 'ACCESSIBILITY_REDUCED'
+    STOP_MOVED = 'STOP_MOVED'
+
+
 class SituationItem(scrapy.Item):
     # define the fields for your item here like:
     source_type = scrapy.Field()
@@ -44,3 +57,4 @@ class SituationItem(scrapy.Item):
     validity_period = scrapy.Field()
     publication_validity_period = scrapy.Field()
     reason = scrapy.Field()
+    effect = scrapy.Field()
