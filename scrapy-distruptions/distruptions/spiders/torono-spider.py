@@ -14,6 +14,8 @@ class TorontoSpider(scrapy.Spider):
         content = response.css('div.main-content')
         links = content.css('h4 a::attr(href)').extract()
         for link in links:
+            if (link == 'York_U_Strike.jsp'):
+                continue
             next_page = response.urljoin(link)
             yield scrapy.Request(next_page, callback=self.parse_diversion)
 
@@ -22,7 +24,7 @@ class TorontoSpider(scrapy.Spider):
 
         content = response.css('div#content-advisory')
         content_soup = BeautifulSoup(content.extract_first(), 'lxml')
-        description = content_soup.get_text()
+        description = content_soup.get_text().strip()
 
         # TODO - check span#expireDate this shows when diversion ends (if empty this means indefinite)
         # Still need to parse h3 tag for start date/time
@@ -33,6 +35,7 @@ class TorontoSpider(scrapy.Spider):
             'source_id': '',
             'source_type': 'HTML',
             'source_location': response.url,
+            'url': response.url,
             # could pass the request url? But this won't ever be unique due to de-duping
             'title': title,
             'description': description,
