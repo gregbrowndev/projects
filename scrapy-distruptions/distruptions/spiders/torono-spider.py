@@ -36,7 +36,6 @@ class TorontoSpider(scrapy.Spider):
             'source_type': 'HTML',
             'source_location': response.url,
             'url': response.url,
-            # could pass the request url? But this won't ever be unique due to de-duping
             'title': title,
             'description': description,
             'reason': '',

@@ -1,6 +1,6 @@
 # Scrapy Distruptions Scraper
 
-## Notes
+## Quick Start
 
 Creating the project:
 
@@ -17,3 +17,20 @@ scrapy crawl mta -o mta_disruptions.json -L WARNING
 
 The warning level is useful for quickly spotting issues.
 Can also specify `--logfile` option to output logs to file.
+
+
+## Overview
+
+Scrapy is a framework for writing webscrapers.
+
+
+SPA, client-side rendered apps can also be scraped with various
+methods:
+
+* Use Selenium + Browser
+* Using Splash
+
+The [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash) 
+library allows you to scrape HTML rendered via JavaScript.
+
+
