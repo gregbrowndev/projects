@@ -2,9 +2,9 @@ import re
 from datetime import datetime, timedelta
 import scrapy
 from bs4 import BeautifulSoup
-from scrapy.shell import inspect_response
 
 from distruptions.items import SituationItem, Reason, Effect
+from distruptions.utils import clean
 
 
 # TODO - add validation using voluptuous or scrapy-jsonschema
@@ -107,7 +107,8 @@ class MTASpider(scrapy.Spider):
                 yield SituationItem({
                     'source_id': id,  # TODO - remove as this is not really an id
                     'source_type': 'MTA',
-                    'source_location': response.url,  # could pass the request url? But this won't ever be unique due to de-duping
+                    'source_location': response.url,
+                    # could pass the request url? But this won't ever be unique due to de-duping
                     'title': title,
                     'description': self.get_text(description),
                     'is_public': True,
@@ -127,50 +128,4 @@ class MTASpider(scrapy.Spider):
         :return: string stripped of excess whitespace. Note all whitespace characters are included
         '''
         text = soup.get_text()
-        return self.clean(text)
-
-    def clean(self, to_clean):
-        if isinstance(to_clean, str):
-            return re.sub('\s+', ' ', to_clean).strip()
-        return [re.sub('\s+', ' ', d).strip() for d in to_clean if d.strip()]
-
-
-def get_text(soup):
-    '''
-    Wrapper around BeautifulSoup get_text, which does take a 'strip=True' arg, but this appeared to join words
-    together in some cases
-    :param soup: BeautifulSoup soup
-    :return: string stripped of excess whitespace. Note all whitespace characters are included
-    '''
-    text = soup.get_text()
-    return re.sub('\s+', ' ', text).strip()
-
-
-if (__name__ == '__main__'):
-    response = None
-    # scrapy shell 'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=ALL&date=6/29/2018&time=&method=getstatus4'
-
-    import re
-    import scrapy
-    from bs4 import BeautifulSoup
-
-    image_regex = re.compile(r'<img src=\"images/(.+).png\"/?>')
-    onclick_regex = re.compile(r'ShowHide\((\d+)\)')
-    underline_regex = re.compile(r'_{4,}')
-
-    soup = BeautifulSoup(response.text, 'lxml')
-    content = soup.select_one('div#divAd')
-
-    # replace images with text
-    for img in content.find_all('img'):
-        line_name = re.sub(image_regex, r'(\1)', str(img))
-        img.replace_with(line_name)
-
-    # replace line breaks with a space
-    for br in content.find_all('br'):
-        br.replace_with(' ')
-
-    # these are the disruption items
-    items = content.select('a[onclick^="ShowHide"]')
-
-    item = content.select_one('a[onclick^="ShowHide(15);"]')
+        return clean(text)
