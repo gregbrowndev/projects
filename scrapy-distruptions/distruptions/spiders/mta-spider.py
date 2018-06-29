@@ -41,7 +41,7 @@ class MTASpider(scrapy.Spider):
     def start_requests(self):
         base_url = 'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=ALL&date={date}&time=&method=getstatus4'
         dates = self.lookahead()
-        return [scrapy.Request(url=base_url.format(date=date.strftime('%d/%m/%Y')), callback=self.parse)
+        return [scrapy.Request(url=base_url.format(date=date.strftime('%m/%d/%Y')), callback=self.parse)
                 for date in dates]
 
     def lookahead(self):
@@ -55,6 +55,11 @@ class MTASpider(scrapy.Spider):
     def parse(self, response):
         soup = BeautifulSoup(response.text, 'lxml')
         content = soup.select_one('div#divAd')
+
+        if not content:
+            self.logger.warning('Failed to parse response: {url}'.format(url=response.request.meta['redirect_urls'][0]))
+            # inspect_response(item, self)
+            return
 
         # replace images with text
         for img in content.find_all('img'):
