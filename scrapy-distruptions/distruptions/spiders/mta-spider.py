@@ -4,6 +4,8 @@ import scrapy
 from bs4 import BeautifulSoup
 from scrapy.shell import inspect_response
 
+from distruptions.items import SituationItem, Reason
+
 
 class MTASpider(scrapy.Spider):
     name = "mta"
@@ -15,6 +17,18 @@ class MTASpider(scrapy.Spider):
     image_regex = re.compile(r'<img src=\"images/(.+).png\"/?>')
     onclick_regex = re.compile(r'ShowHide\((\d+)\)')
     underline_regex = re.compile(r'_{4,}')
+
+    REASON_LOOKUP = {
+        'TRACK MAINTENANCE': Reason.MAINTAINCE,
+        'STATION ENHANCEMENTS': Reason.CONSTRUCTION,
+        'ELECTRICAL IMPROVEMENTS': Reason.MAINTAINCE,
+        'TRACK REPLACEMENT': Reason.MAINTAINCE,
+        'STATION RENOVATION': Reason.CONSTRUCTION,
+        'SCHEDULED MAINTENANCE': Reason.MAINTAINCE,
+        'SIGNAL MAINTENANCE': Reason.MAINTAINCE,
+        'ELEVATOR INSTALLATION': Reason.CONSTRUCTION,
+        'ALTERNATIVE SERVICE': Reason.PLANNED_EVENT  # NOTE - this could probably be its own Reason enum
+    }
 
     def lookahead(self):
         '''
@@ -36,8 +50,10 @@ class MTASpider(scrapy.Spider):
 
         # replace images with text
         for img in content.find_all('img'):
-            line_name = re.sub(self.image_regex, r'(\1)', str(img))
-            img.replace_with(line_name)
+            match = re.match(self.image_regex, str(img))
+            if (match):
+                line_name = match.group(1)
+                img.replace_with('({name})'.format(name=line_name))
 
         # replace line breaks with a space
         for br in content.find_all('br'):
@@ -58,19 +74,27 @@ class MTASpider(scrapy.Spider):
                 # get heading text
                 heading = self.get_text(item)
 
+                # get cause
+                cause = heading.split('|')[0].strip()
+                reason = self.REASON_LOOKUP.get(cause, Reason.UNKNOWN).value
+
                 # find description
                 description = soup.find('div', id=id)
 
                 # remove underscore (matches at least 4 underscores to prevent legit mistake)
                 description.find(string=self.underline_regex).replace_with('')
 
-                yield {
-                    'id': id,
-                    'header': heading,
-                    'description': self.get_text(description)
-                }
+                yield SituationItem({
+                    'source_id': id, # TODO - remove as this is not really an id
+                    'source_type': 'MTA',
+                    'source_location': '',  # could pass the request url? But this won't ever be unique due to de-duping
+                    'title': heading,
+                    'reason': reason,
+                    'description': self.get_text(description),
+                    'is_public': True
+                })
             except:
-                self.logger.warning('Failed to parse item: {text}', item.get_text())
+                self.logger.warning('Failed to parse item: {text}'.format(text=item.get_text()))
                 # inspect_response(item, self)
                 continue
 
@@ -82,7 +106,12 @@ class MTASpider(scrapy.Spider):
         :return: string stripped of excess whitespace. Note all whitespace characters are included
         '''
         text = soup.get_text()
-        return re.sub('\s+', ' ', text).strip()
+        return self.clean(text)
+
+    def clean(self, to_clean):
+        if isinstance(to_clean, str):
+            return re.sub('\s+', ' ', to_clean).strip()
+        return [re.sub('\s+', ' ', d).strip() for d in to_clean if d.strip()]
 
 
 def get_text(soup):
