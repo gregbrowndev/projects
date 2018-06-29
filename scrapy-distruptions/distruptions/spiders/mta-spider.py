@@ -7,12 +7,15 @@ from scrapy.shell import inspect_response
 from distruptions.items import SituationItem, Reason, Effect
 
 
+# TODO - add validation using voluptuous or scrapy-jsonschema
+
+
 class MTASpider(scrapy.Spider):
     name = "mta"
-    start_urls = [
-        # 'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=2&date=6/28/2018&time=&method=getstatus4',
-        'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=ALL&date=6/29/2018&time=&method=getstatus4'
-    ]
+    # start_urls = [
+    #     # 'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=2&date=6/28/2018&time=&method=getstatus4',
+    #     'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=ALL&date=6/29/2018&time=&method=getstatus4'
+    # ]
 
     image_regex = re.compile(r'<img src=\"images/(.+).png\"/?>')
     onclick_regex = re.compile(r'ShowHide\((\d+)\)')
@@ -30,6 +33,17 @@ class MTASpider(scrapy.Spider):
         'ALTERNATIVE SERVICE': Reason.PLANNED_EVENT  # NOTE - this could probably be its own Reason enum?
     }
 
+    def __init__(self, name=None, **kwargs):
+        super().__init__(name=None, **kwargs)
+        # This keep track of 'titles' seen to only keep unique disruptions
+        self.seen_titles = set()
+
+    def start_requests(self):
+        base_url = 'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=ALL&date={date}&time=&method=getstatus4'
+        dates = self.lookahead()
+        return [scrapy.Request(url=base_url.format(date=date.strftime('%d/%m/%Y')), callback=self.parse)
+                for date in dates]
+
     def lookahead(self):
         '''
         Returns a list of the next 30 days
@@ -37,12 +51,6 @@ class MTASpider(scrapy.Spider):
         '''
         today = datetime.today()
         return [today + timedelta(days=i) for i in range(30)]
-
-    # def start_requests(self):
-    #     base_url = 'http://travel.mtanyct.info/serviceadvisory/routeStatusResult.aspx?tag=ALL&date={date}&time=&method=getstatus4'
-    #     dates = self.lookahead()
-    #     return [scrapy.Request(url=base_url.format(date=date.strftime('%d/%m/%Y')), callback=self.parse)
-    #             for date in dates]
 
     def parse(self, response):
         soup = BeautifulSoup(response.text, 'lxml')
@@ -71,14 +79,21 @@ class MTASpider(scrapy.Spider):
                     # Ignore click handlers with large id (these are for nested tables within the description)
                     continue
 
-                # get heading text
-                heading = self.get_text(item)
+                # TODO - find validity period
+                # TODO - add timestamps
+
+                # get title text
+                title = self.get_text(item)
+
+                # ignore duplicate disruption by checking heading text
+                if (title in self.seen_titles):
+                    continue
+                else:
+                    self.seen_titles.add(title)
 
                 # get cause
-                cause = heading.split('|')[0].strip()
+                cause = title.split('|')[0].strip()
                 reason = self.REASON_LOOKUP.get(cause, Reason.UNKNOWN).value
-
-                # TODO - find validity period
 
                 # find description
                 description = soup.find('div', id=id)
@@ -92,8 +107,8 @@ class MTASpider(scrapy.Spider):
                 yield SituationItem({
                     'source_id': id,  # TODO - remove as this is not really an id
                     'source_type': 'MTA',
-                    'source_location': '',  # could pass the request url? But this won't ever be unique due to de-duping
-                    'title': heading,
+                    'source_location': response.url,  # could pass the request url? But this won't ever be unique due to de-duping
+                    'title': title,
                     'description': self.get_text(description),
                     'is_public': True,
                     'reason': reason,
