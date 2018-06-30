@@ -17,7 +17,7 @@ class Reason(Enum):
     WEATHER = 'WEATHER'
     PLANNED_EVENT = 'PLANNED_EVENT'
     UNPLANNED_EVENT = 'UNPLANNED_EVENT'
-    MAINTAINCE = 'MAINTAINCE'
+    MAINTENANCE = 'MAINTENANCE'
     TECHNICAL_PROBLEM = 'TECHNICAL_PROBLEM'
     DEMONSTRATION = 'DEMONSTRATION'
     ACCIDENT = 'ACCIDENT'
@@ -58,3 +58,8 @@ class SituationItem(scrapy.Item):
     publication_validity_period = scrapy.Field()
     reason = scrapy.Field()
     effect = scrapy.Field()
+
+    # custom
+    start_date = scrapy.Field()
+    end_date = scrapy.Field()
+    affected_services = scrapy.Field()
