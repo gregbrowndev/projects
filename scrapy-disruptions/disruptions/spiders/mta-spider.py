@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 import scrapy
 from bs4 import BeautifulSoup
 
-from distruptions.items import SituationItem, Reason, Effect
-from distruptions.utils import get_text
+from disruptions.items import SituationItem, Reason, Effect
+from disruptions.utils import get_text
 
 
 # TODO - add validation using voluptuous or scrapy-jsonschema

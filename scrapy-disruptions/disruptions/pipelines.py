@@ -7,7 +7,7 @@
 from scrapy.exceptions import DropItem
 
 
-class DistruptionsPipeline(object):
+class DisruptionsPipeline(object):
     def process_item(self, item, spider):
         # check required fields
         if (('title' not in item) or not item['title'].strip()):

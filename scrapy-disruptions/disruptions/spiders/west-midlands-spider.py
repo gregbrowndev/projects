@@ -3,8 +3,8 @@ from scrapy.shell import inspect_response
 from scrapy_splash import SplashRequest
 from bs4 import BeautifulSoup
 
-from distruptions.items import SituationItem
-from distruptions.utils import get_text
+from disruptions.items import SituationItem
+from disruptions.utils import get_text
 
 
 class WestMidlandsSpider(scrapy.Spider):

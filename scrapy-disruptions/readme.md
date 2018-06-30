@@ -1,4 +1,4 @@
-# Scrapy Distruptions Scraper
+# Scrapy Disruptions Scraper
 
 ## Quick Start
 
