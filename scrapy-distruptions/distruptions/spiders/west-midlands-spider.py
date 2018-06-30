@@ -16,10 +16,8 @@ class WestMidlandsSpider(scrapy.Spider):
         yield SplashRequest(url=base_url, callback=self.parse, args={'wait': 1.0})
 
     def parse(self, response):
-        # Convert to BeautifulSoup as its easier to convert inline <i>, <b>, etc. to text
-        soup = BeautifulSoup(response.text, 'lxml')
-        content = soup.select_one('div#disruptionContainer')
-        items = content.select('div.disruption')
+        content = response.css('div#disruptionContainer')
+        items = content.css('div.disruption')
 
         if not items:
             self.logger.warning('Failed to parse response: {url}'.format(url=response.url))
@@ -27,18 +25,29 @@ class WestMidlandsSpider(scrapy.Spider):
             return
 
         for item in items:
-            disruption_body = item.select_one('div.disruption__body')
-            description = disruption_body.select_one('div.disrup-description')
+            title = get_text(item.css('h3')[0])
 
-            affected_services = item.select('ul.disruptions')
-            detail = ', '.join(get_text(service) for service in affected_services)
+            rows = item.css('div.disruption__body > div.disruption-row')
+
+            start_date = rows.xpath('span[text() = "Start date:"]') \
+                .xpath('following-sibling::span/text()').extract_first()
+
+            end_date = rows.xpath('span[text() = "End date:"]') \
+                .xpath('following-sibling::span/text()').extract_first()
+
+            description = get_text(rows.css('div.disrup-description')[0])
+
+            affected_services = item.css('ul.disruptions > li')
+            affected_services_list = [get_text(service) for service in affected_services]
 
             yield SituationItem({
                 'source_id': '',
                 'source_type': 'HTML',
                 'source_location': response.url,
                 'url': response.url,
-                'title': item.select_one('h3').get_text().strip(),
-                'description': description.get_text().strip(),
-                'detail': detail
+                'title': title,
+                'description': description,
+                'affected_services': affected_services_list,
+                'start_date': start_date,
+                'end_date': end_date
             })

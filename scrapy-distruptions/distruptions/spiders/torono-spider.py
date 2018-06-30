@@ -2,6 +2,7 @@ import scrapy
 from bs4 import BeautifulSoup
 
 from distruptions.items import SituationItem
+from distruptions.utils import get_text
 
 
 class TorontoSpider(scrapy.Spider):
@@ -22,9 +23,8 @@ class TorontoSpider(scrapy.Spider):
     def parse_item(self, response):
         title = response.css('h1::text').extract_first()
 
-        content = response.css('div#content-advisory')
-        content_soup = BeautifulSoup(content.extract_first(), 'lxml')
-        description = content_soup.get_text().strip()
+        content = response.css('div#content-advisory')[0]
+        description = get_text(content)
 
         # TODO - check span#expireDate this shows when diversion ends (if empty this means indefinite)
         # Still need to parse h3 tag for start date/time

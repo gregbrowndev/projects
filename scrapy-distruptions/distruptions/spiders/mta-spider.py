@@ -4,7 +4,7 @@ import scrapy
 from bs4 import BeautifulSoup
 
 from distruptions.items import SituationItem, Reason, Effect
-from distruptions.utils import clean, get_text
+from distruptions.utils import get_text
 
 
 # TODO - add validation using voluptuous or scrapy-jsonschema
@@ -22,13 +22,13 @@ class MTASpider(scrapy.Spider):
     underline_regex = re.compile(r'_{4,}')
 
     REASON_LOOKUP = {
-        'TRACK MAINTENANCE': Reason.MAINTAINCE,
+        'TRACK MAINTENANCE': Reason.MAINTENANCE,
         'STATION ENHANCEMENTS': Reason.CONSTRUCTION,
-        'ELECTRICAL IMPROVEMENTS': Reason.MAINTAINCE,
-        'TRACK REPLACEMENT': Reason.MAINTAINCE,
+        'ELECTRICAL IMPROVEMENTS': Reason.MAINTENANCE,
+        'TRACK REPLACEMENT': Reason.MAINTENANCE,
         'STATION RENOVATION': Reason.CONSTRUCTION,
-        'SCHEDULED MAINTENANCE': Reason.MAINTAINCE,
-        'SIGNAL MAINTENANCE': Reason.MAINTAINCE,
+        'SCHEDULED MAINTENANCE': Reason.MAINTENANCE,
+        'SIGNAL MAINTENANCE': Reason.MAINTENANCE,
         'ELEVATOR INSTALLATION': Reason.CONSTRUCTION,
         'ALTERNATIVE SERVICE': Reason.PLANNED_EVENT  # NOTE - this could probably be its own Reason enum?
     }
@@ -76,51 +76,51 @@ class MTASpider(scrapy.Spider):
         items = content.select('a[onclick^="ShowHide"]')
 
         for item in items:
-            try:
-                # extract 'id' from onclick handler (this opens the description so can be used to select that later)
-                id = re.match(self.onclick_regex, item['onclick']).group(1)
+            # try:
+            # extract 'id' from onclick handler (this opens the description so can be used to select that later)
+            id = re.match(self.onclick_regex, item['onclick']).group(1)
 
-                if (int(id) > 1000):
-                    # Ignore click handlers with large id (these are for nested tables within the description)
-                    continue
-
-                # TODO - find validity period
-                # TODO - add timestamps
-
-                # get title text
-                title = get_text(item)
-
-                # ignore duplicate disruption by checking heading text
-                if (title in self.seen_titles):
-                    continue
-                else:
-                    self.seen_titles.add(title)
-
-                # get cause
-                cause = title.split('|')[0].strip()
-                reason = self.REASON_LOOKUP.get(cause, Reason.UNKNOWN).value
-
-                # find description
-                description = soup.find('div', id=id)
-
-                # TODO - try to infer effect? - pretty difficult
-                effect = Effect.UNKNOWN.value
-
-                # remove underscore (matches at least 4 underscores to prevent legit mistake)
-                description.find(string=self.underline_regex).replace_with('')
-
-                yield SituationItem({
-                    'source_type': 'HTML',
-                    'source_location': response.url,
-                    # could pass the request url? But this won't ever be unique due to de-duping
-                    'title': title,
-                    'description': get_text(description),
-                    'reason': reason,
-                    'effect': effect
-                })
-            except:
-                self.logger.warning('Failed to parse item: {text}'.format(text=item.get_text()))
-                # inspect_response(item, self)
+            if (int(id) > 1000):
+                # Ignore click handlers with large id (these are for nested tables within the description)
                 continue
+
+            # TODO - find validity period
+            # TODO - add timestamps
+
+            # get title text
+            title = get_text(item)
+
+            # ignore duplicate disruption by checking heading text
+            if (title in self.seen_titles):
+                continue
+            else:
+                self.seen_titles.add(title)
+
+            # get cause
+            cause = title.split('|')[0].strip()
+            reason = self.REASON_LOOKUP.get(cause, Reason.UNKNOWN).value
+
+            # find description
+            description = soup.find('div', id=id)
+
+            # TODO - try to infer effect? - pretty difficult
+            effect = Effect.UNKNOWN.value
+
+            # remove underscore (matches at least 4 underscores to prevent legit mistake)
+            description.find(string=self.underline_regex).replace_with('')
+
+            yield SituationItem({
+                'source_type': 'HTML',
+                'source_location': response.url,
+                # could pass the request url? But this won't ever be unique due to de-duping
+                'title': title,
+                'description': get_text(description),
+                'reason': reason,
+                'effect': effect
+            })
+            # except:
+            #     self.logger.warning('Failed to parse item: {text}'.format(text=item.get_text()))
+            #     # inspect_response(item, self)
+            #     continue
 
 
