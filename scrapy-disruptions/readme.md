@@ -33,4 +33,9 @@ methods:
 The [scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash) 
 library allows you to scrape HTML rendered via JavaScript.
 
+Run Splash server:
+
+```bash
+docker run -p 8050:8050 -p 5023:5023 scrapinghub/splash
+```
 
