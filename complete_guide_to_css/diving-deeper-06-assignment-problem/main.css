@@ -1,0 +1,22 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.my-box {
+    display: inline-block;
+    padding: 16px 14px 10px 12px;
+    border: 5px solid pink;
+    text-align: center;
+}
+
+.my-box:first-of-type {
+    height: 300px;
+    width: 50%;
+    /* display: none; */
+    visibility: hidden;
+}
+
+.my-box:last-of-type:hover {
+    background-color: purple;
+}
