@@ -48,6 +48,8 @@ class WestMidlandsSpider(scrapy.Spider):
                 'title': title,
                 'description': description,
                 'affected_services': affected_services_list,
-                'start_date': start_date,
-                'end_date': end_date
+                'validity_period': [{
+                    "start": start_date,
+                    "finish": end_date,
+                }]
             })
