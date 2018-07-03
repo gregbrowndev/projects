@@ -1,10 +1,11 @@
 import json
+import re
 from datetime import datetime, timezone
 from dateutil import parser, tz
 import scrapy
 from bs4 import BeautifulSoup
 
-from disruptions.items import SituationItem
+from disruptions.items import SituationItem, Reason, Effect
 from disruptions.utils import get_text
 
 
@@ -22,49 +23,77 @@ class PhillySpider(scrapy.Spider):
     def parse(self, response):
         data = json.loads(response.body_as_unicode())
 
-        # store the title as the key
+        # store lookups of title to detour/advisory
         detours = {}
         advisories = {}
 
         for item in data:
+            # parse advisory
+            if item['advisory_message']:
+                advisory_message = BeautifulSoup(item['advisory_message'], 'lxml')
+                headers = advisory_message.find_all('h3', class_='separated')
+                for header in headers:
+                    title = get_text(header)
+                    content = list(self.fetch_advisory_content(header))
+                    description = '\n'.join(get_text(c) for c in content)
+                    route = self.get_route(item)
+
+                    key = self.get_key(title + description)
+                    advisory = advisories.get(key, None)
+                    if advisory is not None:
+                        # Add route to affected services
+                        advisory['affected_services'].append(route)
+                        continue
+
+                    advisories[key] = SituationItem({
+                        'created': self.now.isoformat(),
+                        'source_type': 'JSON',
+                        'title': title,
+                        'description': description,
+                        'affected_services': [route, ],
+                    })
+
             # parse detour
             if item['detour_message']:
                 title = get_text(item['detour_message'])
-                route_id = item['route_id']
+                description = 'Start location: {start_location}\n' \
+                              'Detour reason: {detour_reason}' \
+                    .format(
+                    start_location=item['detour_start_location'],
+                    detour_reason=item['detour_reason'],
+                )
+                route = self.get_route(item)
 
-                # Get route name (and type)
-                route = '{route} ({route_type})'\
-                    .format(route=item['route_name'], route_type=self.get_route_type(route_id))
-
-                detour = detours.get(title, None)
+                key = self.get_key(title + description)
+                detour = detours.get(key, None)
                 if detour is not None:
                     # Add route to affected services
                     detour['affected_services'].append(route)
                     continue
 
-                description = 'Start location: {start_location}\n' \
-                              'Detour reason: {detour_reason}'.format(
-                    start_location=item['detour_start_location'],
-                    detour_reason=item['detour_reason'],
-                )
-
                 start_date = self.get_philly_timestamp(item['detour_start_date_time'])
                 end_date = self.get_philly_timestamp(item['detour_end_date_time'])
 
-                detours[title] = SituationItem({
+                detours[key] = SituationItem({
                     'created': self.now.isoformat(),
                     'source_type': 'JSON',
                     'title': title,
                     'description': description,
-                    'affected_services': [route,],
+                    'affected_services': [route, ],
                     'validity_period': {
                         'start': start_date.isoformat(),
                         'finish': end_date.isoformat()
-                    }
+                    },
+                    'effect': Effect.DIVERSION
                 })
 
-        for detour in detours.values():
-            yield detour
+        # for detour in detours.values():
+        #     yield detour
+
+        for advisory in advisories.values():
+            affected_services = sorted(set(advisory['affected_services']))
+            advisory['affected_services'] = affected_services
+            yield advisory
 
     def get_route_type(self, route_id):
         lookup = {
@@ -79,5 +108,21 @@ class PhillySpider(scrapy.Spider):
         return None
 
     def get_philly_timestamp(self, timestamp):
-        return parser.parse(timestamp)\
+        return parser.parse(timestamp) \
             .replace(tzinfo=self.TZ)
+
+    def fetch_advisory_content(self, header):
+        for elem in header.fetchNextSiblings():
+            if elem.name == 'h3':
+                break
+            yield elem
+
+    def get_route(self, item):
+        route_id = item['route_id']
+
+        # Get route name (and type)
+        return '{route} ({route_type})' \
+            .format(route=item['route_name'], route_type=self.get_route_type(route_id))
+
+    def get_key(self, text):
+        return re.sub(r'\s+', '', text)
