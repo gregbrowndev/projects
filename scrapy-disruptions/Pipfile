@@ -9,6 +9,7 @@ pandas = "*"
 "bs4" = "*"
 scrapy-splash = "*"
 ipython = "*"
+python-dateutil = "*"
 
 [dev-packages]
 

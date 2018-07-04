@@ -42,24 +42,28 @@ class Effect(Enum):
 
 
 class SituationItem(scrapy.Item):
-    # define the fields for your item here like:
+    # meta data
+    created = scrapy.Field()
     source_type = scrapy.Field()
-    source_id = scrapy.Field()
     source_raw_content = scrapy.Field()
     source_location = scrapy.Field()
+
+    # situation data
+    source_id = scrapy.Field()
+    source_created = scrapy.Field()
+    source_updated = scrapy.Field()
     title = scrapy.Field()
-    url = scrapy.Field()
     description = scrapy.Field()
-    detail = scrapy.Field()
-    is_public = scrapy.Field()  # boolean
+    url = scrapy.Field()
     planned = scrapy.Field()  # boolean
-    modelled_in_schedules = scrapy.Field()  # boolean
-    validity_period = scrapy.Field()
-    publication_validity_period = scrapy.Field()
     reason = scrapy.Field()
     effect = scrapy.Field()
 
+    # ?
+    is_public = scrapy.Field()  # boolean
+    detail = scrapy.Field()
+    validity_period = scrapy.Field()
+    publication_validity_period = scrapy.Field()
+
     # custom
-    start_date = scrapy.Field()
-    end_date = scrapy.Field()
     affected_services = scrapy.Field()
