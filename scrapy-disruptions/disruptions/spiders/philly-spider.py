@@ -49,6 +49,7 @@ class PhillySpider(scrapy.Spider):
     def parse_advisory_item(self, item, advisories):
         advisory_message = BeautifulSoup(item['advisory_message'], 'lxml')
         headers = advisory_message.find_all('h3', class_='separated')
+        source_updated = self.get_philly_timestamp(item['last_updated'])
         for header in headers:
             title = 'ADVISORY | ' + get_text(header)
             content = list(self.fetch_advisory_content(header))
@@ -64,6 +65,7 @@ class PhillySpider(scrapy.Spider):
 
             advisories[key] = SituationItem({
                 'created': self.now.isoformat(),
+                'source_updated': source_updated.isoformat(),
                 'source_type': 'JSON',
                 'title': title,
                 'description': description,
@@ -89,17 +91,19 @@ class PhillySpider(scrapy.Spider):
 
         start_date = self.get_philly_timestamp(item['detour_start_date_time'])
         end_date = self.get_philly_timestamp(item['detour_end_date_time'])
+        source_updated = self.get_philly_timestamp(item['last_updated'])
 
         detours[key] = SituationItem({
             'created': self.now.isoformat(),
+            'source_updated': source_updated.isoformat(),
             'source_type': 'JSON',
             'title': title,
             'description': description,
             'affected_services': [route, ],
-            'validity_period': {
+            'validity_period': [{
                 'start': start_date.isoformat(),
                 'finish': end_date.isoformat()
-            },
+            }, ],
             'effect': Effect.DIVERSION.value
         })
 
