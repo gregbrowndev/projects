@@ -161,3 +161,43 @@ body {
 .button:focus {
     outline: none;
 }
+
+#key-features {
+    background-color: #ff1b68;
+    margin-top: 80px;
+    padding: 16px;
+}
+
+#key-features .section-title {
+    color: white;
+    margin: 32px;
+}
+
+.key-feature__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.key-feature {
+    display: inline-block;
+    width: 30%;
+    vertical-align: top;
+}
+
+.key-feature__image {
+    background: #ffcede;
+    width: 120px;
+    height: 120px;
+    border: 2px solid #424242;
+    border-radius: 50%;
+    margin: auto;
+}
+
+.key-feature__description {
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+}
