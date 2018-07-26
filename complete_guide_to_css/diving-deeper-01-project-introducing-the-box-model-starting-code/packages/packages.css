@@ -1,0 +1,43 @@
+main {
+    margin-top: 32px;
+}
+
+.plan {
+    display: block;
+    background-color: #d5ffdc;
+    border: 4px solid #0e4f1f;
+    padding: 32px;
+    width: 80%;
+    margin: 0 auto 16px auto;
+}
+
+.plan a,
+.plan a:hover,
+.plan a:active,
+.plan a:visited {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.plan__title {
+    color: black;
+    font-weight: bold;
+}
+
+.plan__subtitle {
+    color: #858585;
+}
+
+.plan__description {
+    background-color: white;
+    border: 1px solid black;
+    padding: 12px;
+}
+
+.plan--premium {
+    background-color: #0e4f1f;
+}
+
+.plan--premium .plan__title {
+    color: white;
+}
