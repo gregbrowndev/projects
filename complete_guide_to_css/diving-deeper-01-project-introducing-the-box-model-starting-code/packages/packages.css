@@ -4,7 +4,7 @@ main {
 
 .plan {
     background-color: #d5ffdc;
-    border: 4px solid #0e4f1f;
+    border: 4px solid #0e4f1f; 
     border-left: none;
     width: 80%;
     margin: 16px 0;
@@ -13,6 +13,7 @@ main {
 .plan:hover,
 .plan:active {
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    /* border-color: #ff5454 !important; */
     border-color: #ff5454;
 }
 
@@ -55,6 +56,11 @@ main {
     border-right: none;
     border-left: 4px solid #0e4f1f;
     text-align: right;
+}
+
+#free:hover,
+#free:active {
+    border-left-color: #ff5454;
 }
 
 #premium {
