@@ -140,3 +140,24 @@ body {
 .plan__features li {
     margin: 8px 0px;
 }
+
+.button {
+    background-color: #0e4f1f;
+    color: white;
+    font: inherit;
+    border: 1.5px solid #0e4f1f;
+    padding: 8px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.button:hover,
+.button:active {
+    background-color: white;
+    color: #0e4f1f;
+}
+
+.button:focus {
+    outline: none;
+}
