@@ -43,6 +43,9 @@ body {
     background-color: #2ddf5c;
     padding: 8px 16px;
     width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 
 .main-header__brand {
