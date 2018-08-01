@@ -16,6 +16,7 @@ main {
     border-left: none;
     width: 80%;
     margin: 16px 0;
+    position: relative;
 }
 
 .plan:hover,
@@ -37,6 +38,17 @@ main {
 .plan__title {
     color: black;
     font-weight: bold;
+}
+
+.plan__badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 20px;
+    padding: 8px;
+    font-size: 12px;
+    color: white;
+    background: #ff5454;
 }
 
 .plan__subtitle {
