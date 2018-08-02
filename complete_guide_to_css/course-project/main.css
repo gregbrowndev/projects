@@ -1,7 +1,8 @@
 /* Main Content */
 
 #product-overview {
-    background: url("images/freedom.jpg") left 10% bottom 20%/cover no-repeat border-box;
+    /* background: url("images/freedom.jpg") left 10% bottom 20%/cover no-repeat border-box; */
+    background-image: linear-gradient(to bottom, red 70%, blue 60%);
     width: 100%;
     height: 528px;
     padding: 10px;
