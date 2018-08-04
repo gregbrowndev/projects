@@ -14,7 +14,6 @@
 
 .testimonial__image {
   width: 100%;
-  /* vertical-align: top; */
   display: block;
 }
 
@@ -60,7 +59,7 @@
 @media(min-width: 40rem) {
   .testimonial {
     margin: 3rem auto;
-    max-width: 1500px;
+    max-width: 1000px;
   }
   .testimonial__list {
     width: 80%;
