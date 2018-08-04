@@ -1,5 +1,9 @@
 /* Main Content */
 
+main {
+    margin-top: 3.5rem;
+}
+
 #product-overview {
     /* background: url("images/freedom.jpg") left 10% bottom 20%/cover no-repeat border-box; */
     background: linear-gradient(to top, rgba(80, 68, 18, 0.6) 10%, transparent), url("images/freedom.jpg") center/cover no-repeat border-box, #ff1b68;
@@ -7,7 +11,6 @@
     /* background-image: radial-gradient(ellipse farthest-side at 20% 50%, red, blue); */
     width: 100vw;
     height: 33vh;
-    margin-top: 2.6rem;
     position: relative;
 }
 
@@ -158,14 +161,14 @@
 }
 
 @media(min-width: 40rem) {
-    @media(min-height: 50rem) {
+    @media(min-height: 40rem) {
         #product-overview {
             height: 40vh;
             background-position: 50% 25%;
         } 
-    }
-    #product-overview h1 {
-        font-size: 3rem;
+        #product-overview h1 {
+            font-size: 3rem;
+        }
     }
     .plan__list {
         width: 100%;

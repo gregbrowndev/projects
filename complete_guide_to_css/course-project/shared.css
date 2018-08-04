@@ -89,15 +89,15 @@ body {
 
 .main-header__brand {
     display: inline-block;
+    height: 2.5rem;
     color: #0e4f1f;
     text-decoration: none;
     font-weight: bold;
-    font-size: 1.4rem;
     vertical-align: middle;
 }
 
 .main-header__brand img {
-    height: 2.5rem;
+    height: 100%;
 }
 
 .main-nav {
