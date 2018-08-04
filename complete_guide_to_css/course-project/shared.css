@@ -13,6 +13,17 @@ body {
     margin: 0;
 }
 
+.backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+} 
+
 /* Button Style */
 
 .button {
@@ -20,7 +31,7 @@ body {
     color: white;
     font: inherit;
     border: 1.5px solid #0e4f1f;
-    padding: 8px;
+    padding: 0.5rem;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
@@ -41,7 +52,7 @@ body {
 
 .main-header {
     background-color: #2ddf5c;
-    padding: 8px 16px;
+    padding: 0.5rem 1rem;
     width: 100%;
     position: fixed;
     left: 0;
@@ -58,8 +69,8 @@ body {
     color: #0e4f1f;
     text-decoration: none;
     font-weight: bold;
-    font-size: 22px;
-    height: 22px;
+    font-size: 1.4rem;
+    height: 1.4rem;
     display: inline-block;
 }
 
@@ -82,14 +93,14 @@ body {
 
 .main-nav__item {
     display: inline-block;
-    margin: 0 16px;
+    margin: 0 1rem;
 }
 
 .main-nav__item a {
     color: #0e4f1f;
     text-decoration: none;
     font-weight: bold;
-    padding: 3px 0; 
+    padding: 0.2rem 0; 
 }
 
 .main-nav__item a:hover, 
@@ -101,7 +112,7 @@ body {
 .main-nav__item--cta a {
     color: white;
     background-color: #ff1b68;
-    padding: 8px 16px;
+    padding: 0.5rem 1rem;
     border-radius: 8px;
 }
 
@@ -117,8 +128,8 @@ body {
 
 .main-footer {
     background-color: black;
-    padding: 32px;
-    margin-top: 48px;
+    padding: 2rem;
+    margin-top: 3rem;
 }
 
 .main-footer__links {
@@ -130,7 +141,7 @@ body {
 
 .main-footer__links li {
     display: inline-block;
-    margin: 0 16px;
+    margin: 0 1rem;
 }
 
 .main-footer a {

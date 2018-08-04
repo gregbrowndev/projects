@@ -1,12 +1,12 @@
 main {
-    padding-top: 32px;
+    padding-top: 2rem;
 }
 
 .background {
     background: url("../images/plans-background.jpg") center/cover;
     filter: grayscale(40%);
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     position: fixed;
     z-index: -1;
 }
@@ -16,7 +16,7 @@ main {
     border: 4px solid #0e4f1f; 
     border-left: none;
     width: 80%;
-    margin: 16px 0;
+    margin: 1rem 0;
     position: relative;
     z-index: 0;
 }
@@ -30,7 +30,7 @@ main {
 
 .plan a {
     display: block;
-    padding: 32px;
+    padding: 2rem;
     text-decoration: none;
     color: inherit;
     cursor: pointer;
@@ -39,6 +39,7 @@ main {
 
 .plan__title {
     color: black;
+    font-size: 2rem;
     font-weight: bold;
 }
 
@@ -46,9 +47,9 @@ main {
     position: absolute;
     top: 0;
     right: 0;
-    margin: 20px;
-    padding: 8px;
-    font-size: 12px;
+    margin: 1.25rem;
+    padding: 0.5rem;
+    font-size: 0.8rem;
     color: white;
     background: #ff5454;
     z-index: 10;
@@ -56,13 +57,14 @@ main {
 
 .plan__subtitle {
     color: #858585;
+    font-size: 1.5rem;
 }
 
 .plan__description {
     background-color: white;
     border: 1px solid #0e4f1f;
-    padding: 12px;
-    font-size: 20px;
+    padding: 0.8rem;
+    font-size: 1.25rem;
 }
 
 .clearfix {
