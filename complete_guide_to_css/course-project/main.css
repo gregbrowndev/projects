@@ -158,9 +158,11 @@
 }
 
 @media(min-width: 40rem) {
-    #product-overview {
-        height: 40vh;
-        background-position: 50% 25%;
+    @media(min-height: 50rem) {
+        #product-overview {
+            height: 40vh;
+            background-position: 50% 25%;
+        } 
     }
     #product-overview h1 {
         font-size: 3rem;
