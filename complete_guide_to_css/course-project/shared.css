@@ -209,3 +209,7 @@ body {
 .main-footer a:active {
     color: #ccc;
 }
+
+.open {
+	display: block !important;
+}
