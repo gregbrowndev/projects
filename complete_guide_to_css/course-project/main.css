@@ -2,9 +2,7 @@
 
 #product-overview {
     /* background: url("images/freedom.jpg") left 10% bottom 20%/cover no-repeat border-box; */
-    background: linear-gradient(to top, rgba(80, 68, 18, 0.6) 10%, transparent), 
-        url("images/freedom.jpg") left 10% bottom 70%/cover no-repeat border-box, 
-        #ff1b68;
+    background: linear-gradient(to top, rgba(80, 68, 18, 0.6) 10%, transparent), url("images/freedom.jpg") left 10% bottom 70%/cover no-repeat border-box, #ff1b68;
     /* background-image: linear-gradient(to bottom, red 70%, blue 60%); */
     /* background-image: radial-gradient(ellipse farthest-side at 20% 50%, red, blue); */
     width: 100vw;
@@ -135,18 +133,18 @@
     padding: 1rem;
     border: 1px solid #ccc;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-  }
-  
-  .modal__title {
+}
+
+.modal__title {
     text-align: center;
     margin: 0 0 1rem 0;
-  }
-  
-  .modal__actions {
+}
+
+.modal__actions {
     text-align: center;
-  }
-  
-  .modal__action {
+}
+
+.modal__action {
     border: 1px solid #0e4f1f;
     background: #0e4f1f;
     text-decoration: none;
@@ -154,21 +152,21 @@
     font: inherit;
     padding: 0.5rem 1rem;
     cursor: pointer;
-  }
-  
-  .modal__action:hover,
-  .modal__action:active {
+}
+
+.modal__action:hover,
+.modal__action:active {
     background: #2ddf5c;
     border-color: #2ddf5c;
-  }
-  
-  .modal__action--negative {
+}
+
+.modal__action--negative {
     background: red;
     border-color: red;
-  }
-  
-  .modal__action--negative:hover,
-  .modal__action--negative:active {
+}
+
+.modal__action--negative:hover,
+.modal__action--negative:active {
     background: #ff5454;
     border-color: #ff5454;
-  }
+}
