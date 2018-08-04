@@ -1,3 +1,4 @@
+// Modal
 var backdrop = document.querySelector('.backdrop');
 var modal = document.querySelector('.modal');
 var selectPlanButtons = document.querySelectorAll('.plan button');
@@ -18,3 +19,16 @@ function closeModal(){
     modal.style.display = 'none';
     backdrop.style.display = 'none';
 }
+
+// Side Navigation
+var toggleButton = document.querySelector('.toggle-button');
+var sideNav = document.querySelector('.mobile-nav');
+
+toggleButton.addEventListener('click', function() {
+    sideNav.style.display = 'block';
+    backdrop.style.display = 'block';
+});
+backdrop.addEventListener('click', function(){
+    sideNav.style.display = 'none';
+    backdrop.style.display = 'none';
+});
