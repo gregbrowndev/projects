@@ -90,12 +90,6 @@
     text-align: center;
 }
 
-.key-feature {
-    display: inline-block;
-    width: 30%;
-    vertical-align: top;
-}
-
 .key-feature__image {
     background: #ffcede;
     width: 120px;
@@ -184,5 +178,12 @@
     }
     .plan--highlighted {
         box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5);
+    }
+    .key-feature {
+        display: inline-block;
+        vertical-align: top;
+        width: 30%;
+        min-width: 13rem;
+        max-width: 25rem;
     }
 }
