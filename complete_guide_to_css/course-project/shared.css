@@ -93,19 +93,15 @@ body {
     text-decoration: none;
     font-weight: bold;
     font-size: 1.4rem;
-    height: 1.4rem;
     vertical-align: middle;
 }
 
 .main-header__brand img {
-    height: 100%;
+    height: 2.5rem;
 }
 
 .main-nav {
-    display: inline-block;
-    text-align: right;
-    width: calc(100% - 122px);
-    vertical-align: middle;
+    display: none;
 }
 
 .main-nav__items {
@@ -196,8 +192,7 @@ body {
 }
 
 .main-footer__links li {
-    display: inline-block;
-    margin: 0 1rem;
+    margin: 1rem 0;
 }
 
 .main-footer a {
@@ -212,4 +207,20 @@ body {
 
 .open {
     display: block !important;
+}
+
+@media(min-width: 40rem) {
+    .toggle-button {
+        display: none;
+    }
+    .main-nav {
+        display: inline-block;
+        text-align: right;
+        width: calc(100% - 44px);
+        vertical-align: middle;
+    }
+    .main-footer__links li {
+        display: inline-block;
+        margin: 0 1rem;
+    }
 }
