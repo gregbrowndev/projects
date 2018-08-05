@@ -8,10 +8,37 @@ main {
     color: #ff5454;
 }
 
+.signup-form {
+    padding: 1rem;
+}
+
+.signup-form label {
+    font-weight: bold;
+}
+
 .signup-form label,
 .signup-form input,
 .signup-form select {
     display: block;
     margin-top: 1rem;
     width: 100%;
+}
+
+/* .signup-form input[type="checkbox"] */
+.signup-form input[id*="terms"],
+.signup-form label[for*="terms"]  {
+    display: inline-block;
+    width: auto;
+}
+
+.signup-form button {
+    display: block;
+    margin-top: 1rem;
+}
+
+@media(min-width: 40rem) {
+    .signup-form {
+        width: 25rem;
+        margin: auto;
+    }
 }
