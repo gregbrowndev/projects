@@ -1,9 +1,5 @@
 /* Main Content */
 
-main {
-    margin-top: 3.5rem;
-}
-
 #product-overview {
     /* background: url("images/freedom.jpg") left 10% bottom 20%/cover no-repeat border-box; */
     background: linear-gradient(to top, rgba(80, 68, 18, 0.6) 10%, transparent), url("images/freedom.jpg") center/cover no-repeat border-box, #ff1b68;
