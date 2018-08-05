@@ -61,7 +61,14 @@ main {
     border: 1px solid #0e4f1f;
 }
 
-.signup-form button {
+.signup-form input.invalid,
+.signup-form select.invalid,
+.signup-form :invalid {
+    border-color: red !important;
+    background: #faacac;
+}
+
+.signup-form button[type="submit"] {
     display: block;
     margin-top: 1rem;
 }
