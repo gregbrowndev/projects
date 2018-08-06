@@ -64,6 +64,7 @@ main {
     border: 1px solid #0e4f1f;
     padding: 0.8rem;
     font-size: 1.25rem;
+    font-family: 'Roboto', 'Montserrat', sans-serif;
 }
 
 .clearfix {
