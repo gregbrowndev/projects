@@ -65,6 +65,8 @@ main {
     padding: 0.8rem;
     font-size: 1.25rem;
     font-family: 'Roboto', 'Montserrat', sans-serif;
+    font-style: italic;
+    font-weight: 900;
 }
 
 .clearfix {
