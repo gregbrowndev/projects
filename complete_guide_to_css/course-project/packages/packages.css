@@ -74,10 +74,16 @@ main {
     background-color: white;
     border: 1px solid #0e4f1f;
     padding: 0.8rem;
-    font-size: 1.25rem;
-    font-family: 'Roboto', 'Montserrat', sans-serif;
-    font-style: italic;
-    font-weight: 900;
+    /* font-size: 1.25rem; */
+    /* font-family: 'Roboto', 'Montserrat', sans-serif; */
+    /* font-style: italic; */
+    /* font-weight: 900; */
+
+    font: 700 1.2rem 'AnonymousPro', sans-serif;
+    /* font-style font-variant font-weight font-size/line-height font-family */
+
+    /* Using font shorthand with system fonts */
+    /* font: status-bar; */
 }
 
 .clearfix {
