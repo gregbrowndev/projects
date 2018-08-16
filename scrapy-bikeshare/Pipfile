@@ -8,6 +8,8 @@ scrapy = "*"
 attrs = "*"
 cattrs = "*"
 pytest = "*"
+pendulum = "*"
+requests = "*"
 
 [dev-packages]
 
