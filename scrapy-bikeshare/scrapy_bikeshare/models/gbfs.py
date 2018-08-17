@@ -109,10 +109,10 @@ class StationStatusModel(GbfsBaseModel):
             station_id: str
             num_bikes_available: int
             num_docks_available: int
-            is_installed: int
-            is_renting: int
-            is_returning: int
-            last_reported: int
+            is_installed: bool
+            is_renting: bool
+            is_returning: bool
+            last_reported: bool
             num_bikes_disabled: Optional[int] = None
             num_docks_disabled: Optional[int] = None
         stations: List[StationModel]
@@ -121,3 +121,4 @@ class StationStatusModel(GbfsBaseModel):
     def __attrs_post_init__(self):
         # alias
         self.stations = self.data.stations
+
