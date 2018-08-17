@@ -1,13 +1,29 @@
 import enum
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 import attr
+from cattr import Converter
+import pendulum
+
+
+def init_converter():
+    converter = Converter()
+    converter.register_unstructure_hook(pendulum.DateTime, lambda dt: dt.to_iso8601_string())
+    converter.register_structure_hook(pendulum.DateTime, lambda ts, _: pendulum.parse(ts))
+    return converter
 
 
 @attr.s(auto_attribs=True)
 class GbfsBaseModel(object):
     ttl: int
     last_updated: int
+
+    # cattr converter
+    converter = init_converter()
+
+    @classmethod
+    def parse(cls, data: Dict) -> 'GbfsBaseModel':
+        return cls.converter.structure(data, cls)
 
 
 @attr.s(auto_attribs=True)
@@ -24,6 +40,10 @@ class GbfsModel(GbfsBaseModel):
         en: FeedsModel
         # may have to add Optional[FeedsModel] for other languages
     data: DataModel
+
+    def __attrs_post_init__(self):
+        # alias
+        self.feeds = self.data.en.feeds
 
 
 @attr.s(auto_attribs=True)
@@ -75,6 +95,10 @@ class StationInformationModel(GbfsBaseModel):
         stations: List[StationModel]
     data: DataModel
 
+    def __attrs_post_init__(self):
+        # alias
+        self.stations = self.data.stations
+
 
 @attr.s(auto_attribs=True)
 class StationStatusModel(GbfsBaseModel):
@@ -93,3 +117,7 @@ class StationStatusModel(GbfsBaseModel):
             num_docks_disabled: Optional[int] = None
         stations: List[StationModel]
     data: DataModel
+
+    def __attrs_post_init__(self):
+        # alias
+        self.stations = self.data.stations

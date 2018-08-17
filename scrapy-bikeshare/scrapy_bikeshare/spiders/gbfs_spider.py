@@ -1,18 +1,11 @@
 import json
 
-import pendulum
-import scrapy
 import attr
-from cattr import Converter
-from pendulum import DateTime
+import scrapy
 from scrapy.http import HtmlResponse
 
 from scrapy_bikeshare.items import StationItem
-from scrapy_bikeshare.models.gbfs import GbfsModel, SystemInformationModel, StationInformationModel, StationStatusModel
-
-converter = Converter()
-converter.register_unstructure_hook(DateTime, lambda dt: dt.to_iso8601_string())
-converter.register_structure_hook(DateTime, lambda ts, _: pendulum.parse(ts))
+from scrapy_bikeshare.models.gbfs import GbfsModel, StationInformationModel, StationStatusModel
 
 
 class GbfsSpider(scrapy.Spider):
@@ -23,8 +16,8 @@ class GbfsSpider(scrapy.Spider):
 
     def parse(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        model: GbfsModel = converter.structure(data, GbfsModel)
-        for feed in model.data.en.feeds:
+        model = GbfsModel.parse(data)
+        for feed in model.feeds:
             if feed.name == 'system_information':
                 yield scrapy.Request(feed.url, callback=self.parse_system_information, meta={'feed_name': feed.name})
             elif feed.name == 'station_information':
@@ -32,7 +25,7 @@ class GbfsSpider(scrapy.Spider):
 
     def parse_system_information(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        model = converter.structure(data, SystemInformationModel)
+        model = StationInformationModel.parse(data)
 
     def parse_station_information(self, response: HtmlResponse):
         # TODO - need to employ request chaining or cache partial items, so station_status data is merged
@@ -41,7 +34,7 @@ class GbfsSpider(scrapy.Spider):
         # both responses in the callback together
 
         data = json.loads(response.body_as_unicode())
-        model = converter.structure(data, StationInformationModel)
+        model = StationInformationModel.converter.structure(data, StationInformationModel)
         for station in model.data.stations:
             item = attr.asdict(StationItem(
                 source_id=station.station_id,
@@ -55,12 +48,24 @@ class GbfsSpider(scrapy.Spider):
 
     def parse_station_status(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        model = converter.structure(data, StationStatusModel)
+        model = StationStatusModel.converter.structure(data, StationStatusModel)
 
 
 if __name__ == '__main__':
     import requests
 
-    r = requests.get('https://gbfs.bcycle.com/bcycle_madison/gbfs.json')
-    model: GbfsModel = converter.structure(r.json(), GbfsModel)
+    # r = requests.get('https://gbfs.bcycle.com/bcycle_madison/gbfs.json')
+    # model = GbfsModel.parse(r.json())
+    # print(model)
+
+    # r = requests.get('https://gbfs.bcycle.com/bcycle_madison/system_information.json')
+    # model = SystemInformationModel.parse(r.json())
+    # print(model)
+
+    # r = requests.get('https://gbfs.bcycle.com/bcycle_madison/station_information.json')
+    # model = StationInformationModel.parse(r.json())
+    # print(model)
+
+    r = requests.get('https://gbfs.bcycle.com/bcycle_madison/station_status.json')
+    model = StationStatusModel.parse(r.json())
     print(model)
