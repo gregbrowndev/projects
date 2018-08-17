@@ -2,10 +2,12 @@ import json
 
 import pendulum
 import scrapy
+import attr
 from cattr import Converter
 from pendulum import DateTime
 from scrapy.http import HtmlResponse
 
+from scrapy_bikeshare.items import StationItem
 from scrapy_bikeshare.models.gbfs import GbfsModel, SystemInformationModel, StationInformationModel, StationStatusModel
 
 converter = Converter()
@@ -23,35 +25,37 @@ class GbfsSpider(scrapy.Spider):
         data = json.loads(response.body_as_unicode())
         model: GbfsModel = converter.structure(data, GbfsModel)
         for feed in model.data.en.feeds:
-            if feed.name in ['system_information', 'station_information', 'station_status']:
-                request = scrapy.Request(feed.url, callback=self.parse_feed)
-                request.meta['feed_name'] = feed.name
-                yield request
+            if feed.name == 'system_information':
+                yield scrapy.Request(feed.url, callback=self.parse_system_information, meta={'feed_name': feed.name})
+            elif feed.name == 'station_information':
+                yield scrapy.Request(feed.url, callback=self.parse_station_information, meta={'feed_name': feed.name})
 
-    def parse_feed(self, response: HtmlResponse):
+    def parse_system_information(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        feed_name = response.meta['feed_name']
-        if feed_name == 'system_information':
-            model = converter.structure(data, SystemInformationModel)
-            self.parse_system_information(response, model)
-        elif feed_name == 'station_information':
-            model = converter.structure(data, StationInformationModel)
-            self.parse_station_information(response, model)
-        elif feed_name == 'station_status':
-            model = converter.structure(data, StationStatusModel)
-            self.parse_station_status(response, model)
+        model = converter.structure(data, SystemInformationModel)
 
-    def parse_system_information(self, response: HtmlResponse, model: SystemInformationModel):
-        print(model)
-        print()
+    def parse_station_information(self, response: HtmlResponse):
+        # TODO - need to employ request chaining or cache partial items, so station_status data is merged
+        # see https://stackoverflow.com/questions/13910357/how-can-i-use-multiple-requests-and-pass-items-in-between-them-in-scrapy-python
+        # ideas: is there RxJS forkJoin mechanism for Twisted? could then dispatch multiple requests and handle
+        # both responses in the callback together
 
-    def parse_station_information(self, response: HtmlResponse, model: StationInformationModel):
-        print(model.data.stations[0])
-        print()
+        data = json.loads(response.body_as_unicode())
+        model = converter.structure(data, StationInformationModel)
+        for station in model.data.stations:
+            item = attr.asdict(StationItem(
+                source_id=station.station_id,
+                name=station.name,
+                address=station.address,
+                latitude=station.lat,
+                longitude=station.lon,
+                capacity=station.capacity
+            ))
+            yield item
 
-    def parse_station_status(self, response: HtmlResponse, model: StationStatusModel):
-        print(model.data.stations[0])
-        print()
+    def parse_station_status(self, response: HtmlResponse):
+        data = json.loads(response.body_as_unicode())
+        model = converter.structure(data, StationStatusModel)
 
 
 if __name__ == '__main__':
