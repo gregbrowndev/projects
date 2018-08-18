@@ -1,8 +1,10 @@
 from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 from db.mixins.scraper_item_mixin import ScraperItemMixin
 from db.mixins.timestamp_mixin import TimestampMixin
 from db.models.base import Base
+from db.utils import create_session
 
 
 class System(ScraperItemMixin, TimestampMixin, Base):
@@ -13,15 +15,12 @@ class System(ScraperItemMixin, TimestampMixin, Base):
     url = Column(String, nullable=False, default='')
     language = Column(String, nullable=False, default='')
 
+    stations = relationship("Station", back_populates="system")
+
 
 if __name__ == '__main__':
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import sessionmaker
+    session = create_session()
 
-    engine = create_engine('postgresql://postgres:mysecret@localhost:5432/scrapy-bikeshare', echo=True)
-    Session = sessionmaker(bind=engine)
-
-    session = Session()
     system = System(
         name='TfL Bikeshare',
         phone_number='0343 222 6666',

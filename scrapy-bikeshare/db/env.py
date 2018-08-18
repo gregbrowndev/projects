@@ -16,8 +16,9 @@ fileConfig(config.config_file_name)
 # add project root to PATH so models can be imported
 # see https://stackoverflow.com/a/30427817/5221078
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
-from db.models.system import Base
-target_metadata = Base.metadata
+from db.models.system import System
+from db.models.station import Station
+target_metadata = System.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
