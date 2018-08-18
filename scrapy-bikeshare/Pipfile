@@ -13,6 +13,7 @@ requests = "*"
 alembic = "*"
 sqlalchemy = "*"
 "psycopg2" = "*"
+sqlalchemy-repr = "*"
 
 [dev-packages]
 ipython = "*"
