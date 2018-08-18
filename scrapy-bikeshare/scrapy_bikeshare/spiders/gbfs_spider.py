@@ -8,7 +8,6 @@ from scrapy.http import HtmlResponse
 from scrapy_bikeshare.items import StationItem, SystemItem
 from scrapy_bikeshare.models.gbfs import GbfsModel, StationInformationModel, StationStatusModel, SystemInformationModel
 
-
 class GbfsSpider(scrapy.Spider):
     name = 'gbfs'
     start_urls = [
