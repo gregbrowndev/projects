@@ -5,9 +5,9 @@ import attr
 import scrapy
 from scrapy.http import HtmlResponse
 
-from scrapy_bikeshare.items import StationItem, SystemItem
-from scrapy_bikeshare.models.gbfs import GbfsModel, StationInformationModel, StationStatusModel, SystemInformationModel
-
+from scrapy_bikeshare.api_models.gbfs import GbfsModel, SystemInformationModel, StationInformationModel, \
+    StationStatusModel
+from scrapy_bikeshare.items import StationItem
 
 class GbfsSpider(scrapy.Spider):
     name = 'gbfs'
@@ -40,7 +40,7 @@ class GbfsSpider(scrapy.Spider):
 
     def parse_station_information(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        model = StationInformationModel.converter.structure(data, StationInformationModel)
+        model = StationInformationModel.parse(data)
         # chain station status request
         # see https://stackoverflow.com/questions/13910357/how-can-i-use-multiple-requests-and-pass-items-in-between-them-in-scrapy-python
         # TODO is there RxJS forkJoin mechanism for Twisted? could then dispatch multiple requests and await responses

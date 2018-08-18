@@ -12,7 +12,6 @@ import attr
 @attr.s(auto_attribs=True)
 class SystemItem(object):
     name: str
-
     source_id: Optional[str] = None
     phone_number: Optional[str] = None
     email: Optional[str] = None
