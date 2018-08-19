@@ -19,7 +19,8 @@ sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..'
 # TODO - need to find a way to register models nicely
 from db.models.system import System
 from db.models.station import Station
-target_metadata = [System.metadata, Station.metadata][0]  # to stop unused import from being removed
+from db.models.scraper import Scraper
+target_metadata = [System.metadata, Station.metadata, Scraper.metadata][0]  # to stop unused import from being removed
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
