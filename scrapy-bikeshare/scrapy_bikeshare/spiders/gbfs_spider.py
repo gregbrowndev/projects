@@ -28,10 +28,10 @@ class GbfsSpider(scrapy.Spider):
         scraper = get_or_create(session, Scraper, name=name)[0]
         return super().from_crawler(crawler, scraper=scraper, *args, **kwargs)
 
-    def __init__(self, scraper: Scraper, name=None, *args, **kwargs):
+    def __init__(self, scraper: Scraper, name=None, *args, **kwargs) -> None:
         super().__init__(name=name, **kwargs)
         self.scraper = scraper
-        self.feeds = {}
+        self.feeds: Dict = {}
 
     def parse(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())

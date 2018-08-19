@@ -12,14 +12,14 @@ from sqlalchemy.orm import Session
 
 from db.models.station import Station
 from db.models.system import System
-from db.utils import create_session
+from db.utils import create_session, update_or_create
 from scrapy_bikeshare.items import SystemItem, StationItem
 
 
 class ScrapyBikesharePipeline(object):
     def __init__(self):
         print('INIT CALLED')
-        self.session = create_session()
+        self.session: Session = create_session()
 
     def close_spider(self, spider):
         self.session.close()
@@ -37,29 +37,43 @@ class ScrapyBikesharePipeline(object):
 
     def process_system(self, item: SystemItem):
         # Insert or Update
-        instance: System = self.session.query(System).filter_by(source_id=item.source_id).one_or_none()
-        if instance:
-            print('UPDATING')
-            instance.name = item.name
-            instance.phone_number = item.phone_number
-            instance.email = item.email
-            instance.timezone = item.timezone
-            instance.url = item.url
-            instance.language = item.language
-        else:
-            print('INSERTING')
-            system = System(
-                scraper_id=item.scraper_id,
-                source_id=item.source_id,
-                name=item.name,
-                phone_number=item.phone_number,
-                email=item.email,
-                timezone=item.timezone,
-                url=item.url,
-                language=item.language
-            )
-            self.session.add(system)
-        self.session.commit()
+        instance, created = update_or_create(
+            self.session,
+            System,
+            scraper_id=item.scraper_id,
+            source_id=item.source_id,
+            defaults={
+                'name': item.name,
+                'phone_number': item.phone_number,
+                'email': item.email,
+                'timezone': item.timezone,
+                'url': item.url,
+                'language': item.language
+            }
+        )
+        # instance: System = self.session.query(System).filter_by(source_id=item.source_id).one_or_none()
+        # if instance:
+        #     print('UPDATING')
+        #     instance.name = item.name
+        #     instance.phone_number = item.phone_number
+        #     instance.email = item.email
+        #     instance.timezone = item.timezone
+        #     instance.url = item.url
+        #     instance.language = item.language
+        # else:
+        #     print('INSERTING')
+        #     system = System(
+        #         scraper_id=item.scraper_id,
+        #         source_id=item.source_id,
+        #         name=item.name,
+        #         phone_number=item.phone_number,
+        #         email=item.email,
+        #         timezone=item.timezone,
+        #         url=item.url,
+        #         language=item.language
+        #     )
+        #     self.session.add(system)
+        # self.session.commit()
         return item
 
     def process_station(self, item: StationItem):

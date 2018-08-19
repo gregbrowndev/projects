@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-
 # Define here the models for your scraped items
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/items.html
-from typing import Optional, Dict, TypeVar
 from datetime import datetime
-from dateutil import parser
+from typing import Optional, Dict, TypeVar
 
 import attr
 from cattr import Converter
-from pendulum.tz.zoneinfo import Timezone
+from dateutil import parser
 
 
 def init_converter():
@@ -22,6 +20,8 @@ def init_converter():
     return converter
 
 
+# Annotate factory function on base class
+# see https://github.com/python/typing/issues/58
 T = TypeVar('T', bound='BaseItem')
 
 
