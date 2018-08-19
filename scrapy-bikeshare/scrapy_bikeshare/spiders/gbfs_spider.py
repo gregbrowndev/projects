@@ -9,6 +9,7 @@ from scrapy_bikeshare.api_models.gbfs import GbfsModel, SystemInformationModel, 
     StationStatusModel
 from scrapy_bikeshare.items import StationItem
 
+
 class GbfsSpider(scrapy.Spider):
     name = 'gbfs'
     start_urls = [
@@ -73,19 +74,21 @@ class GbfsSpider(scrapy.Spider):
                 docks_disabled = status.num_docks_disabled
                 is_open = status.is_renting
 
-            yield attr.asdict(StationItem(
-                source_id=station_id,
-                name=station.name,
-                address=station.address,
-                latitude=station.lat,
-                longitude=station.lon,
-                capacity=station.capacity,
-                bikes_available=bikes_available,
-                docks_available=docks_available,
-                bikes_disabled=bikes_disabled,
-                docks_disabled=docks_disabled,
-                open=is_open
-            ))
+            yield {
+                'item_type': 'station',
+                'data': attr.asdict(StationItem(
+                    source_id=station_id,
+                    name=station.name,
+                    address=station.address,
+                    latitude=station.lat,
+                    longitude=station.lon,
+                    capacity=station.capacity,
+                    bikes_available=bikes_available,
+                    docks_available=docks_available,
+                    bikes_disabled=bikes_disabled,
+                    docks_disabled=docks_disabled,
+                    open=is_open
+                ))}
 
 
 if __name__ == '__main__':
