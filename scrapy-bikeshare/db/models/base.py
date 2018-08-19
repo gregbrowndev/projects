@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, Sequence
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy_repr import RepresentableBase
 
@@ -17,13 +17,11 @@ class Base(RepresentableBase):
     def __tablename__(cls):
         return cls.__name__.lower()
 
-    # @declared_attr
-    # def id(cls):
-    #     sequence_name = f'{cls.__tablename__}_id_seq'
-    #     return Column(Integer, Sequence(sequence_name), primary_key=True)
-
-    # it seems that Sequence is completely ignored by SqlAlchemy/Postgres, so above code is unnecessary
-    id = Column(Integer, primary_key=True)
+    @declared_attr
+    def id(cls):
+        # NOTE it seems that Sequence is being ignored by SqlAlchemy/Postgres
+        sequence_name = f'{cls.__tablename__}_id_seq'
+        return Column(Integer, Sequence(sequence_name), primary_key=True)
 
 
 Base = declarative_base(cls=Base)
