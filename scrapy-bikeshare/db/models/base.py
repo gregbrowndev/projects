@@ -14,14 +14,15 @@ class Base(RepresentableBase):
     """
 
     @declared_attr
-    def __tablename__(cls):
+    def __tablename__(cls) -> str:
         return cls.__name__.lower()
 
     @declared_attr
-    def id(cls):
+    def id(cls) -> Column:
         # NOTE it seems that Sequence is being ignored by SqlAlchemy/Postgres
         sequence_name = f'{cls.__tablename__}_id_seq'
         return Column(Integer, Sequence(sequence_name), primary_key=True)
 
 
 Base = declarative_base(cls=Base)
+

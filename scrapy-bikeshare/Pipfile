@@ -17,6 +17,7 @@ sqlalchemy-repr = "*"
 
 [dev-packages]
 ipython = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.6"

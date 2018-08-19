@@ -4,7 +4,7 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/items.html
-from typing import Optional, Dict
+from typing import Optional, Dict, TypeVar
 from datetime import datetime
 from dateutil import parser
 
@@ -22,14 +22,19 @@ def init_converter():
     return converter
 
 
+T = TypeVar('T', bound='BaseItem')
+
+
+@attr.s(auto_attribs=True)
 class BaseItem(object):
-    """ItemBase with cattr methods for (de)serialization
-    """
+    """ItemBase with cattr methods for (de)serialization"""
+    scraper_id: int
+
     # cattr converter
     converter = init_converter()
 
     @classmethod
-    def structure(cls, data: Dict) -> 'ItemBase':
+    def structure(cls, data: Dict) -> T:
         return cls.converter.structure(data, cls)
 
     def unstructure(self) -> Dict:

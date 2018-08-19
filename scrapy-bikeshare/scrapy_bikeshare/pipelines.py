@@ -28,30 +28,41 @@ class ScrapyBikesharePipeline(object):
         item_type = item['item_type']
         if item_type == 'system':
             self.process_system(
-                SystemItem.structure(item['data']),
-                spider
+                SystemItem.structure(item['data'])
             )
-        elif item_type == 'station':
-            self.process_station(
-                StationItem.structure(item['data']),
-                spider
+        # elif item_type == 'station':
+        #     self.process_station(
+        #         StationItem.structure(item['data'])
+        #     )
+
+    def process_system(self, item: SystemItem):
+        # Insert or Update
+        instance: System = self.session.query(System).filter_by(source_id=item.source_id).one_or_none()
+        if instance:
+            print('UPDATING')
+            instance.name = item.name
+            instance.phone_number = item.phone_number
+            instance.email = item.email
+            instance.timezone = item.timezone
+            instance.url = item.url
+            instance.language = item.language
+        else:
+            print('INSERTING')
+            system = System(
+                scraper_id=item.scraper_id,
+                source_id=item.source_id,
+                name=item.name,
+                phone_number=item.phone_number,
+                email=item.email,
+                timezone=item.timezone,
+                url=item.url,
+                language=item.language
             )
-
-    def process_system(self, item: SystemItem, spider: Spider):
-
-        system = System(
-            name=item.name,
-            source_id=item.source_id,
-            phone_number=item.phone_number,
-            email=item.email,
-            timezone=item.timezone,
-            url=item.url,
-            language=item.language
-        )
-        self.save(system)
+            self.session.add(system)
+        self.session.commit()
         return item
 
-    def process_station(self, item: StationItem, spider: Spider):
+    def process_station(self, item: StationItem):
         return item
 
     def save(self, item: Union[System, Station]):

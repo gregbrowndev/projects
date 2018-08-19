@@ -3,20 +3,20 @@ from typing import List, Optional, Dict
 
 import attr
 from cattr import Converter
-import pendulum
+from pendulum import DateTime, from_timestamp
 
 
 def init_converter():
     converter = Converter()
-    converter.register_unstructure_hook(pendulum.DateTime, lambda dt: dt.to_iso8601_string())
-    converter.register_structure_hook(pendulum.DateTime, lambda ts, _: pendulum.parse(ts))
+    converter.register_unstructure_hook(DateTime, lambda dt: dt.to_iso8601_string())
+    converter.register_structure_hook(DateTime, lambda ts, _: from_timestamp(ts))
     return converter
 
 
 @attr.s(auto_attribs=True)
 class GbfsBaseModel(object):
     ttl: int
-    last_updated: int
+    last_updated: DateTime
 
     # cattr converter
     converter = init_converter()
@@ -121,4 +121,12 @@ class StationStatusModel(GbfsBaseModel):
     def __attrs_post_init__(self):
         # alias
         self.stations = self.data.stations
+
+
+if __name__ == '__main__':
+    import requests
+
+    r = requests.get('https://gbfs.bcycle.com/bcycle_madison/gbfs.json')
+    model = GbfsModel.parse(r.json())
+    print(model)
 
