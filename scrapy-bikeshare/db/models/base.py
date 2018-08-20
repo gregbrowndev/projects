@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy_repr import RepresentableBase
 
 
-class Base(RepresentableBase):
+class PrimaryKeyedBase(RepresentableBase):
     """Custom Declarative Base passed to cls argument of declarative_base()
 
     Each table extending this base class will have:
@@ -24,5 +24,5 @@ class Base(RepresentableBase):
         return Column(Integer, Sequence(sequence_name), primary_key=True)
 
 
-Base = declarative_base(cls=Base)
+Base = declarative_base(cls=PrimaryKeyedBase)
 

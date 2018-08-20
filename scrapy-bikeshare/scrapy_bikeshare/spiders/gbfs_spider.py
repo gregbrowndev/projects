@@ -16,6 +16,7 @@ class GbfsSpider(scrapy.Spider):
     scraper: Scraper
 
     name: str = 'gbfs'
+    feeds: Dict[str, str]
     start_urls = [
         'https://gbfs.bcycle.com/bcycle_madison/gbfs.json'
     ]
@@ -35,7 +36,7 @@ class GbfsSpider(scrapy.Spider):
 
     def parse(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        model = GbfsModel.parse(data)
+        model: GbfsModel = GbfsModel.parse(data)
         self.feeds = {feed.name: feed.url for feed in model.feeds}
         for name, url in self.feeds.items():
             if name == 'system_information':
@@ -45,7 +46,8 @@ class GbfsSpider(scrapy.Spider):
 
     def parse_system_information(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        system = SystemInformationModel.parse(data).data
+        model: SystemInformationModel = SystemInformationModel.parse(data)
+        system = model.data
         # Note - not passing source_id through as gbfs sources only contain a single system.
         # In addition, the station feeds do not contain the system_id, so it makes it easier
         # for pipeline to find the system when its source_id is null.
@@ -64,7 +66,7 @@ class GbfsSpider(scrapy.Spider):
 
     def parse_station_information(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        model = StationInformationModel.parse(data)
+        model: StationInformationModel = StationInformationModel.parse(data)
         # chain station status request
         # see https://stackoverflow.com/questions/13910357/how-can-i-use-multiple-requests-and-pass-items-in-between-them-in-scrapy-python
         # TODO is there RxJS forkJoin mechanism for Twisted? could then dispatch multiple requests and await responses
@@ -74,7 +76,7 @@ class GbfsSpider(scrapy.Spider):
 
     def parse_station_status(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
-        status_model = StationStatusModel.parse(data)
+        status_model: StationStatusModel = StationStatusModel.parse(data)
         statuses = {station.station_id: station for station in status_model.stations}
 
         # Get previous model

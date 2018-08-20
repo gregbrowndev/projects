@@ -4,7 +4,7 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/items.html
 from datetime import datetime
-from typing import Optional, Dict, TypeVar
+from typing import Optional, Dict, TypeVar, ClassVar
 
 import attr
 from cattr import Converter
@@ -22,6 +22,9 @@ def init_converter():
 
 # Annotate factory function on base class
 # see https://github.com/python/typing/issues/58
+# also see https://docs.python.org/3/library/typing.html#classes-functions-and-decorators
+# "a type variable may specify an upper bound using bound=<type>... the type variable must be a
+# subclass of the boundary type"
 T = TypeVar('T', bound='BaseItem')
 
 
@@ -31,7 +34,7 @@ class BaseItem(object):
     scraper_id: int
 
     # cattr converter
-    converter = init_converter()
+    converter: ClassVar[Converter] = init_converter()
 
     @classmethod
     def structure(cls, data: Dict) -> T:

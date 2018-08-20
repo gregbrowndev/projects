@@ -1,5 +1,5 @@
 import enum
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, TypeVar, ClassVar
 
 import attr
 from cattr import Converter
@@ -13,16 +13,19 @@ def init_converter():
     return converter
 
 
+# TODO - this doesn't seem to have worked. Only created more mypy errors
+T = TypeVar('T', bound='GbfsBaseModel')
+
+
 @attr.s(auto_attribs=True)
 class GbfsBaseModel(object):
     ttl: int
     last_updated: DateTime
 
-    # cattr converter
-    converter = init_converter()
+    converter: ClassVar[Converter] = init_converter()
 
     @classmethod
-    def parse(cls, data: Dict) -> 'GbfsBaseModel':
+    def parse(cls, data: Dict) -> T:
         return cls.converter.structure(data, cls)
 
 
@@ -127,6 +130,6 @@ if __name__ == '__main__':
     import requests
 
     r = requests.get('https://gbfs.bcycle.com/bcycle_madison/gbfs.json')
-    model = GbfsModel.parse(r.json())
+    model: GbfsModel = GbfsModel.parse(r.json())
     print(model)
 
