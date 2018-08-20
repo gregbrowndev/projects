@@ -1,19 +1,37 @@
 import json
-from typing import Optional
+from typing import Optional, Dict
 
 import attr
 import scrapy
 from scrapy.http import HtmlResponse
 
-from scrapy_bikeshare.api_models.gbfs import GbfsModel, SystemInformationModel, StationInformationModel, \
-    StationStatusModel
-from scrapy_bikeshare.items import StationItem
+from db.models import Scraper
+from db.utils import create_session, get_or_create
+from scrapy_bikeshare.api_models.gbfs import SystemInformationModel, StationInformationModel, \
+    StationStatusModel, GbfsModel
+from scrapy_bikeshare.items import StationItem, SystemItem
+
 
 class GbfsSpider(scrapy.Spider):
-    name = 'gbfs'
+    scraper: Scraper
+
+    name: str = 'gbfs'
     start_urls = [
         'https://gbfs.bcycle.com/bcycle_madison/gbfs.json'
     ]
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        name = kwargs.get('name', cls.name)
+        print('NAME', name)
+        session = create_session()
+        scraper = get_or_create(session, Scraper, name=name)[0]
+        return super().from_crawler(crawler, scraper=scraper, *args, **kwargs)
+
+    def __init__(self, scraper: Scraper, name=None, *args, **kwargs) -> None:
+        super().__init__(name=name, **kwargs)
+        self.scraper = scraper
+        self.feeds: Dict = {}
 
     def parse(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
@@ -28,15 +46,21 @@ class GbfsSpider(scrapy.Spider):
     def parse_system_information(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
         system = SystemInformationModel.parse(data).data
-        # yield attr.asdict(SystemItem(
-        #     name=system.name,
-        #     source_id=system.system_id,
-        #     phone_number=system.phone_number,
-        #     email=system.email,
-        #     timezone=system.timezone,
-        #     url=system.url,
-        #     language=system.language
-        # ))
+        # Note - not passing source_id through as gbfs sources only contain a single system.
+        # In addition, the station feeds do not contain the system_id, so it makes it easier
+        # for pipeline to find the system when its source_id is null.
+        yield {
+            'item_type': 'system',
+            'data': attr.asdict(SystemItem(
+                scraper_id=self.scraper.id,
+                name=system.name,
+                # source_id=system.system_id,
+                phone_number=system.phone_number,
+                email=system.email,
+                timezone=system.timezone,
+                url=system.url,
+                language=system.language
+            ))}
 
     def parse_station_information(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
@@ -73,36 +97,23 @@ class GbfsSpider(scrapy.Spider):
                 docks_disabled = status.num_docks_disabled
                 is_open = status.is_renting
 
-            yield attr.asdict(StationItem(
-                source_id=station_id,
-                name=station.name,
-                address=station.address,
-                latitude=station.lat,
-                longitude=station.lon,
-                capacity=station.capacity,
-                bikes_available=bikes_available,
-                docks_available=docks_available,
-                bikes_disabled=bikes_disabled,
-                docks_disabled=docks_disabled,
-                open=is_open
-            ))
+            yield {
+                'item_type': 'station',
+                'data': attr.asdict(StationItem(
+                    scraper_id=self.scraper.id,
+                    source_id=station_id,
+                    name=station.name,
+                    address=station.address,
+                    latitude=station.lat,
+                    longitude=station.lon,
+                    capacity=station.capacity,
+                    bikes_available=bikes_available,
+                    docks_available=docks_available,
+                    bikes_disabled=bikes_disabled,
+                    docks_disabled=docks_disabled,
+                    open=is_open
+                ))}
 
 
 if __name__ == '__main__':
-    import requests
-
-    # r = requests.get('https://gbfs.bcycle.com/bcycle_madison/gbfs.json')
-    # model = GbfsModel.parse(r.json())
-    # print(model)
-
-    # r = requests.get('https://gbfs.bcycle.com/bcycle_madison/system_information.json')
-    # model = SystemInformationModel.parse(r.json())
-    # print(model)
-
-    # r = requests.get('https://gbfs.bcycle.com/bcycle_madison/station_information.json')
-    # model = StationInformationModel.parse(r.json())
-    # print(model)
-
-    r = requests.get('https://gbfs.bcycle.com/bcycle_madison/station_status.json')
-    model = StationStatusModel.parse(r.json())
-    print(model)
+    session = create_session()

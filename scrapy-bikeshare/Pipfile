@@ -12,11 +12,12 @@ pendulum = "*"
 requests = "*"
 alembic = "*"
 sqlalchemy = "*"
-"psycopg2" = "*"
 sqlalchemy-repr = "*"
+"psycopg2-binary" = "*"
 
 [dev-packages]
 ipython = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.6"
