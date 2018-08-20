@@ -9,6 +9,7 @@ from typing import Dict, Union
 from scrapy import Spider
 from scrapy.exceptions import DropItem
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import NoResultFound
 
 from db.models.station import Station
 from db.models.system import System
@@ -30,10 +31,10 @@ class ScrapyBikesharePipeline(object):
             self.process_system(
                 SystemItem.structure(item['data'])
             )
-        # elif item_type == 'station':
-        #     self.process_station(
-        #         StationItem.structure(item['data'])
-        #     )
+        elif item_type == 'station':
+            self.process_station(
+                StationItem.structure(item['data'])
+            )
 
     def process_system(self, item: SystemItem):
         # Insert or Update
@@ -51,32 +52,36 @@ class ScrapyBikesharePipeline(object):
                 'language': item.language
             }
         )
-        # instance: System = self.session.query(System).filter_by(source_id=item.source_id).one_or_none()
-        # if instance:
-        #     print('UPDATING')
-        #     instance.name = item.name
-        #     instance.phone_number = item.phone_number
-        #     instance.email = item.email
-        #     instance.timezone = item.timezone
-        #     instance.url = item.url
-        #     instance.language = item.language
-        # else:
-        #     print('INSERTING')
-        #     system = System(
-        #         scraper_id=item.scraper_id,
-        #         source_id=item.source_id,
-        #         name=item.name,
-        #         phone_number=item.phone_number,
-        #         email=item.email,
-        #         timezone=item.timezone,
-        #         url=item.url,
-        #         language=item.language
-        #     )
-        #     self.session.add(system)
-        # self.session.commit()
         return item
 
     def process_station(self, item: StationItem):
+        # Need to link the system first
+        source_system_id = item.source_system_id
+        system = System.get_system(self.session, item.scraper_id, source_system_id)
+
+        if not system:
+            raise DropItem('No system was found for station: ', item)
+
+        # Insert or Update
+        instance, created = update_or_create(
+            self.session,
+            Station,
+            system=system,
+            scraper_id=item.scraper_id,
+            source_id=item.source_id,
+            defaults={
+                'name': item.name,
+                'latitude': item.latitude,
+                'longitude': item.longitude,
+                'address': item.address,
+                'capacity': item.capacity,
+                'bikes_available': item.bikes_available,
+                'bikes_disabled': item.bikes_disabled,
+                'docks_available': item.docks_available,
+                'docks_disabled': item.docks_disabled,
+                'open': item.open,
+            }
+        )
         return item
 
     def save(self, item: Union[System, Station]):

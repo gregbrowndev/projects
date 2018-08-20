@@ -57,8 +57,9 @@ class StationItem(BaseItem):
     name: str
     latitude: float
     longitude: float
-    address: Optional[str] = None
     source_id: Optional[str] = None
+    source_system_id: Optional[str] = None
+    address: Optional[str] = None
     capacity: Optional[int] = None
     bikes_available: Optional[int] = None
     docks_available: Optional[int] = None

@@ -40,18 +40,21 @@ class GbfsSpider(scrapy.Spider):
         for name, url in self.feeds.items():
             if name == 'system_information':
                 yield scrapy.Request(url, callback=self.parse_system_information)
-            # elif name == 'station_information':
-            #     yield scrapy.Request(url, callback=self.parse_station_information)
+            elif name == 'station_information':
+                yield scrapy.Request(url, callback=self.parse_station_information)
 
     def parse_system_information(self, response: HtmlResponse):
         data = json.loads(response.body_as_unicode())
         system = SystemInformationModel.parse(data).data
+        # Note - not passing source_id through as gbfs sources only contain a single system.
+        # In addition, the station feeds do not contain the system_id, so it makes it easier
+        # for pipeline to find the system when its source_id is null.
         yield {
             'item_type': 'system',
             'data': attr.asdict(SystemItem(
                 scraper_id=self.scraper.id,
                 name=system.name,
-                source_id=system.system_id,
+                # source_id=system.system_id,
                 phone_number=system.phone_number,
                 email=system.email,
                 timezone=system.timezone,
