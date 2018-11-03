@@ -26,7 +26,10 @@
 
 .plan {
     background: #d5ffdc;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     padding: 1rem;
     margin: 0.5rem 0;
     width: 100%;
@@ -35,6 +38,7 @@
 .plan--highlighted {
     background: #19b84c;
     color: white;
+    z-index: 40;
 }
 
 .plan__annotation {
@@ -65,10 +69,13 @@
     list-style: none;
     margin: 1rem 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .plan__features li {
-    margin: 1rem 0;
+    margin: 0.5rem 0;
 }
 
 #key-features {
@@ -86,7 +93,10 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 .key-feature__image {
@@ -168,21 +178,26 @@
     }
     .plan__list {
         width: 100%;
-        text-align: center;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: stretch;
     }
     .plan {
-        display: inline-block;
         width: 30%;
-        vertical-align: middle;
         min-width: 13rem;
         max-width: 25rem;
+        margin: 2rem 0;
     }
     .plan--highlighted {
         box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.5);
+        margin: 0;
     }
+
+    .key-feature__list {
+        flex-direction: row;
+    }
+
     .key-feature {
-        display: inline-block;
-        vertical-align: top;
         width: 30%;
         min-width: 13rem;
         max-width: 25rem;
