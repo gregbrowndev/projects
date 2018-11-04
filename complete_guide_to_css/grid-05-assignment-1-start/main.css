@@ -1,0 +1,36 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 33% 1fr;
+    grid-template-rows: auto 1fr auto
+}
+
+#header {
+    background: rgba(255, 154, 72, 0.5);
+    height: 2.5rem;
+    grid-column-start: 1;
+    grid-column-end: -1;
+    }
+
+#sidebar {
+    background: rgba(255, 0, 0, 0.5);
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+#main {
+    background: rgba(0, 128, 0, 0.5);
+    grid-column-start: 2;
+    grid-column-end: -1;
+}
+
+#footer {
+    background: rgba(0, 4, 255, 0.5);
+    height: 2.5rem;
+    grid-column-start: 1;
+    grid-column-end: -1;
+}
