@@ -1,7 +1,9 @@
 .container {
     margin: 20px;
     display: grid;
-    grid-template-columns: [hd-start] repeat(4, [col-start] 25% [col-end]) [hd-end];
+    height: 800px;
+    width: 800px;
+    grid-template-columns: [hd-start] repeat(4, [col-start] 20% [col-end]) [hd-end];
     grid-template-rows: [hd-start] 5rem [hd-end row-2-start] minmax(10px, 200px) [row-2-end row-3-start] 100px [row-3-end];
     /*grid-column-gap: 20px;*/
     /*grid-row-gap: 10px;*/
@@ -11,6 +13,7 @@
                          "footer footer footer footer";
     justify-items: stretch;
     align-items: center;
+    justify-content: end;
 }
 
 .el1 {
