@@ -21,9 +21,9 @@ function openModel() {
 }
 
 function closeModal() {
+  closeBackdrop();
   modal.classList.remove('open');
   setTimeout(function () {
     modal.style.display = 'none';
-  }, 200);
-  closeBackdrop();
+  }, 500);
 }

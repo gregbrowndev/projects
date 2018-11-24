@@ -170,6 +170,9 @@ body {
     background: white;
     width: 80%;
     height: 100vh;
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: opacity 200ms linear, transform 200ms ease-out;
 }
 
 .mobile-nav__items {
@@ -234,7 +237,7 @@ main {
 .open {
     display: block !important;
     opacity: 1 !important;
-    transform: translateY(0) !important;
+    transform: translate(0, 0) !important;
 }
 
 @media(min-width: 40rem) {

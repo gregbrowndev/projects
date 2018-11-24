@@ -8,12 +8,18 @@ backdrop.addEventListener('click', closeSideNav);
 
 function openSideNav() {
   openBackdrop();
-  sideNav.classList.add('open');
+  sideNav.style.display = 'block';
+  setTimeout(function () {
+    sideNav.classList.add('open');
+  }, 10);
 }
 
 function closeSideNav() {
-  sideNav.classList.remove('open');
   closeBackdrop();
+  sideNav.classList.remove('open');
+  setTimeout(function () {
+    sideNav.style.display = 'none';
+  }, 200);
 }
 
 function openBackdrop() {
