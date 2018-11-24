@@ -4,13 +4,7 @@ var modal = document.querySelector('.modal');
 var selectPlanButtons = document.querySelectorAll('.plan button');
 
 for (var i = 0; i < selectPlanButtons.length; ++i) {
-    selectPlanButtons[i].addEventListener('click', function() {
-        // modal.style.display = 'block';
-        // backdrop.style.display = 'block';
-        // modal.className = 'open'; // This would override all the classes on modal
-        modal.classList.add('open');
-        backdrop.classList.add('open');
-    });
+  selectPlanButtons[i].addEventListener('click', openModel);
 }
 
 var modalCancelButton = modal.querySelector('.modal__actions .modal__action--negative');
@@ -18,9 +12,18 @@ var modalCancelButton = modal.querySelector('.modal__actions .modal__action--neg
 modalCancelButton.addEventListener('click', closeModal);
 backdrop.addEventListener('click', closeModal);
 
-function closeModal(){
-    // modal.style.display = 'none';
-    // backdrop.style.display = 'none';
-    modal.classList.remove('open');
-    backdrop.classList.remove('open');
+function openModel() {
+  openBackdrop();
+  modal.style.display = 'block';
+  setTimeout(function () {
+    modal.classList.add('open');
+  }, 10);
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+  setTimeout(function () {
+    modal.style.display = 'none';
+  }, 200);
+  closeBackdrop();
 }

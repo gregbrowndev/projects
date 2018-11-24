@@ -3,15 +3,29 @@ var backdrop = document.querySelector('.backdrop');
 var toggleButton = document.querySelector('.toggle-button');
 var sideNav = document.querySelector('.mobile-nav');
 
-toggleButton.addEventListener('click', function() {
-    // sideNav.style.display = 'block';
-    // backdrop.style.display = 'block';
-    sideNav.classList.add('open');
+toggleButton.addEventListener('click', openSideNav);
+backdrop.addEventListener('click', closeSideNav);
+
+function openSideNav() {
+  openBackdrop();
+  sideNav.classList.add('open');
+}
+
+function closeSideNav() {
+  sideNav.classList.remove('open');
+  closeBackdrop();
+}
+
+function openBackdrop() {
+  backdrop.style.display = 'block';
+  setTimeout(function () {
     backdrop.classList.add('open');
-});
-backdrop.addEventListener('click', function(){
-    // sideNav.style.display = 'none';
-    // backdrop.style.display = 'none';
-    sideNav.classList.remove('open');
-    backdrop.classList.remove('open');
-});
+  }, 10);
+}
+
+function closeBackdrop() {
+  backdrop.classList.remove('open');
+  setTimeout(function () {
+    backdrop.style.display = 'none';
+  }, 200);
+}
