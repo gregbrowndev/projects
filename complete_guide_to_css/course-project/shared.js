@@ -2,9 +2,20 @@
 var backdrop = document.querySelector('.backdrop');
 var toggleButton = document.querySelector('.toggle-button');
 var sideNav = document.querySelector('.mobile-nav');
+var ctaButton = document.querySelector('.main-nav__item--cta');
 
 toggleButton.addEventListener('click', openSideNav);
 backdrop.addEventListener('click', closeSideNav);
+
+ctaButton.addEventListener('animationstart', function(event) {
+  console.log('Animation started', event);
+});
+ctaButton.addEventListener('animationend', function(event) {
+  console.log('Animation ended', event);
+});
+ctaButton.addEventListener('animationiteration', function(event) {
+  console.log('Animation iteration', event);
+});
 
 function openSideNav() {
   openBackdrop();
