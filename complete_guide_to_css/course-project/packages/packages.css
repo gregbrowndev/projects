@@ -30,6 +30,7 @@ main {
     margin: 1rem 0;
     position: relative;
     z-index: 0;
+    overflow: hidden;
 }
 
 .package:hover,
@@ -57,12 +58,17 @@ main {
     position: absolute;
     top: 0;
     right: 0;
-    margin: 1.25rem;
+    /*margin: 1.25rem;*/
+    margin: 0;
     padding: 0.5rem;
     font-size: 0.8rem;
     color: white;
     background: #ff5454;
     z-index: 10;
+    transform: rotateZ(45deg) translateX(3.5rem) translateY(-1rem);
+    transform-origin: center;
+    width: 12rem;
+    text-align: center;
 }
 
 .package__subtitle {
