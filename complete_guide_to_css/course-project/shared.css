@@ -15,16 +15,24 @@
 
 html, body {
     height: 100%;
+    margin: 0;
 }
 
 body {
     font-family: 'Montserrat', sans-serif;
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 3.5rem 1fr auto;
-    grid-template-areas: 'header' 'main' 'footer';
+    margin-top: 3.5rem;
 }
+
+@supports (display: grid) {
+    body {
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 3.5rem 1fr auto;
+        grid-template-areas: 'header' 'main' 'footer';
+    }
+}
+
 
 .backdrop {
     display: none;
