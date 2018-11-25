@@ -28,36 +28,31 @@ body {
   box-sizing: border-box;
 }
 
-.sass-introduction {
+.sass-section {
   border: $border-default;
   background: map-get($colors, accent);
   padding: $size-default * 2;
   text-align: center;
-  box-shadow: $size-tiny $size-tiny $size-tiny / 2 #ccc;
-  width: 90%;
   box-sizing: border-box;
-
-  p {
-    margin: 0;
-  }
+  width: 90%;
 
   @media (min-width: 40rem) {
     width: 30rem;
   }
 }
 
-.sass-details {
-  border: $border-default;
-  background: map-get($colors, accent);
-  padding: $size-default;
-  text-align: center;
-  margin: $size-default * 2 0;
-  width: 90%;
-  box-sizing: border-box;
+.sass-introduction {
+  @extend .sass-section;
+  box-shadow: $size-tiny $size-tiny $size-tiny / 2 #ccc;
 
-  @media (min-width: 40rem) {
-    width: 30rem;
+  p {
+    margin: 0;
   }
+}
+
+.sass-details {
+  @extend .sass-section;
+  margin: $size-default * 2 0;
 }
 
 .section-header {

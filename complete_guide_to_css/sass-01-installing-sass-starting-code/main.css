@@ -30,37 +30,29 @@ body {
   box-sizing: border-box;
 }
 
-.sass-introduction {
+.sass-section, .sass-details, .sass-introduction {
   border: 0.05rem solid #521751;
   background: #f7e1f6;
   padding: 2rem;
   text-align: center;
-  box-shadow: 0.2rem 0.2rem 0.1rem #ccc;
-  width: 90%;
   box-sizing: border-box;
-}
-.sass-introduction p {
-  margin: 0;
+  width: 90%;
 }
 @media (min-width: 40rem) {
-  .sass-introduction {
+  .sass-section, .sass-details, .sass-introduction {
     width: 30rem;
   }
 }
 
-.sass-details {
-  border: 0.05rem solid #521751;
-  background: #f7e1f6;
-  padding: 1rem;
-  text-align: center;
-  margin: 2rem 0;
-  width: 90%;
-  box-sizing: border-box;
+.sass-introduction {
+  box-shadow: 0.2rem 0.2rem 0.1rem #ccc;
 }
-@media (min-width: 40rem) {
-  .sass-details {
-    width: 30rem;
-  }
+.sass-introduction p {
+  margin: 0;
+}
+
+.sass-details {
+  margin: 2rem 0;
 }
 
 .section-header {
