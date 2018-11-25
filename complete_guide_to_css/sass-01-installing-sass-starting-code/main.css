@@ -29,7 +29,6 @@ body {
   width: 90%;
   box-sizing: border-box;
 }
-
 .sass-introduction p {
   margin: 0;
 }
@@ -47,7 +46,6 @@ body {
 .section-header {
   border-bottom: 0.05rem solid #521751;
 }
-
 .section-header h1 {
   margin: 0 0 1rem 0;
 }
@@ -83,10 +81,6 @@ body {
 @media (min-width: 40rem) {
   html {
     font-size: 125%;
-  }
-
-  .container {
-    padding: 3rem 0;
   }
 
   .sass-introduction,
