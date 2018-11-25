@@ -3,6 +3,10 @@
 
 html {
   font-size: 94.75%;
+
+  @media (min-width: 40rem) {
+    font-size: 125%;
+  }
 }
 
 body {
@@ -36,6 +40,10 @@ body {
   p {
     margin: 0;
   }
+
+  @media (min-width: 40rem) {
+    width: 30rem;
+  }
 }
 
 .sass-details {
@@ -46,6 +54,10 @@ body {
   margin: $size-default * 2 0;
   width: 90%;
   box-sizing: border-box;
+
+  @media (min-width: 40rem) {
+    width: 30rem;
+  }
 }
 
 .section-header {
@@ -84,16 +96,5 @@ body {
     color: white;
     background: map-get($colors, secondary);
     border-color: map-get($colors, secondary);
-  }
-}
-
-@media (min-width: 40rem) {
-  html {
-    font-size: 125%;
-  }
-
-  .sass-introduction,
-  .sass-details {
-    width: 30rem;
   }
 }
