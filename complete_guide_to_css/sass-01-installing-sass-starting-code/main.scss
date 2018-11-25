@@ -1,5 +1,10 @@
 //$main-color: #521751;
-$colors: (main: #521751, secondary: #fa923f);
+$base-colors: (main: #521751, secondary: #fa923f);
+$extended-colors: (
+        accent: lighten(map-get($base-colors, main), 72%)
+);
+$colors: map-merge($base-colors, $extended-colors);
+
 $border-default: 0.05rem solid map-get($colors, main);
 
 @import "typography.css";
@@ -29,7 +34,7 @@ body {
 
 .sass-introduction {
   border: $border-default;
-  background: #fae5ff;
+  background: map-get($colors, accent);
   padding: 2rem;
   text-align: center;
   box-shadow: 0.2rem 0.2rem 0.1rem #ccc;
@@ -43,7 +48,7 @@ body {
 
 .sass-details {
   border: $border-default;
-  background: #fae5ff;
+  background: map-get($colors, accent);
   padding: 1rem;
   text-align: center;
   margin: 2rem 0;
