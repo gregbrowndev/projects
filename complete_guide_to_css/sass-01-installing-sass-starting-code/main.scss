@@ -1,10 +1,22 @@
 @import "_variables.scss";
 @import "typography.scss";
 
+@mixin display-flex() {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+@mixin media-min-width($width) {
+  @media (min-width: $width) {
+    @content;
+  }
+}
+
 html {
   font-size: 94.75%;
-
-  @media (min-width: 40rem) {
+  @include media-min-width(40rem) {
     font-size: 125%;
   }
 }
@@ -15,10 +27,7 @@ body {
 }
 
 .container {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
+  @include display-flex();
   flex: {
     direction: column;
     wrap: nowrap;
@@ -36,7 +45,7 @@ body {
   box-sizing: border-box;
   width: 90%;
 
-  @media (min-width: 40rem) {
+  @include media-min-width(40rem) {
     width: 30rem;
   }
 }
@@ -67,10 +76,7 @@ body {
   list-style: none;
   margin: $size-default 0 0 0;
   padding: 0;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
+  @include display-flex();
   flex-direction: column;
 
   li {
