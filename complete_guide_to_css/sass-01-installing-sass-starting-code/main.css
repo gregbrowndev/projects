@@ -83,8 +83,7 @@ body {
   padding: 0.2rem;
   border: 0.05rem solid #521751;
 }
-.documentation-links .documentation-link:hover,
-.documentation-links .documentation-link:active {
+.documentation-links .documentation-link:hover, .documentation-links .documentation-link:active {
   color: white;
   background: #fa923f;
   border-color: #fa923f;
