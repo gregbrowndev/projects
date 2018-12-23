@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f4f61975-7788-4f0f-888d-c94d6347a09e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../bs4bolier/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../bs4bolier/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -129,12 +131,12 @@
       <option name="presentableId" value="Default" />
       <updated>1545431665781</updated>
       <workItem from="1545431667341" duration="3638000" />
-      <workItem from="1545592706964" duration="358000" />
+      <workItem from="1545592706964" duration="1168000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3996000" />
+    <option name="totallyTimeSpent" value="4806000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="0" />
