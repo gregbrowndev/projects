@@ -1,11 +1,4 @@
-
-**\.DS_Store
-
 \.DS_Store
-
-complete_guide_to_css/\.idea/
-
-
-**\.idea
-**/node_modules
-bootstrap4-brad-traversy/looplab/\.idea/
+.idea/
+node_modules/
+dist/
