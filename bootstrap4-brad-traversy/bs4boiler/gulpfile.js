@@ -9,7 +9,7 @@ function compile() {
     'node_modules/bootstrap/scss/bootstrap.scss',
     'src/scss/*.scss'
   ])
-    .pipe(sass())
+    .pipe(sass({ includePaths: ['node_modules'] }))
     .pipe(autoprefixer({
       browsers: ['last 2 versions'],
       cascade: false
@@ -25,7 +25,7 @@ function js() {
     'node_modules/popper.js/dist/umd/popper.min.js',
     'src/js/*.js'
   ])
-    .pipe(gulp.dest("dist/js"))
+    .pipe(gulp.dest('dist/js'))
     .pipe(browserSync.stream());
 }
 
@@ -33,21 +33,28 @@ function html() {
   return gulp.src([
     'src/*.html'
   ])
-    .pipe(gulp.dest("dist/"))
+    .pipe(gulp.dest('dist/'))
     .pipe(browserSync.stream());
+}
+
+function images() {
+  return gulp.src([
+    'src/img/*'
+  ])
+    .pipe(gulp.dest('dist/img/'));
 }
 
 // Move Fonts to dist/fonts
 function fonts() {
-  return gulp.src('node_modules/font-awesome/fonts/*')
-    .pipe(gulp.dest('dist/fonts'))
+  return gulp.src('node_modules/@fortawesome/fontawesome-free/webfonts/*')
+    .pipe(gulp.dest('dist/webfonts'))
 }
 
 // Move Font Awesome CSS to dist/css
-function fa() {
-  return gulp.src('node_modules/font-awesome/css/font-awesome.min.css')
-    .pipe(gulp.dest('dist/css'))
-}
+// function fa() {
+//   return gulp.src('node_modules/@fortawesome/fontawesome-free/css/fontawesome.css')
+//     .pipe(gulp.dest('dist/css'))
+// }
 
 
 // Watch Sass & Serve
@@ -69,7 +76,7 @@ function watch() {
   gulp.watch('src/*.html', { events: 'change' }, gulp.series(html, reload));
 }
 
-const dev = gulp.series(compile, js, html, fonts, fa, serve, watch);
+const dev = gulp.series(compile, js, html, images, fonts, serve, watch);
 
 // Default Task
 exports.default = dev;
