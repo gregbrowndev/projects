@@ -37,6 +37,13 @@ function html() {
     .pipe(browserSync.stream());
 }
 
+function images() {
+  return gulp.src([
+    'src/img/*'
+  ])
+    .pipe(gulp.dest('dist/img/'));
+}
+
 // Move Fonts to dist/fonts
 function fonts() {
   return gulp.src('node_modules/@fortawesome/fontawesome-free/webfonts/*')
@@ -69,7 +76,7 @@ function watch() {
   gulp.watch('src/*.html', { events: 'change' }, gulp.series(html, reload));
 }
 
-const dev = gulp.series(compile, js, html, fonts, serve, watch);
+const dev = gulp.series(compile, js, html, images, fonts, serve, watch);
 
 // Default Task
 exports.default = dev;
