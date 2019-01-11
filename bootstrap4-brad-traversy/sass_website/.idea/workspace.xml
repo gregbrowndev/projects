@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23426565-a8e4-4ded-a277-87dfff4b7caf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../looplab/src/scss/_variables.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../looplab/gulpfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/../looplab/gulpfile.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../looplab/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../looplab/src/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../looplab/src/scss/style.scss" beforeDir="false" afterPath="$PROJECT_DIR$/../looplab/src/scss/style.scss" afterDir="false" />
     </list>
@@ -172,12 +170,12 @@
       <updated>1546622931469</updated>
       <workItem from="1546622933189" duration="2474000" />
       <workItem from="1546632272755" duration="2467000" />
-      <workItem from="1547165037145" duration="188000" />
+      <workItem from="1547165037145" duration="731000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5129000" />
+    <option name="totallyTimeSpent" value="5672000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />

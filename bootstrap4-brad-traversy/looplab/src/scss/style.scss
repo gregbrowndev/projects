@@ -22,7 +22,7 @@ body {
     left: 0;
     width: 100%;
     min-height: 700px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
   }
 
   .home-inner {
@@ -36,6 +36,16 @@ body {
   .fas {
     color: $primary-color;
     background: #fff;
+    padding: 5px;
+    border-radius: 5px;
+  }
+}
+
+#explore-section,
+#share-section {
+  .fas {
+    background: #333;
+    color: #fff;
     padding: 5px;
     border-radius: 5px;
   }
