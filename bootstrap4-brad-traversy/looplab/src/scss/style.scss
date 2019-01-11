@@ -32,7 +32,10 @@ body {
   .card-form {
     opacity: 0.8;
   }
+}
 
+#home-section,
+#create-section {
   .fas {
     color: $primary-color;
     background: #fff;
@@ -50,3 +53,4 @@ body {
     border-radius: 5px;
   }
 }
+
