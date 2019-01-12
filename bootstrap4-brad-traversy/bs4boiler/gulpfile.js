@@ -1,6 +1,5 @@
 const gulp = require('gulp');
 const sourcemaps = require('gulp-sourcemaps');
-const concat = require('gulp-concat');
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const imagemin = require('gulp-imagemin');
@@ -112,6 +111,7 @@ function serve(done) {
 
 function watch() {
   gulp.watch(['src/scss/*.scss'], gulp.series(compile));
+  // gulp.watch(['src/js/*.js'], gulp.series(js));
   gulp.watch('src/*.html', { events: 'change' }, gulp.series(html, reload));
 }
 
