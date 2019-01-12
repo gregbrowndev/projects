@@ -10,27 +10,61 @@
     <title>Bootstrap Theme</title>
 </head>
 <body>
-<!-- Start Here -->
+<nav class="navbar navbar-expand-md navbar-light fixed-top py-4">
+    <div class="container">
+        <a href="#home" class="navbar-brand">
+            <img src="img/mlogo.png" alt="Mizuxe brand logo" width="50" height="50">
+            <h3 class="d-inline align-middle">Mizuxe</h3>
+        </a>
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#authors" class="nav-link">Meet The Authors</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-<div class="jumbotron">
-    <h1 class="display-4" id="greeting"></h1>
-    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to
-        featured content or information.</p>
-    <hr class="my-4">
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-    <p class="lead">
-        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-    </p>
-</div>
+<!-- SHOWCASE -->
+<section id="showcase" class="py-5">
+    <div class="primary-overlay text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 text-center">
+                    <h1 class="display-2 mt-5 pt-5">
+                        Do What You Dream Of...
+                    </h1>
+                    <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, inventore!</p>
+                    <a href="#" class="btn btn-outline-secondary btn-lg text-white">
+                        <i class="fas fa-arrow-right"></i> Read More
+                    </a>
+                </div>
+                <div class="col-lg-6">
+                    <img src="img/book.png" alt="Poster book" class="img-fluid d-none d-lg-block">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- Scripts -->
 <script src="js/bundle.js"></script>
 <script>
   // Get the current year for the copyright
   $('#year').text(new Date().getFullYear());
-
-  // Get greeting
-  $('#greeting').text(mainBundle.greeting('Greg'));
 </script>
 </body>
 </html>
