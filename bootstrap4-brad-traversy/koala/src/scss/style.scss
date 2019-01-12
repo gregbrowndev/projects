@@ -1,4 +1,5 @@
 @import "variables";
+@import "bootstrap/scss/bootstrap";
 
 body {
   background: $body-bg;
@@ -30,4 +31,13 @@ body {
     height: 100%;
     background: $primary-overlay;
   }
+
+  @include media-breakpoint-down(md) {
+    min-height: 500px;
+
+    h1 {
+      font-size: 4rem;
+    }
+  }
+
 }
