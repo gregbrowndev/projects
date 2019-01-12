@@ -111,7 +111,7 @@ function serve(done) {
 
 function watch() {
   gulp.watch(['src/scss/*.scss'], gulp.series(compile));
-  // gulp.watch(['src/js/*.js'], gulp.series(js));
+  gulp.watch(['src/img/**'], gulp.series(images));
   gulp.watch('src/*.html', { events: 'change' }, gulp.series(html, reload));
 }
 
