@@ -95,8 +95,8 @@ function fonts() {
 //     .pipe(gulp.dest('dist/css'))
 // }
 
+// BrowserSync
 
-// Watch Sass & Serve
 function reload(done) {
   browserSync.reload();
   done();
@@ -115,7 +115,7 @@ function watch() {
   gulp.watch('src/*.html', { events: 'change' }, gulp.series(html, reload));
 }
 
-const dev = gulp.series(compile, bundle, html, images, fonts, serve, watch);
+const dev = gulp.series(gulp.parallel(compile, bundle, html, images, fonts), serve, watch);
 
 // Default Task
 exports.default = dev;
