@@ -1,9 +1,20 @@
 const gulp = require('gulp');
-const browserSync = require('browser-sync').create();
+const sourcemaps = require('gulp-sourcemaps');
+const concat = require('gulp-concat');
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
+const imagemin = require('gulp-imagemin');
+const browserify = require('browserify');
+const watchify = require('watchify');
+const babel = require('babelify');
+const browserSync = require('browser-sync').create();
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const log = require('gulplog');
 
-// Compile Sass & Inject Into Browser
+
+// Compile SASS
+
 function compile() {
   return gulp.src([
     'node_modules/bootstrap/scss/bootstrap.scss',
@@ -18,16 +29,44 @@ function compile() {
     .pipe(browserSync.stream());
 }
 
-function js() {
-  return gulp.src([
-    'node_modules/bootstrap/dist/js/bootstrap.min.js',
-    'node_modules/jquery/dist/jquery.min.js',
-    'node_modules/popper.js/dist/umd/popper.min.js',
-    'src/js/*.js'
-  ])
-    .pipe(gulp.dest('dist/js'))
+// JavaScript
+
+const customOpts = {
+  entries: ['./src/js/main.js'],
+  // require: ['bootstrap', 'jquery'],  // Note this breaks my exported functions
+  standalone: 'mainBundle',
+  debug: true
+};
+const opts = { ...watchify.args, ...customOpts };
+const b = watchify(browserify(opts));
+console.log('Browserify options: ', opts);
+
+// add transformations here
+// i.e. b.transform(coffeeify);
+b.transform(babel, {
+  presets: ['@babel/preset-env']
+});
+
+exports.js = bundle; // so you can run `gulp js` to build the file
+b.on('update', bundle); // on any dep update, runs the bundler
+b.on('log', log.info); // output build logs to terminal
+
+function bundle() {
+  return b.bundle()
+  // log errors if they happen
+    .on('error', log.error.bind(log, 'Browserify Error'))
+    .pipe(source('bundle.js'))
+    // optional, remove if you don't need to buffer file contents
+    .pipe(buffer())
+    // optional, remove if you dont want sourcemaps
+    .pipe(sourcemaps.init({ loadMaps: true })) // loads map from browserify file
+    // Add transformation tasks to the pipeline here.
+    .pipe(sourcemaps.write('./')) // writes .map file
+    .pipe(gulp.dest('./dist/js'))
     .pipe(browserSync.stream());
 }
+
+// Other assets
 
 function html() {
   return gulp.src([
@@ -39,8 +78,9 @@ function html() {
 
 function images() {
   return gulp.src([
-    'src/img/*'
+    'src/img/**'
   ])
+    .pipe(imagemin())
     .pipe(gulp.dest('dist/img/'));
 }
 
@@ -72,11 +112,10 @@ function serve(done) {
 
 function watch() {
   gulp.watch(['src/scss/*.scss'], gulp.series(compile));
-  gulp.watch(['src/js/*.js'], gulp.series(js));
   gulp.watch('src/*.html', { events: 'change' }, gulp.series(html, reload));
 }
 
-const dev = gulp.series(compile, js, html, images, fonts, serve, watch);
+const dev = gulp.series(compile, bundle, html, images, fonts, serve, watch);
 
 // Default Task
 exports.default = dev;
