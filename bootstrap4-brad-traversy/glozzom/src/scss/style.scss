@@ -4,3 +4,14 @@
 body {
   background: $body-bg;
 }
+
+#main-nav .nav-link {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+
+  &.active {
+    border-left: #444 3px solid
+  }
+}
+

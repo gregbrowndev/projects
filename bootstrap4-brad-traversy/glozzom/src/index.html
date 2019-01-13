@@ -5,23 +5,27 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="ie=edge" http-equiv="X-UA-Compatible">
     <link href="css/font-awesome.css" rel="stylesheet">
-    <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <title>Glozzom</title>
 </head>
 <body>
-<!-- Start Here -->
-
-<div class="jumbotron">
-    <h1 class="display-4" id="greeting"></h1>
-    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to
-        featured content or information.</p>
-    <hr class="my-4">
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-    <p class="lead">
-        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-    </p>
-</div>
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" id="main-nav">
+    <div class="container">
+        <a href="index.html" class="navbar-brand">Glozzom</a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a href="index.html" class="nav-link active">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="services.html" class="nav-link">Services</a></li>
+                <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <!-- Scripts -->
 <script src="js/bundle.js"></script>
@@ -30,7 +34,7 @@
   $('#year').text(new Date().getFullYear());
 
   // Get greeting
-  $('#greeting').text(mainBundle.greeting('Greg'));
+  console.log(mainBundle.greeting('Greg'));
 </script>
 </body>
 </html>
