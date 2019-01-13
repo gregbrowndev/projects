@@ -8,8 +8,8 @@
     <link href="css/style.css" rel="stylesheet">
     <title>Bootstrap Theme</title>
 </head>
-<body>
-<nav class="navbar navbar-expand-md navbar-light fixed-top py-4">
+<body id="home" data-spy="scroll" data-target="#main-nav">
+<nav class="navbar navbar-expand-md navbar-light fixed-top py-4" id="main-nav">
     <div class="container">
         <a href="#home" class="navbar-brand">
             <img src="img/mlogo.png" alt="Mizuxe brand logo" width="50" height="50">
@@ -131,7 +131,7 @@
         <div class="row">
             <div class="col-lg-8 offset-lg-2">
                 <h2 class="display-6 text-primary">Why This Book?</h2>
-                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus aliquam
+                <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus aliquam
                     aliquid ex maxime molestiae molestias non quibusdam repellat repellendus ullam.</p>
             </div>
         </div>
@@ -209,12 +209,12 @@
 </section>
 
 <!-- AUTHORS SECTION -->
-<section id="authors" class="text-center my-5">
+<section id="authors" class="text-center py-5">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 offset-lg-2">
                 <h2 class="display-6 text-primary">Meet The Authors</h2>
-                <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dignissimos
+                <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae dignissimos
                     dolorem eligendi fuga incidunt inventore ipsam maxime molestias natus sunt?</p>
             </div>
         </div>
@@ -356,6 +356,64 @@
     </div>
 </section>
 
+<!-- CONTACT SECTION -->
+<section id="contact" class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h2 class="display-6">Get In Touch</h2>
+                <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, voluptates!</p>
+                <form>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="userIcon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Name" aria-label="Name"
+                               aria-describedby="#userIcon">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="emailIcon">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                        </div>
+                        <input type="email" class="form-control" placeholder="Email" aria-label="Email"
+                               aria-describedby="#emailIcon">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="messageIcon">
+                                <i class="fas fa-pencil-alt"></i>
+                            </span>
+                        </div>
+                        <textarea rows="4" class="form-control" placeholder="Message" aria-label="Message"
+                                  aria-describedby="#messageIcon"></textarea>
+                    </div>
+                    <input type="submit" value="Submit" class="btn btn-primary btn-block">
+                </form>
+            </div>
+            <div class="col-md-4 align-self-center d-none d-md-block">
+                <img src="img/mlogo.png" alt="Mizuxe logo" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="main-footer" class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-6 ml-auto">
+                <p class="lead">
+                    Copyright &copy;
+                    <span id="year"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
 
 <script src="js/bundle.js"></script>
 <script>
@@ -364,6 +422,23 @@
 
   // Access exported JavaScript in bundle:
   console.log(mainBundle.greeting('Greg'));
+
+  // Init ScrollSpy
+  $('body').scrollspy({ target: '#main-nav' });
+
+  // Smooth Scrolling
+  $('#main-nav a').on('click', function (event) {
+    if (this.hash !== '') {
+      event.preventDefault();
+
+      const hash = this.hash;
+      const navHeight = $('#main-nav').outerHeight();
+
+      $('html, body').animate({
+        scrollTop: $(hash).offset().top - navHeight
+      }, 800)
+    }
+  })
 </script>
 </body>
 </html>
