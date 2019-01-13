@@ -16,7 +16,6 @@ const log = require('gulplog');
 
 function compile() {
   return gulp.src([
-    'node_modules/bootstrap/scss/bootstrap.scss',
     'src/scss/*.scss'
   ])
     .pipe(sass({ includePaths: ['node_modules'] }))
