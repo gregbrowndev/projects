@@ -1,6 +1,11 @@
 @import "variables";
 @import "bootstrap/scss/bootstrap";
 
+@mixin carousel-image($url) {
+  background: url($url) no-repeat;
+  background-size: cover;
+}
+
 body {
   background: $body-bg;
 }
@@ -15,3 +20,20 @@ body {
   }
 }
 
+#showcaseCarousel {
+
+  .carousel-item {
+    height: 28rem;
+
+    &.carousel-image-1 {
+      @include carousel-image('../img/image1.jpg');
+    }
+    &.carousel-image-2 {
+      @include carousel-image('../img/image2.jpg');
+    }
+    &.carousel-image-3 {
+      @include carousel-image('../img/image3.jpg');
+    }
+  }
+
+}
