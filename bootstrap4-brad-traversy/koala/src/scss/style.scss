@@ -40,3 +40,39 @@ body {
     }
   }
 }
+
+#authors {
+  .card-deck {
+    justify-content: space-between;
+    margin: 0;
+
+    .author-card {
+      @extend .card;
+      flex: 0 0 100%;
+      margin: 2rem 0 0 0;
+
+      .card-img-top {
+        width: 50%;
+        margin-top: -3rem;
+        margin-bottom: 1rem;
+      }
+
+      .fab {
+        color: #fff;
+      }
+
+      &:hover {
+        background: $primary;
+        color: #fff;
+      }
+
+      @include media-breakpoint-up(md) {
+        flex: 0 0 48.7%;
+      }
+
+      @include media-breakpoint-up(lg) {
+        flex: 0 0 24%;
+      }
+    }
+  }
+}
