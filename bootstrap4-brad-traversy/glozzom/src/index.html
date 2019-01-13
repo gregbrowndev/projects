@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <title>Glozzom</title>
+</head>
+<body>
+<!-- Start Here -->
+
+<div class="jumbotron">
+    <h1 class="display-4" id="greeting"></h1>
+    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to
+        featured content or information.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <p class="lead">
+        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    </p>
+</div>
+
+<!-- Scripts -->
+<script src="js/bundle.js"></script>
+<script>
+  // Get the current year for the copyright
+  $('#year').text(new Date().getFullYear());
+
+  // Get greeting
+  $('#greeting').text(mainBundle.greeting('Greg'));
+</script>
+</body>
+</html>
