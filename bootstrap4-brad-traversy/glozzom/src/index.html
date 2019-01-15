@@ -29,11 +29,11 @@
 
 <!-- SHOWCASE SLIDER -->
 <section id="showcase">
-    <div id="showcaseCarousel" class="carousel slide" data-ride="carousel">
+    <div id="showcase-carousel" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
-            <li data-target="#showcaseCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#showcaseCarousel" data-slide-to="1"></li>
-            <li data-target="#showcaseCarousel" data-slide-to="2"></li>
+            <li data-target="#showcase-carousel" data-slide-to="0" class="active"></li>
+            <li data-target="#showcase-carousel" data-slide-to="1"></li>
+            <li data-target="#showcase-carousel" data-slide-to="2"></li>
         </ol>
         <div class="carousel-inner">
             <div class="carousel-item carousel-image-1 active">
@@ -69,14 +69,72 @@
                 </div>
             </div>
         </div>
-        <a href="#showcaseCarousel" class="carousel-control-prev" role="button" data-slide="prev">
+        <a href="#showcase-carousel" class="carousel-control-prev" role="button" data-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="sr-only">Previous</span>
         </a>
-        <a href="#showcaseCarousel" class="carousel-control-next" role="button" data-slide="next">
+        <a href="#showcase-carousel" class="carousel-control-next" role="button" data-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="sr-only">Next</span>
         </a>
+    </div>
+</section>
+
+<!-- HOME ICON SECTION -->
+<section id="home-icons" class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-sm-10 offset-sm-1 offset-md-0 col-md-4 mb-4 mb-md-0">
+                <i class="fas fa-cog fa-3x mb-2"></i>
+                <h3>Turning Gears</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea eveniet quos sed sit.</p>
+            </div>
+            <div class="col-sm-10 offset-sm-1 offset-md-0 col-md-4 mb-4 mb-md-0">
+                <i class="fas fa-cloud fa-3x mb-2"></i>
+                <h3>Sending Data</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis et explicabo quasi
+                    temporibus!</p>
+            </div>
+            <div class="col-sm-10 offset-sm-1 offset-md-0 col-md-4">
+                <i class="fas fa-cart-plus fa-3x mb-2"></i>
+                <h3>Making Money</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad molestias quis quo voluptatum.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOME HEADING SECTION -->
+<section id="home-heading" class="py-5 text-center text-white">
+    <div class="dark-overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2>Are You Ready To Get Started?</h2>
+                <p class="d-none d-md-block">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate
+                    doloremque
+                    nostrum
+                    nulla quaerat suscipit.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- INFO SECTION -->
+<section id="info" class="py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7 align-self-center">
+                <h2>Lorem ipsum</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aspernatur deserunt et maiores
+                    provident,
+                    tenetur voluptatem!</p>
+                <a href="about.html" class="btn btn-outline-danger btn-lg">Learn More</a>
+            </div>
+            <div class="d-none d-md-block col-md-5">
+                <img src="img/laptop.png" alt="Image of a laptop" class="img-fluid">
+            </div>
+        </div>
     </div>
 </section>
 
@@ -88,6 +146,12 @@
 
   // Get greeting
   console.log(mainBundle.greeting('Greg'));
+
+  // Configure slider
+  $('.carousel').carousel({
+    interval: 6000,
+    pause: 'hover'
+  });
 </script>
 </body>
 </html>
