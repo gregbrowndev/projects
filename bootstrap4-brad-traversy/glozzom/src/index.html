@@ -111,7 +111,7 @@
         <div class="row">
             <div class="col">
                 <h2>Are You Ready To Get Started?</h2>
-                <p class="d-none d-md-block">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate
+                <p class="d-none d-sm-block">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate
                     doloremque
                     nostrum
                     nulla quaerat suscipit.</p>
@@ -138,6 +138,37 @@
     </div>
 </section>
 
+<!-- VIDEO PLAY -->
+<section id="video-play" class="py-5">
+    <div class="dark-overlay"></div>
+    <div class="container text-center text-white align-self-center">
+        <div class="row">
+            <div class="col">
+                <a href="#" class="video" data-video="https://www.youtube.com/embed/peiYvyhvk-w/" data-toggle="modal"
+                   data-target="#videoModal">
+                    <i class="fas fa-play fa-2x"></i>
+                    <h2>See What We Do</h2>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VIDEO MODAL -->
+<div class="modal fade" id="videoModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+                <iframe src="" frameborder="0" height="350" width="100%" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Scripts -->
 <script src="js/bundle.js"></script>
 <script>
@@ -152,6 +183,25 @@
     interval: 6000,
     pause: 'hover'
   });
+
+  // Video Play
+  $(function () {
+    // Auto play modal video
+    $('.video').click(function () {
+      var theModal = $(this).data('target'),
+        videoSRC = $(this).attr('data-video'),
+        videoSRCauto = videoSRC + '?modestbranding=1&rel=0&controls=0&showinfo=0&html5=1&autoplay=1';
+      $(theModal + ' iframe').attr('src', videoSRCauto);
+      $(theModal + ' button.close').click(function () {
+        $(theModal + ' iframe').attr('src', videoSRC);
+      });
+    });
+
+    /* Assign empty url value to the iframe src attribute when modal hide or closes, which stop the video playing */
+    $("#videoModal").on('hide.bs.modal', function(){
+      $("iframe").attr('src', "");
+    });
+  })
 </script>
 </body>
 </html>
