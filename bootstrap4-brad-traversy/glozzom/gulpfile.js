@@ -74,6 +74,14 @@ function html() {
     .pipe(browserSync.stream());
 }
 
+function otherCSS() {
+  return gulp.src([
+    'node_modules/ekko-lightbox/dist/ekko-lightbox.css'
+  ])
+    .pipe(gulp.dest('dist/css'))
+    .pipe(browserSync.stream());
+}
+
 function images() {
   return gulp.src([
     'src/img/**'
@@ -114,7 +122,7 @@ function watch() {
   gulp.watch('src/*.html', { events: 'change' }, gulp.series(html, reload));
 }
 
-const dev = gulp.series(gulp.parallel(compile, bundle, html, images, fonts), serve, watch);
+const dev = gulp.series(gulp.parallel(compile, otherCSS, bundle, html, images, fonts), serve, watch);
 
 // Default Task
 exports.default = dev;

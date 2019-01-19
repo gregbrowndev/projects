@@ -5,6 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="ie=edge" http-equiv="X-UA-Compatible">
     <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/ekko-lightbox.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <title>Glozzom</title>
 </head>
@@ -121,7 +122,7 @@
 </section>
 
 <!-- INFO SECTION -->
-<section id="info" class="py-3">
+<section id="info" class="py-5">
     <div class="container">
         <div class="row">
             <div class="col-md-7 align-self-center">
@@ -153,6 +154,94 @@
         </div>
     </div>
 </section>
+
+<!-- PHOTO GALLERY -->
+<!-- note we change the image size in the url to force the API to send a different image -->
+<section id="gallery" class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2 class="text-center">Photo Gallery</h2>
+                <p class="text-center">Check out our photos</p>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <a href="https://source.unsplash.com/random/560x560" data-toggle="lightbox"
+                           data-gallery="img-gallery"
+                           data-height="560" data-width="560">
+                            <img src="https://source.unsplash.com/random/560x560" alt="Random image" class="img-fluid">
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="https://source.unsplash.com/random/561x561" data-toggle="lightbox"
+                           data-gallery="img-gallery"
+                           data-height="561" data-width="561">
+                            <img src="https://source.unsplash.com/random/561x561" alt="Random image" class="img-fluid">
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="https://source.unsplash.com/random/562x562" data-toggle="lightbox"
+                           data-gallery="img-gallery"
+                           data-height="562" data-width="562">
+                            <img src="https://source.unsplash.com/random/562x562" alt="Random image" class="img-fluid">
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <a href="https://source.unsplash.com/random/563x563" data-toggle="lightbox"
+                           data-gallery="img-gallery"
+                           data-height="563" data-width="563">
+                            <img src="https://source.unsplash.com/random/563x563" alt="Random image" class="img-fluid">
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="https://source.unsplash.com/random/564x564" data-toggle="lightbox"
+                           data-gallery="img-gallery"
+                           data-height="564" data-width="564">
+                            <img src="https://source.unsplash.com/random/564x564" alt="Random image" class="img-fluid">
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="https://source.unsplash.com/random/565x565" data-toggle="lightbox"
+                           data-gallery="img-gallery"
+                           data-height="565" data-width="565">
+                            <img src="https://source.unsplash.com/random/565x565" alt="Random image" class="img-fluid">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="newsletter" class="bg-dark py-5 text-center text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2>Sign Up For Our Newsletter</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque, nulla.</p>
+                <form class="form-inline justify-content-center">
+                    <input type="text" class="form-control mb-2 mr-2" placeholder="Enter Name" aria-label="Name input">
+                    <input type="email" class="form-control mb-2 mr-2" placeholder="Enter Email"
+                           aria-label="Email input">
+                    <button class="btn btn-primary mb-2" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="main-footer" class="text-center text-white py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p>Copyright &copy; <span id="year"></span> Glozzom</p>
+            </div>
+        </div>
+    </div>
+</footer>
 
 <!-- VIDEO MODAL -->
 <div class="modal fade" id="videoModal">
@@ -198,8 +287,8 @@
     });
 
     /* Assign empty url value to the iframe src attribute when modal hide or closes, which stop the video playing */
-    $("#videoModal").on('hide.bs.modal', function(){
-      $("iframe").attr('src', "");
+    $('#videoModal').on('hide.bs.modal', function () {
+      $('iframe').attr('src', '');
     });
   })
 </script>
