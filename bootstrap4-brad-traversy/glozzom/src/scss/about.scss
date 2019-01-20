@@ -1,11 +1,12 @@
 @import "variables";
 
-#about-heading {
-  background: url('../img/image1.jpg') no-repeat fixed 0 -250px;
+#page-header {
+  background: url('../img/image1.jpg') no-repeat fixed 0 -360px;
   background-size: cover;
+  border-bottom: 1px #eee solid;
 }
 
-#about-us {
+#about {
   img {
     @include media-breakpoint-up(md) {
       margin-top: -2rem;

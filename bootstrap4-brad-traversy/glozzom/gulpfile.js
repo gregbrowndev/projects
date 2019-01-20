@@ -16,7 +16,8 @@ const log = require('gulplog');
 
 function compile() {
   return gulp.src([
-    'src/scss/*.scss'
+    'node_modules/slick-carousel/slick/*.scss',
+    'src/scss/*.scss',
   ])
     .pipe(sass({ includePaths: ['node_modules'] }))
     .pipe(autoprefixer({
