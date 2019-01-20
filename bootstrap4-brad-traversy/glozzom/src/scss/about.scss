@@ -1,0 +1,38 @@
+@import "variables";
+
+#about-heading {
+  background: url('../img/image1.jpg') no-repeat fixed 0 -250px;
+  background-size: cover;
+}
+
+#about-us {
+  img {
+    @include media-breakpoint-up(md) {
+      margin-top: -2rem;
+    }
+  }
+}
+
+#boxes {
+  .card-deck {
+    justify-content: space-between;
+    margin: 0;
+
+    .card {
+      flex: 0 0 100%;
+      margin: 2rem 0 0 0;
+
+      .fab {
+        color: #fff;
+      }
+
+      @include media-breakpoint-up(md) {
+        flex: 0 0 48.7%;
+      }
+
+      @include media-breakpoint-up(lg) {
+        flex: 0 0 33%;
+      }
+    }
+  }
+}

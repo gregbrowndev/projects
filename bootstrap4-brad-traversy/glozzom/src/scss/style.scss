@@ -1,13 +1,10 @@
 @import "variables";
 @import "bootstrap/scss/bootstrap";
 
-@mixin carousel-image($url) {
-  background: url($url) no-repeat;
-  background-size: cover;
-}
 
 body {
   background: $body-bg;
+  padding-top: 40px;
 }
 
 #main-nav .nav-link {
@@ -20,25 +17,6 @@ body {
   }
 }
 
-#showcase-carousel {
-
-  .carousel-item {
-    height: 28rem;
-
-    &.carousel-image-1 {
-      @include carousel-image('../img/image1.jpg');
-    }
-
-    &.carousel-image-2 {
-      @include carousel-image('../img/image2.jpg');
-    }
-
-    &.carousel-image-3 {
-      @include carousel-image('../img/image3.jpg');
-    }
-  }
-
-}
 
 .dark-overlay {
   position: absolute;
@@ -49,22 +27,6 @@ body {
   background: rgba(0, 0, 0, 0.7);
 }
 
-#home-heading {
-  position: relative;
-  min-height: 12.5rem;
-
-  background: url('../img/lights.jpg') no-repeat fixed;
-}
-
-#video-play {
-  position: relative;
-  min-height: 12.5rem;
-  background: url('../img/media.jpg') no-repeat fixed 0 -300px;
-
-  a {
-    color: #fff;
-  }
-}
 
 #main-footer {
   background: #000;
