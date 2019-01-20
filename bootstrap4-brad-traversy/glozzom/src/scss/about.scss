@@ -14,25 +14,38 @@
   }
 }
 
-#boxes {
+#icon-boxes {
   .card-deck {
     justify-content: space-between;
     margin: 0;
 
     .card {
       flex: 0 0 100%;
-      margin: 2rem 0 0 0;
+      margin: 0 0 1rem 0;
+      text-align: center;
+      color: #fff;
+      background: $dark;
 
-      .fab {
-        color: #fff;
+      @include media-breakpoint-down(sm) {
+        &:nth-child(odd) {
+          background: $danger;
+        }
       }
 
-      @include media-breakpoint-up(md) {
+      @include media-breakpoint-only(md) {
         flex: 0 0 48.7%;
+
+        &:nth-child(4n+1),
+        &:nth-child(4n) {
+          background: $danger;
+        }
       }
 
       @include media-breakpoint-up(lg) {
-        flex: 0 0 33%;
+        flex: 0 0 32%;
+        &:nth-child(odd) {
+          background: $danger;
+        }
       }
     }
   }
