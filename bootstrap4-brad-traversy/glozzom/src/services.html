@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/services.css" rel="stylesheet">
+    <title>Glozzom</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="main-nav">
+    <div class="container">
+        <a href="index.html" class="navbar-brand">Glozzom</a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="services.html" class="nav-link active">Services</a></li>
+                <li class="nav-item"><a href="blog.html" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<section id="page-header" class="bg-dark text-center text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Our Services</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam aperiam consectetur enim
+                    perferendis quasi sequi.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES SECTION -->
+<section id="services" class="py-5">
+    <div class="container">
+        <div class="card-deck">
+            <div class="card text-center">
+                <div class="card-header bg-dark text-white">
+                    <h3>Service Plan One</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">$59.99/Month</h4>
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores, libero!</p>
+                    <ul class="list-group mb-2">
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature One
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Two
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Three
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Four
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Five
+                        </li>
+                    </ul>
+                    <a href="#" class="btn btn-danger btn-block btn-lg">Get it</a>
+                </div>
+                <div class="card-footer text-muted">1 Year Plan</div>
+            </div>
+
+            <div class="card text-center">
+                <div class="card-header bg-dark text-white">
+                    <h3>Service Plan Two</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">$99.99/Month</h4>
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores, libero!</p>
+                    <ul class="list-group mb-2">
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature One
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Two
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Three
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Four
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Five
+                        </li>
+                    </ul>
+                    <a href="#" class="btn btn-danger btn-block btn-lg">Get it</a>
+                </div>
+                <div class="card-footer text-muted">1 Year Plan</div>
+            </div>
+
+            <div class="card text-center">
+                <div class="card-header bg-dark text-white">
+                    <h3>Service Plan Three</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">$129.99/Month</h4>
+                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores, libero!</p>
+                    <ul class="list-group mb-2">
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature One
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Two
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Three
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Four
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-check"></i> Feature Five
+                        </li>
+                    </ul>
+                    <a href="#" class="btn btn-danger btn-block btn-lg">Get it</a>
+                </div>
+                <div class="card-footer text-muted">1 Year Plan</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer id="main-footer" class="text-center text-white py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <p>Copyright &copy; <span id="year"></span> Glozzom</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="js/bundle.js"></script>
+<script>
+  // Get the current year for the copyright
+  $('#year').text(new Date().getFullYear());
+
+  // Get greeting
+  console.log(mainBundle.greeting('Greg'));
+</script>
+</body>
+</html>
