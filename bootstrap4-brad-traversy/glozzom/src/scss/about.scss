@@ -33,7 +33,7 @@
       }
 
       @include media-breakpoint-only(md) {
-        flex: 0 0 48.7%;
+        flex: 0 0 calc(50% - #{$grid-gutter-width});
 
         &:nth-child(4n+1),
         &:nth-child(4n) {
@@ -42,7 +42,7 @@
       }
 
       @include media-breakpoint-up(lg) {
-        flex: 0 0 32%;
+        flex: 0 0 calc(100% / 3 - #{$grid-gutter-width});
         &:nth-child(odd) {
           background: $danger;
         }
