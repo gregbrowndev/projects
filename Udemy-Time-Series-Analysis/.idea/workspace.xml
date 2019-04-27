@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3ef944e-30cd-49e9-b851-d87332d1e802" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/02-Pandas/01-Series.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/02-Pandas/01-Series.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-Pandas/02-DataFrames.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/02-Pandas/02-DataFrames.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-Pandas/03-Missing-Data.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/02-Pandas/03-Missing-Data.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-Pandas/04-Groupby.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/02-Pandas/04-Groupby.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-Pandas/05-Operations.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/02-Pandas/05-Operations.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-Pandas/06-Data-Input-and-Output.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/02-Pandas/06-Data-Input-and-Output.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-Pandas/Excel_Sample.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/02-Pandas/Excel_Sample.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02-Pandas/example.csv" beforeDir="false" afterPath="$PROJECT_DIR$/02-Pandas/example.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03-Pandas-Visualization/00-Pandas Built-in Data Visualization.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/03-Pandas-Visualization/00-Pandas Built-in Data Visualization.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03-Pandas-Visualization/01-Customizing-Plots.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/03-Pandas-Visualization/01-Customizing-Plots.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03-Pandas-Visualization/02-Pandas-Data-Visualization-Exercise.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/03-Pandas-Visualization/02-Pandas-Data-Visualization-Exercise.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,7 +15,24 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/tsa_course_env.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="165">
+              <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/requirements.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-90" />
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -109,12 +123,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1555443647195</updated>
-      <workItem from="1555443660530" duration="6477000" />
+      <workItem from="1555443660530" duration="7440000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6477000" />
+    <option name="totallyTimeSpent" value="7440000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -154,17 +168,15 @@
     <entry file="file://$PROJECT_DIR$/01-NumPy/00-NumPy-Arrays.ipynb">
       <provider selected="true" editor-type-id="jupyter-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/tsa_course_env.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="16" lean-forward="true" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="22" lean-forward="true" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+        <state relative-caret-position="-90" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tsa_course_env.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
         </state>
       </provider>
     </entry>
