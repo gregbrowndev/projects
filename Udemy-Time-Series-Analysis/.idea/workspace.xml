@@ -2,11 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f3ef944e-30cd-49e9-b851-d87332d1e802" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03-Pandas-Visualization/00-Pandas Built-in Data Visualization.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/03-Pandas-Visualization/00-Pandas Built-in Data Visualization.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03-Pandas-Visualization/01-Customizing-Plots.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/03-Pandas-Visualization/01-Customizing-Plots.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03-Pandas-Visualization/02-Pandas-Data-Visualization-Exercise.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/03-Pandas-Visualization/02-Pandas-Data-Visualization-Exercise.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-Time-Series-with-Pandas/.ipynb_checkpoints/03-Rolling-and-Expanding-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/04-Time-Series-with-Pandas/.ipynb_checkpoints/03-Rolling-and-Expanding-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-Time-Series-with-Pandas/00-Datetime-Index.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/04-Time-Series-with-Pandas/00-Datetime-Index.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-Time-Series-with-Pandas/01-Time-Resampling.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/04-Time-Series-with-Pandas/01-Time-Resampling.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-Time-Series-with-Pandas/02-Time-Shifting.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/04-Time-Series-with-Pandas/02-Time-Shifting.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-Time-Series-with-Pandas/03-Rolling-and-Expanding.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/04-Time-Series-with-Pandas/03-Rolling-and-Expanding.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-Time-Series-with-Pandas/04-Visualizing-Time-Series-Data.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/04-Time-Series-with-Pandas/04-Visualizing-Time-Series-Data.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-Time-Series-with-Pandas/05-Pandas-Time-Series-Exercises-SET-ONE.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/04-Time-Series-with-Pandas/05-Pandas-Time-Series-Exercises-SET-ONE.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/04-Time-Series-with-Pandas/07-Time-Series-with-Pandas-Project-Exercise-SET-TWO.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/04-Time-Series-with-Pandas/07-Time-Series-with-Pandas-Project-Exercise-SET-TWO.ipynb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -123,12 +126,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1555443647195</updated>
-      <workItem from="1555443660530" duration="7440000" />
+      <workItem from="1555443660530" duration="10324000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="7440000" />
+    <option name="totallyTimeSpent" value="10324000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -139,8 +142,8 @@
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" />
       <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Python Console" weight="0.38343948" />
-      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.4789809" />
+      <window_info active="true" anchor="bottom" id="Python Console" visible="true" weight="0.38343948" />
+      <window_info anchor="bottom" id="Terminal" weight="0.4789809" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" weight="0.3299363" />
       <window_info anchor="bottom" id="Jupyter" weight="0.3299363" />
       <window_info anchor="bottom" id="Message" order="0" />
