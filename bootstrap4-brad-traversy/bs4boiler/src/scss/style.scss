@@ -1,4 +1,5 @@
-$body-bg: #fff;
+@import "variables";
+@import "bootstrap/scss/bootstrap";
 
 body {
   background: $body-bg;

@@ -1,0 +1,43 @@
+@import "variables";
+
+@mixin carousel-image($url) {
+  background: url($url) no-repeat;
+  background-size: cover;
+}
+
+#showcase-carousel {
+
+  .carousel-item {
+    height: 28rem;
+
+    &.carousel-image-1 {
+      @include carousel-image('../img/image1.jpg');
+    }
+
+    &.carousel-image-2 {
+      @include carousel-image('../img/image2.jpg');
+    }
+
+    &.carousel-image-3 {
+      @include carousel-image('../img/image3.jpg');
+    }
+  }
+
+}
+
+#home-heading {
+  position: relative;
+  min-height: 12.5rem;
+
+  background: url('../img/lights.jpg') no-repeat fixed;
+}
+
+#video-play {
+  position: relative;
+  min-height: 12.5rem;
+  background: url('../img/media.jpg') no-repeat fixed 0 -300px;
+
+  a {
+    color: #fff;
+  }
+}
