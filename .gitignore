@@ -49,3 +49,5 @@ test/vagrant-spec/boxes/*.box
 # Custom
 repo
 
+**/.ipynb_checkpoints/
+
