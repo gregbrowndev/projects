@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+
+  db:
+    image: postgres
+    restart: on-failure
+    environment:
+      POSTGRES_PASSWORD: mypwd
+    volumes:
+      - django-db:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+
+  web:
+    build: .
+    restart: on-failure
+    environment:
+      DJANGO_SETTINGS_MODULE: celeryapp.settings
+    volumes:
+      - .:/code
+    ports:
+      - "8050:8000"
+    depends_on:
+      - db
+
+  celery_worker:
+    # This is a celery work process running in a container from the same Django image as web, this ensures the workers
+    # have all the dependencies installed
+    build: .
+    restart: on-failure
+    command: celery worker -A celeryapp --loglevel=debug --concurrency=4
+#    user: nobody
+    environment:
+      DJANGO_SETTINGS_MODULE: celeryapp.settings
+    volumes:
+      - .:/code
+    depends_on:
+      - web
+      - redis
+
+  celery_beat:
+    # This is a celery beat process. It likely doesn't need all the requirements that the Django image installs and
+    # could be made much lighter with a standalone image
+    build: .
+    restart: on-failure
+    command: celery beat -A celeryapp --loglevel=debug --scheduler django_celery_beat.schedulers:DatabaseScheduler
+#    user: nobody
+    environment:
+      DJANGO_SETTINGS_MODULE: celeryapp.settings
+    volumes:
+      - .:/code
+    depends_on:
+      - web
+      - redis
+
+#  celery_flower:
+#    image: iserko/docker-celery-flower
+#    environment:
+#      CELERY_BROKER_URL: 'redis://redis:6379/0'
+#    ports:
+#      - "5555:5555"
+
+
+volumes:
+  django-db:

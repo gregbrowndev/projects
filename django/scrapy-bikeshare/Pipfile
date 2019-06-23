@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+scrapy = "*"
+attrs = "*"
+cattrs = "*"
+pendulum = "*"
+alembic = "*"
+sqlalchemy = "*"
+sqlalchemy-repr = "*"
+"psycopg2-binary" = "*"
+
+[dev-packages]
+ipython = "*"
+mypy = "*"
+pytest = "*"
+requests = "*"
+
+[requires]
+python_version = "3.6"
