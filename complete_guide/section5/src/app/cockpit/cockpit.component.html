@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-xs-12">
+    <p>Add new Servers or blueprints!</p>
+    <label>Server Name</label>
+    <!--<input type="text" class="form-control" [(ngModel)]="newServerName">-->
+    <!--We replaced the input above using two-way binding to 'newServerName' with the input below, which can be passed
+     directly to our functions as an HTMLInputElement using its local reference-->
+    <input
+      type="text"
+      class="form-control"
+      #serverNameInput
+    >
+    <label>Server Content</label>
+    <!--<input type="text" class="form-control" [(ngModel)]="newServerContent">-->
+    <input
+      type="text"
+      class="form-control"
+      #serverContentInput>
+    <!---->
+    <br>
+    <button
+      class="btn btn-primary"
+      (click)="onAddServer(serverNameInput)">Add Server</button>
+    <button
+      class="btn btn-primary"
+      (click)="onAddBlueprint(serverNameInput)">Add Server Blueprint</button>
+  </div>
+</div>
