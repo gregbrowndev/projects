@@ -1,0 +1,118 @@
+# vagrant package --base pocd-cm572-template-manager --output cm572-manager.box
+# vagrant package --base pocd-cm572-template-node --output cm572-node.box
+
+# vagrant box add cm572-manager file:///F:/COURSES/VAGRANT_COURSE/VAGRANT_PROJECT/cm572-manager.box
+# vagrant box add cm572-node file:///F:/COURSES/VAGRANT_COURSE/VAGRANT_PROJECT/cm572-node.box
+
+# ##########################################################################################################
+
+varManagerServer = "cm572-dev-manager"
+
+varRamCM=3172
+varRamMan=2048
+varRamNode=2048
+
+varDomain = "poc-d.internal"
+varRepository = "/home/greg/Development/vagrant_apps/repo"
+
+nodes = [
+	{ :host => "#{varManagerServer}",  :ip => "10.10.47.10", :box => "cm572-manager", :ram => varRamCM, :cpu => 2, :gui => false },
+
+	{ :host => "cm572-man1",  :ip => "10.10.47.11", :box => "cm572-node", :ram => varRamMan, :cpu => 2, :gui => false },
+#	{ :host => "cm572-man2",  :ip => "10.10.47.12", :box => "cm572-node", :ram => varRamMan, :cpu => 2, :gui => false },
+#	{ :host => "cm572-man3",  :ip => "10.10.47.13", :box => "cm572-node", :ram => varRamMan, :cpu => 2, :gui => false },
+
+	{ :host => "cm572-node1",  :ip => "10.10.47.14", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+	{ :host => "cm572-node2",  :ip => "10.10.47.15", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+	{ :host => "cm572-node3",  :ip => "10.10.47.16", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+#	{ :host => "cm572-node4",  :ip => "10.10.47.17", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+
+#	{ :host => "cm572-node5",  :ip => "10.10.47.18", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+#	{ :host => "cm572-node6",  :ip => "10.10.47.19", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+#	{ :host => "cm572-node7",  :ip => "10.10.47.20", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+#	{ :host => "cm572-node8",  :ip => "10.10.47.21", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+
+#	{ :host => "cm572-node9",  :ip => "10.10.47.22", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+#	{ :host => "cm572-node10",  :ip => "10.10.47.23", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+#	{ :host => "cm572-node11",  :ip => "10.10.47.24", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+#	{ :host => "cm572-node12",  :ip => "10.10.47.25", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+
+#	{ :host => "cm572-template",  :ip => "10.10.47.210", :box => "cm572-node", :ram => varRamNode, :cpu => 2, :gui => false },
+
+]
+
+## ################################################################
+## START - HOSTS FOR GUESTS
+## ################################################################
+varHostEntries = ""
+nodes.each do |node|
+	varHostEntries << "#{node[:ip]} #{node[:host]}.#{varDomain} #{node[:host]}\n"
+end
+
+puts varHostEntries
+
+$etchosts = <<SCRIPT
+#!/bin/bash
+cat > /etc/hosts <<EOF
+127.0.0.1       localhost
+10.10.47.1      host.#{varDomain} host
+#{varHostEntries}
+EOF
+SCRIPT
+## ################################################################
+## END - HOSTS FOR GUESTS
+## ################################################################
+
+Vagrant.configure("2") do |config|
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = false
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  nodes.each do |node|
+	config.vm.define node[:host] do |node_config|
+	
+		node_config.ssh.username = "vagrant"
+		node_config.ssh.password = "vagrant"
+	
+		node_config.vm.box = node[:box]
+		node_config.vm.hostname = "#{node[:host]}.#{varDomain}"
+		node_config.vm.network "private_network", ip: node[:ip], :netmask => "255.255.255.0"
+		
+		node_config.hostmanager.aliases = "#{node[:host]}"
+		
+		node_config.vm.provider :virtualbox do |v|
+			v.name = node[:host].to_s
+			v.gui = node[:gui]
+			
+			v.customize ["modifyvm", :id, "--memory", node[:ram].to_s]
+			v.customize ["modifyvm", :id, "--cpus", node[:cpu].to_s]			
+		end
+
+		node_config.vm.synced_folder varRepository, "/repository", 
+			id: "repository",
+			owner: "vagrant",
+			group: "vagrant"
+		
+		node_config.vm.provision :shell, :inline => $etchosts
+		
+		node_config.vm.provision :shell, :path => "os-tuning/provision_for_print_os.sh"
+		node_config.vm.provision :shell, :path => "os-tuning/provision_for_os_settings.sh"
+		node_config.vm.provision :shell, :path => "os-tuning/provision_for_os.sh"
+		node_config.vm.provision :shell, :path => "os-tuning/provision_for_print_os.sh"
+				
+		if node[:host] == varManagerServer
+			node_config.vm.provision :shell, :path => "webserver/provision_for_httpd_start_67_v2.sh"
+		
+			# http://cm572-dev-manager:7180/
+			node_config.vm.provision :shell, :path => "cloudera-manager-deploy/provision_for_cm_server.sh"				
+		end
+
+		node_config.vm.provision :shell, :path => "cloudera-node-deploy/provision_for_cm_client_v2.sh", 
+			:args => "#{varManagerServer}"
+
+	end
+  end	
+end

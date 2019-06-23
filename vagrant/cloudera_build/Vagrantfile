@@ -1,0 +1,99 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# This project creates two VMs, a Cloudera Manager and data node, which can be exported and used as base images in other projects.
+
+# Export the VMs once they're built
+# vagrant package --base manager --output cm572-manager.box
+# vagrant package --base node --output cm572-node.box
+
+# Register VMs to use as base images
+# vagrant box add cm572-manager cm572-manager.box
+# vagrant box add cm572-node cm572-node.box
+
+# Specifies whether the installed Cloudera agent should run at startup
+varStartAgent = "stop" # "start" or "stop"
+
+varManagerServer = "manager"
+varTemplateNode = "node"
+
+varWebSubDir = "parcels"
+varWebExportedRepoDir = "_cdh5-parcels"
+
+nodes = [
+  { :host => "#{varManagerServer}", :ip => "10.10.45.9", :box => "centos/7", :gui => false, :ram => 3172, :cpu => 1 },
+  { :host => "#{varTemplateNode}", :ip => "10.10.45.10", :box => "centos/7", :gui => false, :ram => 3172, :cpu => 2 }
+]
+
+varDomain = "internal"
+varRepository = "/home/greg/Development/vagrant_apps/repo"
+
+varHostEntries = ""
+nodes.each do |node|
+  varHostEntries << "#{node[:ip]} #{node[:host]}.#{varDomain} #{node[:host]}\n"
+end 
+
+puts varHostEntries
+
+$etchosts = <<SCRIPT
+#!/bin/bash
+cat > /etc/hosts <<EOF
+127.0.0.1     localhost
+10.10.45.1    host.#{varDomain} host
+#{varHostEntries}
+EOF
+SCRIPT
+
+### Configure Machines
+
+Vagrant.configure("2") do |config|
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = false
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  nodes.each do |node|
+    config.vm.define node[:host] do |node_config|
+      node_config.vm.box = node[:box]
+      node_config.vm.network "private_network", ip: node[:ip]
+      node_config.vm.hostname = "#{node[:host]}.#{varDomain}"
+      node_config.hostmanager.aliases = "#{node[:host]}"
+  
+      node_config.vm.provider :virtualbox do |v|
+          v.name = node[:host].to_s
+          v.gui = node[:gui]
+          v.customize ["modifyvm", :id, "--memory", node[:ram].to_s]
+          v.customize ["modifyvm", :id, "--cpus", node[:cpu].to_s]
+      end
+
+      node_config.vm.synced_folder varRepository, "/repository", id: "repository", owner: "vagrant", group: "vagrant"
+
+      node_config.vm.provision :shell, :inline => $etchosts
+      node_config.vm.provision :shell, :path => "cloudera/provision_rpm_cm572.sh"
+
+      node_config.vm.provision :shell, :path => "os-tuning/provision_for_print_os.sh"
+      node_config.vm.provision :shell, :path => "os-tuning/provision_for_os_settings.sh"
+      node_config.vm.provision :shell, :path => "os-tuning/provision_for_os.sh"
+      node_config.vm.provision :shell, :path => "os-tuning/provision_for_print_os.sh"
+
+      node_config.vm.provision :shell, :path => "java/provision_for_java.sh"
+
+      if node[:host] == varManagerServer
+
+        # http://manager:80/parcels/
+        node_config.vm.provision :shell, 
+          :path => "webserver/provision_for_httpd_67_v3.sh",
+          :args => "#{varManagerServer} #{varWebSubDir} #{varWebExportedRepoDir}"
+
+        # http://manager:7180/
+        node_config.vm.provision :shell, :path => "cloudera-manager-deploy/provision_for_cdh_master_embedded.sh"
+      end
+
+      node_config.vm.provision :shell,
+        :path => "cloudera-node-deploy/provision_for_cdh_datanode.sh",
+        :args => "#{varManagerServer} #{varStartAgent}"
+    end
+  end
+end

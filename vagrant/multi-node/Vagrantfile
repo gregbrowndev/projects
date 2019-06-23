@@ -1,0 +1,37 @@
+nodes = [
+  { :host => "manager-node", :ip => "10.10.45.9", :box => "centos/7", :gui => false, :ram => 1024, :cpu => 1 },
+  { :host => "data-node1", :ip => "10.10.45.10", :box => "centos/7", :gui => false, :ram => 2048, :cpu => 2 },
+  { :host => "data-node2", :ip => "10.10.45.11", :box => "centos/7", :gui => false, :ram => 2048, :cpu => 2 }
+]
+
+varDomain = "internal"
+varRepository = "/home/greg/Development/vagrant_apps/repo"
+
+Vagrant.configure("2") do |config|
+
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  nodes.each do |node|
+    config.vm.define node[:host] do |node_config|
+      node_config.vm.box = node[:box]
+      node_config.vm.network "private_network", ip: node[:ip]
+      node_config.vm.hostname = node[:host] + "." + varDomain
+      node_config.hostmanager.aliases = "#{node[:host]}"
+  
+      node_config.vm.provider :virtualbox do |v|
+          v.name = node[:host].to_s
+          v.gui = node[:gui]
+          v.customize ["modifyvm", :id, "--memory", node[:ram].to_s]
+          v.customize ["modifyvm", :id, "--cpus", node[:cpu].to_s]
+      end
+
+      node_config.vm.synced_folder varRepository, "/repository", id: "repository", owner: "vagrant", group: "vagrant"
+
+      node_config.vm.provision :shell, :path => "java/provision_for_java.sh"
+    end
+  end
+end
