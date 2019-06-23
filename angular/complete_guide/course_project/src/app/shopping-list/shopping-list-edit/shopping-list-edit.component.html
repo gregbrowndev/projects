@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="col-xs-12">
+  <!-- We don't need to specify an action as we do not want to send a request to the server -->
+    <form (ngSubmit)="onSubmit()" #f="ngForm">
+      <div class="row">
+        <div class="col-sm-5 form-group">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            ngModel
+            name="name"
+            required
+            #name="ngModel">
+          <span class="help-block" *ngIf="!name.valid && name.touched">Please enter a valid name!</span>
+        </div>
+        <div class="col-sm-2 form-group">
+          <label for="amount">Amount</label>
+          <input
+            type="number"
+            id="amount"
+            class="form-group"
+            ngModel
+            name="amount"
+            required
+            [pattern]="'^[1-9]+[0-9]*$'"
+            #amount="ngModel">
+          <span class="help-block" *ngIf="!amount.valid && amount.touched">Please enter a valid amount!</span>
+        </div>
+      </div>
+      <div class="col-xs-12">
+        <button class="btn btn-success" type="submit" [disabled]="!f.valid">{{ editMode ? "Update" : "Add" }}</button>
+        <button class="btn btn-primary" (click)="onClear()" type="button">Clear</button>
+        <button class="btn btn-danger" type="button" (click)="onDelete()" *ngIf="editMode">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
