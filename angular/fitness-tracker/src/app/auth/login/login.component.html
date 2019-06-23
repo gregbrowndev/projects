@@ -1,0 +1,31 @@
+<section>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="10px">
+    <mat-form-field>
+      <input
+        type="email"
+        matInput
+        formControlName="email"
+        placeholder="Your email"
+        email
+        required>
+      <mat-error>{{getErrorMessage('email')}}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <input
+        type="password"
+        matInput
+        formControlName="password"
+        placeholder="Your password"
+        required
+        minlength="6"
+        #pwInput>
+      <mat-hint align="start">Should be at least 6 characters long</mat-hint>
+      <mat-hint align="end"> {{pwInput.value?.length}} / 6</mat-hint>
+      <mat-error>{{getErrorMessage('password')}}</mat-error>
+    </mat-form-field>
+
+    <button *ngIf="!(isLoading$ | async)" mat-raised-button type="submit" color="primary" [disabled]="form.invalid">Submit</button>
+    <mat-spinner *ngIf="(isLoading$ | async)"></mat-spinner>
+
+  </form>
+</section>
