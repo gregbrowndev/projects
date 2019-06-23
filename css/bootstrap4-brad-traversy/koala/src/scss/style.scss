@@ -1,0 +1,78 @@
+@import "variables";
+@import "bootstrap/scss/bootstrap";
+
+body {
+  background: $body-bg;
+  margin-top: 105px;
+}
+
+.navbar {
+  box-shadow: 2px 2px 5px $primary;
+  opacity: 0.9;
+  background: #fff;
+
+  .nav-item {
+    font-size: 1.4rem;
+    padding-right: 1.4rem;
+  }
+}
+
+#showcase {
+  min-height: 600px;
+  background: url('../img/mountains.jpg') no-repeat fixed;
+  background-size: cover;
+  position: relative;
+
+  .primary-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: $primary-overlay;
+  }
+
+  @include media-breakpoint-down(md) {
+    min-height: 500px;
+
+    h1 {
+      font-size: 4rem;
+    }
+  }
+}
+
+#authors {
+  .card-deck {
+    justify-content: space-between;
+    margin: 0;
+
+    .author-card {
+      @extend .card;
+      flex: 0 0 100%;
+      margin: 2rem 0 0 0;
+
+      .card-img-top {
+        width: 50%;
+        margin-top: -3rem;
+        margin-bottom: 1rem;
+      }
+
+      .fab {
+        color: #fff;
+      }
+
+      &:hover {
+        background: $primary;
+        color: #fff;
+      }
+
+      @include media-breakpoint-up(md) {
+        flex: 0 0 48.7%;
+      }
+
+      @include media-breakpoint-up(lg) {
+        flex: 0 0 24%;
+      }
+    }
+  }
+}

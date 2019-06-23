@@ -1,0 +1,52 @@
+@import "variables";
+
+#page-header {
+  background: url('../img/image1.jpg') no-repeat fixed 0 -360px;
+  background-size: cover;
+  border-bottom: 1px #eee solid;
+}
+
+#about {
+  img {
+    @include media-breakpoint-up(md) {
+      margin-top: -2rem;
+    }
+  }
+}
+
+#icon-boxes {
+  .card-deck {
+    justify-content: space-between;
+    margin: 0;
+
+    .card {
+      flex: 0 0 100%;
+      margin: 0 0 1rem 0;
+      text-align: center;
+      color: #fff;
+      background: $dark;
+
+      @include media-breakpoint-down(sm) {
+        &:nth-child(odd) {
+          background: $danger;
+        }
+      }
+
+      @include media-breakpoint-only(md) {
+        flex: 0 0 calc(50% - #{$grid-gutter-width});
+
+        &:nth-child(4n+1),
+        &:nth-child(4n) {
+          background: $danger;
+        }
+      }
+
+      @include media-breakpoint-up(lg) {
+        flex: 0 0 calc(100% / 3 - #{$grid-gutter-width});
+        &:nth-child(odd) {
+          background: $danger;
+        }
+      }
+    }
+  }
+}

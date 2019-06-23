@@ -1,0 +1,159 @@
+@font-face {
+    font-family: "AnonymousPro";
+    src: url("anonymousPro-Regular.ttf");
+}
+
+@font-face {
+    font-family: "AnonymousPro";
+    src: url("anonymousPro-Bold.ttf");
+    font-weight: 700;
+}
+
+main {
+    padding-top: 2em;
+}
+
+.background {
+    background: url("../images/plans-background.jpg") center/cover;
+    filter: grayscale(40%);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+}
+
+.package {
+    background-color: #d5ffdc;
+    border: 4px solid #0e4f1f;
+    border-left: none;
+    width: 80%;
+    margin: 1rem 0;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.package:hover,
+.package:active {
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    /* border-color: #ff5454 !important; */
+    border-color: #ff5454;
+    animation: elevate 400ms 1 ease-out forwards;
+}
+
+.package a {
+    display: block;
+    padding: 2rem;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.package__title {
+    color: black;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.package__badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    /*margin: 1.25rem;*/
+    margin: 0;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    color: white;
+    background: #ff5454;
+    z-index: 10;
+    transform: rotateZ(45deg) translateX(3.5rem) translateY(-1rem);
+    transform-origin: center;
+    width: 12rem;
+    text-align: center;
+}
+
+.package__subtitle {
+    color: #858585;
+    font-size: 1.5rem;
+}
+
+.package__description {
+    background-color: white;
+    border: 1px solid #0e4f1f;
+    padding: 0.8rem;
+    /* font-size: 1.25rem; */
+    /* font-family: 'Roboto', 'Montserrat', sans-serif; */
+    /* font-style: italic; */
+    /* font-weight: 900; */
+
+    font: 700 1.2rem 'AnonymousPro', sans-serif;
+    /* font-style font-variant font-weight font-size/line-height font-family */
+
+    /* Using font shorthand with system fonts */
+    /* font: status-bar; */
+}
+
+.clearfix {
+    clear: both;
+}
+
+#plus {
+    background: rgba(213, 255, 220, 0.95);
+}
+
+#free {
+    background: rgba(234, 252, 237, 0.95);
+    float: right;
+    border-right: none;
+    border-left: 4px solid #0e4f1f;
+    text-align: right;
+}
+
+#free:hover,
+#free:active {
+    border-left-color: #ff5454;
+}
+
+#premium {
+    background: rgba(14, 79, 31, 0.95);
+}
+
+#premium .package__title {
+    color: white;
+}
+
+#premium .package__subtitle {
+    color: #bbb;
+}
+
+@media (min-width: 40rem) {
+    main {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 1000px;
+    }
+}
+
+@media (min-width: 1000px) {
+    .package,
+    #free {
+        border: 4px solid #0e4f1f;
+    }
+
+    #free:hover,
+    #free:active {
+        border-color: #ff5454;
+    }
+}
+
+@keyframes elevate {
+    0% {
+        transform: translateY(0);
+    }
+    33% {
+        transform: translateY(-1.5rem);
+    }
+    100% {
+        transform: translateY(-1rem);
+    }
+}

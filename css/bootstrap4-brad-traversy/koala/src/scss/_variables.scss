@@ -1,0 +1,12 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/mixins";
+
+// Bootstrap overrides
+$body-bg: #fff;
+$blue: #3292a6;
+
+$primary: $blue;
+$primary-overlay: rgba($primary, 0.8);
+
+// Import bootstrap variables to override defaults
+@import "bootstrap/scss/variables";
