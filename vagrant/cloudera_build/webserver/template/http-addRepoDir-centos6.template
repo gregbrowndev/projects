@@ -1,0 +1,20 @@
+# - TOYIN - Add repo directory
+
+<Location />
+  require all granted
+</Location>
+
+Alias /REP_WEB_SERVER_ALIAS_DIR_REP/ "/repository/REP_WEB_SERVER_DIR_REP/"
+
+<Directory "/repository/REP_WEB_SERVER_DIR_REP/">
+        Options All Indexes
+        AllowOverride all
+        Order Allow,Deny
+        Allow from all
+    </Directory>
+<DirectoryMatch  /repository/REP_WEB_SERVER_DIR_REP/(.)*/>
+        Options +Indexes
+</DirectoryMatch>
+
+# ServerName REP_SERVERNAME_REP:80
+
