@@ -1,0 +1,10 @@
+[requires]
+gtest/1.8.0@conan/stable
+
+[options]
+gtest:shared=True
+gtest:no_gmock=True # don't include Google Mock
+gtest:no_main=False # link with main() provided by gtest/gmock
+
+[generators]
+cmake
