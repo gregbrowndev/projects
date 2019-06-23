@@ -40,8 +40,16 @@ export const Schema = [`
     messages(groupId: Int, userId: Int): [Message]
   }
   
+  type Mutation {
+    # send a message to a group
+    createMessage(
+      text: String!, userId: Int!, groupId: Int!
+    ): Message
+  }
+  
   schema {
-      query: Query
+      query: Query,
+      mutation: Mutation
   }`,
 ];
 
