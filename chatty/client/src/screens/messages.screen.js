@@ -69,6 +69,8 @@ class Messages extends Component {
       groupId: this.props.navigation.state.params.groupId,
       userId: 1,
       text
+    }).then(() => {
+      this.flatList.scrollToEnd({ animated: true });
     });
   }
 
@@ -102,6 +104,7 @@ class Messages extends Component {
         keyboardVerticalOffset={64}
       >
         <FlatList
+          ref={(ref) => { this.flatList = ref; }}
           data={group.messages.slice().reverse()}
           keyExtractor={this.keyExtractor}
           renderItem={this.renderItem}
