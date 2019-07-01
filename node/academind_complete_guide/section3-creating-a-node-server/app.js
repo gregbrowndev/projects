@@ -16,16 +16,17 @@ const server = http.createServer((req, res) => {
             body.push(chunk);
             console.log(chunk);
         });
-        req.on('end', () => {
+        return req.on('end', () => {
             const parsedBody = Buffer.concat(body).toString();
             console.log(parsedBody);
             const message = parsedBody.split('=')[1];
-            fs.writeFileSync('message.txt', message);
+            fs.writeFile('message.txt', message, (err) => {
+                // res.writeHead(302, {'Location': '/'});
+                res.statusCode = 302;
+                res.setHeader('Location', '/');
+                return res.end();
+            });
         });
-        // res.writeHead(302, {'Location': '/'});
-        res.statusCode = 302;
-        res.setHeader('Location', '/');
-        return res.end()
     }
     res.setHeader('Content-Type', 'text/html');
     res.write('<html>');
