@@ -34,11 +34,22 @@ class Square(Rectangle):
     def __init__(self, size):
         super().__init__(size, size)
 
-    @Rectangle.width.setter
+    @property
+    def width(self) -> int:
+        # redefining getter as mypy isn't happy is they are not defined in pairs
+        # see https://github.com/python/mypy/issues/5936
+        return super().width
+
+    @width.setter
     def width(self, value) -> None:
         self._width = self._height = value
 
-    @Rectangle.height.setter
+    @property
+    def height(self) -> int:
+        # see comment on width getter
+        return super().height
+
+    @height.setter
     def height(self, value) -> None:
         self._height = self._width = value
 
