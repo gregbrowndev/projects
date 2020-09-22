@@ -1,17 +1,20 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const {randomBytes} = require("crypto");
+const cors = require("cors");
 
 const app = express();
 const port = 4000;
 
 app.use(bodyParser.json());
+app.use(cors());
 
 // Not using a DB to keep this app simple
 const posts = new Map();
 
 app.get("/posts", (req, res) => {
     // Return all posts
+    console.log("GET /posts");
     res.send(
         [...posts.entries()].reduce((obj, [key, value]) => ({...obj, [key]: value}), {})
     );
@@ -19,6 +22,7 @@ app.get("/posts", (req, res) => {
 
 app.post("/posts", (req, res) => {
     // Create a new post
+    console.log("POST /posts");
     const id = randomBytes(4).toString("hex");
     const {title} = req.body;
 
