@@ -1,0 +1,6 @@
+findspark
+pyspark
+python-dateutil
+pathlib
+pandas
+ipython
