@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const {randomBytes} = require("crypto");
 const cors = require("cors");
+const axios = require("axios");
 
 const app = express();
 const port = 4000;
@@ -20,7 +21,7 @@ app.get("/posts", (req, res) => {
     );
 });
 
-app.post("/posts", (req, res) => {
+app.post("/posts", async (req, res) => {
     // Create a new post
     console.log("POST /posts");
     const id = randomBytes(4).toString("hex");
@@ -29,7 +30,19 @@ app.post("/posts", (req, res) => {
     const post = {id, title};
     posts.set(id, post);
 
+    // emit event to eventbus
+    await axios.post("http://localhost:4005/events", {
+        type: "PostCreated",
+        data: post
+    }).then(r => {});
+
     res.status(201).send(post)
+});
+
+app.post("/events", (req, res) => {
+    console.log("POST /events ", req.body.type);
+
+    res.send({});
 });
 
 app.listen(port, () => {
