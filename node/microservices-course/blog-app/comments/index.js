@@ -13,12 +13,12 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.get("/posts/:id/comments", (req, res) => {
-    console.log("GET: /posts/:id/comments")
+    console.log("[GET: /posts/:id/comments] ", req.body)
     res.send(commentsByPostId.get(req.params.id) || []);
 });
 
 app.post("/posts/:id/comments", async (req, res) => {
-    console.log("POST: /posts/:id/comments")
+    console.log("[POST: /posts/:id/comments] ", req.body)
     const postId = req.params.id;
     const commentId = randomBytes(4).toString("hex");
     const { content } = req.body;
@@ -41,7 +41,7 @@ app.post("/posts/:id/comments", async (req, res) => {
 });
 
 app.post("/events", (req, res) => {
-    console.log("POST /events ", req.body.type);
+    console.log("[POST /events] ", req.body.type);
 
     res.send({});
 });

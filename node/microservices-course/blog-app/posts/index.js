@@ -15,7 +15,7 @@ const posts = new Map();
 
 app.get("/posts", (req, res) => {
     // Return all posts
-    console.log("GET /posts");
+    console.log("[GET /posts] ", req.body);
     res.send(
         [...posts.entries()].reduce((obj, [key, value]) => ({...obj, [key]: value}), {})
     );
@@ -23,7 +23,7 @@ app.get("/posts", (req, res) => {
 
 app.post("/posts", async (req, res) => {
     // Create a new post
-    console.log("POST /posts");
+    console.log("[POST /posts] ", req.body);
     const id = randomBytes(4).toString("hex");
     const {title} = req.body;
 
@@ -40,7 +40,7 @@ app.post("/posts", async (req, res) => {
 });
 
 app.post("/events", (req, res) => {
-    console.log("POST /events ", req.body.type);
+    console.log("[POST /events] ", req.body.type);
 
     res.send({});
 });

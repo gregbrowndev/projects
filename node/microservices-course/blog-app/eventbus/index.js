@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 
 app.post("/events", (req, res) => {
     const event = req.body;
-    console.log("'POST: /events' received data ", event)
+    console.log("[POST: /events] ", event)
 
     // send event to other services
     axios.post("http://localhost:4000/events", event);
