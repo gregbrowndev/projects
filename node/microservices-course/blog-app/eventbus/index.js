@@ -6,13 +6,14 @@ const app = express();
 app.use(bodyParser.json());
 
 app.post("/events", (req, res) => {
+    console.log("[POST: /events] ",  req.body)
     const event = req.body;
-    console.log("[POST: /events] ", event)
 
     // send event to other services
     axios.post("http://localhost:4000/events", event);
     axios.post("http://localhost:4001/events", event);
     axios.post("http://localhost:4002/events", event);
+    axios.post("http://localhost:4003/events", event);
 
     res.send({ status: "OK"});
 });
