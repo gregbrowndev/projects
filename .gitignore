@@ -448,7 +448,7 @@ pip-selfcheck.json
 
 *.jl
 
-*.json
+#*.json
 =======
 # misc
 **/.sass-cache
