@@ -4,6 +4,8 @@ const {randomBytes} = require("crypto");
 const cors = require("cors");
 const axios = require("axios");
 
+const EVENTBUS_URL = "http://eventbus-srv:4005/events";
+
 const app = express();
 const port = 4000;
 
@@ -31,7 +33,7 @@ app.post("/posts", async (req, res) => {
     posts.set(id, post);
 
     // emit event to eventbus
-    await axios.post("http://localhost:4005/events", {
+    await axios.post(EVENTBUS_URL, {
         type: "PostCreated",
         data: post
     }).then(r => {});
@@ -46,6 +48,5 @@ app.post("/events", (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log("version 55");
     console.log(`Listening on ${port}`);
 });
