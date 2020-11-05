@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
 
+const EVENTBUS_URL = "http://eventbus-srv:4005/events";
+
 const app = express();
 const port = 4003;
 
@@ -13,7 +15,7 @@ app.post("/events", async (req, res) => {
     if (type === "CommentCreated") {
         console.log("[POST /events] ", type);
         const status = data.content.includes("orange") ? "rejected" : "approved";
-        await axios.post("http://localhost:4005/events", {
+        await axios.post(EVENTBUS_URL, {
             type: "CommentModerated",
             data: {
                 ...data,

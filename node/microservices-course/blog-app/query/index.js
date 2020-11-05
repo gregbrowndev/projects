@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
 
+const EVENTBUS_URL = "http://eventbus-srv:4005/events";
+
 const port = 4002;
 const app = express();
 
@@ -49,7 +51,7 @@ app.post("/events", (req, res) => {
 app.listen(port, async () => {
     console.log(`Listening on ${port}`);
     console.log("[Loading events]");
-    const res = await axios.get("http://localhost:4005/events");
+    const res = await axios.get(EVENTBUS_URL);
     for (let event of res.data) {
         handleEvent(event);
     }

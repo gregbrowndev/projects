@@ -4,6 +4,8 @@ const {randomBytes} = require("crypto");
 const cors = require("cors");
 const axios = require("axios");
 
+const EVENTBUS_URL = "http://eventbus-srv:4005/events";
+
 const app = express();
 const port = 4001;
 
@@ -30,7 +32,7 @@ app.post("/posts/:id/comments", async (req, res) => {
     commentsByPostId.set(postId, comments);
 
     // send commentCreated event to bus
-    await axios.post("http://localhost:4005/events", {
+    await axios.post(EVENTBUS_URL, {
         type: "CommentCreated",
         data: {
             ...comment,
@@ -55,7 +57,7 @@ app.post("/events", async (req, res) => {
         commentsByPostId.set(postId, comments);
 
         console.log("[POST /events] Sending CommentUpdated event");
-        await axios.post("http://localhost:4005/events", {
+        await axios.post(EVENTBUS_URL, {
             type: "CommentUpdated",
             data: {
                 ...comment,
