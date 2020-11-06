@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+import {BASE_URL} from './constants';
 
 export default () => {
     const [title, setTitle] = useState('');
@@ -9,7 +10,7 @@ export default () => {
         event.preventDefault();
 
         // we use axios to post data to PostsService. We use async/await syntax instead of promises, callbacks, etc.
-        await axios.post("http://localhost:4000/posts", {
+        await axios.post(`${BASE_URL}/posts/create`, {
             title
         });
 

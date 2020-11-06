@@ -23,7 +23,7 @@ app.get("/posts", (req, res) => {
     );
 });
 
-app.post("/posts", async (req, res) => {
+app.post("/posts/create", async (req, res) => {
     // Create a new post
     console.log("[POST /posts] ", req.body);
     const id = randomBytes(4).toString("hex");

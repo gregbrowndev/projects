@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
+import {BASE_URL} from './constants';
 import CommentCreate from "./CommentCreate";
 import CommentList from "./CommentList";
 
 export default () => {
     const [posts, setPosts] = useState({});
     const fetchPosts = async () => {
-        const res = await axios.get("http://localhost:4002/posts");
+        const res = await axios.get(`${BASE_URL}/posts`);
         console.log("[fetchPosts]", res.data);
         setPosts(res.data);
     };
