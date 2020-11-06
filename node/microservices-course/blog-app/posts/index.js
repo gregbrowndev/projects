@@ -48,5 +48,6 @@ app.post("/events", (req, res) => {
 });
 
 app.listen(port, () => {
+    console.log("version 0.5.0");
     console.log(`Listening on ${port}`);
 });
