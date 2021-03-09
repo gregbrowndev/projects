@@ -7,6 +7,7 @@ const app = express();
 app.use(json());
 
 app.get("/api/users/currentuser", (req, res) => {
+    console.log("Request received");
     res.send("Hi there!");
 });
 
