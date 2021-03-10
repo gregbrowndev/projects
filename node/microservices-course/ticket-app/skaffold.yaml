@@ -8,6 +8,7 @@ build:
   googleCloudBuild:
     projectId: ticketing-dev-306115
   artifacts:
+#  - image: gregbrowndev/ticking-app-auth
   - image: us.gcr.io/ticketing-dev-306115/auth
     context: auth
     docker:
