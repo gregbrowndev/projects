@@ -1,3 +1,11 @@
+/*
+Exercise 3.1: Many ways to model failure
+
+The exercise was to rewrite the declaration of `AccountService` to use `Option` rather
+than `Try` to model failure. The declaration of `transfer` can still compose the `credit`
+and `debit` functions as `Option` implements the flatMap function.
+ */
+
 package fr_ddd.chapter3.ex1
 
 import java.util.Date
