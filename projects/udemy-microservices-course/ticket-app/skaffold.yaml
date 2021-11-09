@@ -1,12 +1,14 @@
-apiVersion: skaffold/v2beta9
+apiVersion: skaffold/v2beta25
 kind: Config
 metadata:
   name: ticket-app
 build:
-#  local:
-#    push: false
-  googleCloudBuild:
-    projectId: ticketing-dev-306115
+  # Uncomment one of these sections to determine if
+  local:
+    push: false
+#  googleCloudBuild:
+#    projectId: ticketing-dev-306115
+
   artifacts:
 #  - image: gregbrowndev/ticking-app-auth
   - image: us.gcr.io/ticketing-dev-306115/auth
@@ -20,4 +22,4 @@ build:
 deploy:
   kubectl:
     manifests:
-    - ./infra/k8s/*
+      - ./infra/k8s/*
