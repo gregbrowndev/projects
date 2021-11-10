@@ -4,7 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev --poll src/index.ts"
+    "start": "ts-node-dev --poll src/index.ts",
+    "build": "react-scripts build",
+    "test": "react-scripts test a --coverage",
+    "test:watch": "react-scripts test a --watch",
+    "test:e2e:headless": "yarn cypress run",
+    "test:e2e:browser": "yarn cypress open",
+    "lint": "eslint --cache 'src/**/*.{ts,tsx}' && tsc --noEmit --project .",
+    "format:check": "prettier 'src/**/*.{ts,tsx}' --check",
+    "format": "prettier 'src/**/*.{ts,tsx}' --loglevel=warn --write",
+    "clean": "rm -rf build && rm -rf node_modules"
   },
   "keywords": [],
   "author": "",
@@ -22,5 +31,8 @@
     "mongoose": "^5.10.19",
     "ts-node-dev": "^1.0.0",
     "typescript": "^4.0.5"
+  },
+  "devDependencies": {
+    "prettier": "2.4.1"
   }
 }
