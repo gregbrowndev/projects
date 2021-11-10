@@ -3,14 +3,7 @@ kind: Config
 metadata:
   name: ticket-app
 build:
-  # Uncomment one of these sections to determine if
-  local:
-    push: false
-#  googleCloudBuild:
-#    projectId: ticketing-dev-306115
-
   artifacts:
-#  - image: gregbrowndev/ticking-app-auth
   - image: us.gcr.io/ticketing-dev-306115/auth
     context: auth
     docker:
@@ -23,3 +16,14 @@ deploy:
   kubectl:
     manifests:
       - ./infra/k8s/*
+profiles:
+  # Choose a profile to build locally or with GCB
+  # e.g. skaffold dev -p local
+  - name: local
+    build:
+      local:
+        push: false
+  - name: gcb
+    build:
+      googleCloudBuild:
+        projectId: ticketing-dev-306115
