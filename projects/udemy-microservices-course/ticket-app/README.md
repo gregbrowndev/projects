@@ -69,7 +69,6 @@ brew install skaffold
 > Caveat! Cloud Code creates its own minikube Kubernetes cluster, so I think you may need to install ingress-nginx
 > in that cluster too. Haven't tried yet!
 
-
 Update _/etc/hosts_ to route traffic from `ticketing.dev` to IP address where our Kubernetes cluster is located,
 i.e. loopback for local or remote IP for GKE, etc:
 
@@ -98,3 +97,10 @@ Then you can visit _https://ticketing.dev/api/users/currentuser_ to see the appl
 
 > You'll be greated by Chrome's unsafe page when you visit this URL in the browser. Simply type
 > `thisisunsafe` to bypass the warning. Alternatively, you can use Postman to interact with the system.
+
+
+## Additional Dev Tooling
+
+* [ESLint](https://typescript-eslint.io/docs/getting-started/linting/linting)
+* [Prettier](https://prettier.io/docs/en/install.html)
+* 

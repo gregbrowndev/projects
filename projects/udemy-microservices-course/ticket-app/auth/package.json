@@ -5,11 +5,6 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev --poll src/index.ts",
-    "build": "react-scripts build",
-    "test": "react-scripts test a --coverage",
-    "test:watch": "react-scripts test a --watch",
-    "test:e2e:headless": "yarn cypress run",
-    "test:e2e:browser": "yarn cypress open",
     "lint": "eslint --cache 'src/**/*.{ts,tsx}' && tsc --noEmit --project .",
     "format:check": "prettier 'src/**/*.{ts,tsx}' --check",
     "format": "prettier 'src/**/*.{ts,tsx}' --loglevel=warn --write",
@@ -33,6 +28,7 @@
     "typescript": "^4.0.5"
   },
   "devDependencies": {
+    "eslint": "^8.2.0",
     "prettier": "2.4.1"
   }
 }
