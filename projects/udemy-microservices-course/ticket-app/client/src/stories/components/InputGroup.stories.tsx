@@ -2,7 +2,7 @@ import InputGroup from "../../components/InputGroup";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
-  title: "Components/InputGroup",
+  title: "Components/Input Group",
   component: InputGroup,
 } as ComponentMeta<typeof InputGroup>;
 

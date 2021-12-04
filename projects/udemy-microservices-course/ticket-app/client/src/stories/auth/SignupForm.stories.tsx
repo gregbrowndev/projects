@@ -2,7 +2,7 @@ import SignupForm from "../../modules/auth/SignupForm";
 import { ComponentStory } from "@storybook/react";
 
 export default {
-  title: "Auth/SignupForm",
+  title: "Auth/Sign Up Form",
   component: SignupForm,
 };
 

@@ -6,6 +6,8 @@ module.exports = {
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
+    "@storybook/addon-a11y",
+    "@storybook/addon-storysource",
     // Tailwind v2 requires PostCSS v8. However, StoryBook bundles v7.
     // see https://github.com/wagerfield/storybook-tailwind
     {

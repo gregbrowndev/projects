@@ -1,5 +1,7 @@
 import "../styles/globals.css";
+import { addDecorator } from "@storybook/react";
 import * as NextImage from "next/image";
+import { withConsole } from "@storybook/addon-console";
 
 const OriginalNextImage = NextImage.default;
 
@@ -10,6 +12,8 @@ Object.defineProperty(NextImage, "default", {
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
+  showPanel: true,
+  panelPosition: "bottom",
   controls: {
     matchers: {
       color: /(background|color)$/i,
@@ -17,3 +21,5 @@ export const parameters = {
     },
   },
 };
+
+addDecorator((storyFn, context) => withConsole()(storyFn)(context));

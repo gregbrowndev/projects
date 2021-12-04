@@ -11,32 +11,32 @@ const Template: ComponentStory<typeof Button> = (args) => <Button {...args} />;
 
 export const Primary = Template.bind({});
 Primary.args = {
-  type: "primary",
+  variant: "primary",
   label: "Button",
 };
 
 export const Secondary = Template.bind({});
 Secondary.args = {
-  type: "secondary",
+  variant: "secondary",
   label: "Button",
 };
 
-export const White = Template.bind({});
-White.args = {
-  type: "white",
+export const Tertiary = Template.bind({});
+Tertiary.args = {
+  variant: "tertiary",
   label: "Button",
 };
 
 export const Large = Template.bind({});
 Large.args = {
-  type: "primary",
+  variant: "primary",
   size: "large",
   label: "Button",
 };
 
 export const Small = Template.bind({});
 Small.args = {
-  type: "primary",
+  variant: "primary",
   size: "small",
   label: "Button",
 };
