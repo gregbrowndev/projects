@@ -1,24 +1,25 @@
-const SignupForm = () => {
+import Button from "../../components/Button";
+import InputGroup from "../../components/InputGroup";
+
+interface SignupFormProps {}
+
+const SignupForm = ({ ...props }: SignupFormProps) => {
   return (
     <form>
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Email Address
-        </label>
-        <input
-          type="email"
-          className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
-          id="email"
-        />
+      <div className="shadow sm:rounded-md sm:overflow-hidden">
+        <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+          <InputGroup
+            inputType="email"
+            label="Email Address"
+            required
+            placeholder="you@example.com"
+          />
+          <InputGroup inputType="password" label="Password" required />
+        </div>
+        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+          <Button label="Sign Up" />
+        </div>
       </div>
-      <div className="">
-        <label htmlFor="password">Password</label>
-        <input type="password" className="" id="password" />
-      </div>
-      <button className="">Sign Up</button>
     </form>
   );
 };
