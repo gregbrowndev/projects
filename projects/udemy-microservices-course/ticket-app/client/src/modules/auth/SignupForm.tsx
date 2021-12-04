@@ -1,15 +1,24 @@
 const SignupForm = () => {
   return (
     <form>
-      <div className="form-group">
-        <label htmlFor="email">Email Address</label>
-        <input type="email" className="form-control" id="email" />
+      <div>
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Email Address
+        </label>
+        <input
+          type="email"
+          className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+          id="email"
+        />
       </div>
-      <div className="form-group">
+      <div className="">
         <label htmlFor="password">Password</label>
-        <input type="password" className="form-control" id="passwod" />
+        <input type="password" className="" id="password" />
       </div>
-      <button className="btn btn-primary">Sign Up</button>
+      <button className="">Sign Up</button>
     </form>
   );
 };
