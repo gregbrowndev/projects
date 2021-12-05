@@ -2,6 +2,13 @@ import "../styles/globals.css";
 import { addDecorator } from "@storybook/react";
 import * as NextImage from "next/image";
 import { withConsole } from "@storybook/addon-console";
+import { initialize, mswDecorator } from "msw-storybook-addon";
+
+// Initialize MSW
+initialize();
+
+// Provide the MSW addon decorator globally
+export const decorators = [mswDecorator];
 
 const OriginalNextImage = NextImage.default;
 
