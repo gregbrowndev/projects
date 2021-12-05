@@ -1,6 +1,7 @@
 import { ChangeEvent } from "react";
 
 interface InputGroupProps {
+  id: string;
   label?: string;
   value?: string;
   description?: string;
@@ -11,6 +12,7 @@ interface InputGroupProps {
 }
 
 const InputGroup = ({
+  id,
   label,
   value,
   description,
@@ -23,13 +25,13 @@ const InputGroup = ({
     <div>
       {label && (
         <label
-          htmlFor="inputField"
-          className="block text-sm font-medium text-gray-700"
+          htmlFor={id}
+          className="block text-base font-medium text-gray-700"
         >
           <span>{label}</span>
           {required && (
             <strong className="pl-1">
-              <abbr title="required" className="no-underline text-xs">
+              <abbr title="required" className="no-underline text-base">
                 *
               </abbr>
             </strong>
@@ -44,7 +46,7 @@ const InputGroup = ({
           type={inputType}
           value={value}
           className="focus:ring-indigo-500 focus:border-indigo-500 flex-1 block w-full px-3 py-2 rounded-md sm:text-sm border border-gray-300"
-          id={label && "inputField"}
+          id={label && id}
           placeholder={placeholder}
           onChange={onChange}
         />

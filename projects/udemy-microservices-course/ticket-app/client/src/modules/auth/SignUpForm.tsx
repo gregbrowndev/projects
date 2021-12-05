@@ -1,24 +1,31 @@
 import Button from "../../components/Button";
 import InputGroup from "../../components/InputGroup";
 import { FormEvent, useState } from "react";
+import axios from "axios";
 
-interface SignupFormProps {}
+interface SignUpFormProps {}
 
-const SignupForm = ({}: SignupFormProps) => {
+const SignUpForm = ({}: SignUpFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    console.log(email, password);
+    const response = await axios.post("/api/users/signup", {
+      email,
+      password,
+    });
+
+    console.log(response.data);
   };
 
   return (
     <form onSubmit={onSubmit}>
-      <div className="shadow sm:rounded-md sm:overflow-hidden">
+      <div className="shadow-lg sm:rounded-md sm:overflow-hidden">
         <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
           <InputGroup
+            id="email-control"
             inputType="email"
             value={email}
             label="Email Address"
@@ -27,6 +34,7 @@ const SignupForm = ({}: SignupFormProps) => {
             onChange={(e) => setEmail(e.target.value)}
           />
           <InputGroup
+            id="password-control"
             inputType="password"
             value={password}
             label="Password"
@@ -42,4 +50,4 @@ const SignupForm = ({}: SignupFormProps) => {
   );
 };
 
-export default SignupForm;
+export default SignUpForm;

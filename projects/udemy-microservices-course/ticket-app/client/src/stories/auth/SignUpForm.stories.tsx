@@ -1,13 +1,13 @@
-import SignupForm from "../../modules/auth/SignupForm";
+import SignUpForm from "../../modules/auth/SignUpForm";
 import { ComponentStory } from "@storybook/react";
 
 export default {
   title: "Auth/Sign Up Form",
-  component: SignupForm,
+  component: SignUpForm,
 };
 
-const Template: ComponentStory<typeof SignupForm> = (args) => (
-  <SignupForm {...args} />
+const Template: ComponentStory<typeof SignUpForm> = (args) => (
+  <SignUpForm {...args} />
 );
 
 export const Empty = Template.bind({});
