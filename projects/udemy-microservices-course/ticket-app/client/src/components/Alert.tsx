@@ -7,9 +7,9 @@ import {
 import { match } from "ts-pattern";
 import { ReactNode } from "react";
 
-type Variant = "success" | "warning" | "danger" | "info";
+export type Variant = "success" | "warning" | "danger" | "info";
 
-interface AlertProps {
+export interface AlertProps {
   /**
    * Optional title to display above the description text
    */
@@ -48,7 +48,7 @@ const Alert = ({ title, children, variant }: AlertProps) => {
 
   const description =
     typeof children === "string" ? (
-      <p className="text-xs font-light text-gray-500">{children}</p>
+      <p className="text-sm font-light text-gray-500">{children}</p>
     ) : (
       children
     );
@@ -61,9 +61,11 @@ const Alert = ({ title, children, variant }: AlertProps) => {
       }
     >
       <div className={"border-l-4 pl-2 flex flex-row " + borderColour}>
-        <div className="py-1">{icon}</div>
+        <div className="py-1 ">{icon}</div>
         <div>
-          {title && <h2 className={"font-bold " + titleColour}>{title}</h2>}
+          {title && (
+            <h2 className={"font-bold text-xl " + titleColour}>{title}</h2>
+          )}
           {description}
         </div>
       </div>

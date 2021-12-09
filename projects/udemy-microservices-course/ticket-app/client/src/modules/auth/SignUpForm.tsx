@@ -1,55 +1,33 @@
 import Button from "../../components/Button";
 import InputGroup from "../../components/InputGroup";
 import { FormEvent, useState } from "react";
-import axios, { AxiosError } from "axios";
-import Alert from "../../components/Alert";
-
-interface SignUpFormProps {}
-
-interface Error {
-  message: string;
-}
-interface ErrorList {
-  errors: Error[];
-}
+import useRequest from "../../hooks/use-request";
+import Router from "next/router";
+export interface SignUpFormProps {}
 
 const SignUpForm = ({}: SignUpFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<Error[]>([]);
+  const { doRequest, errors } = useRequest({
+    url: "/api/users/signup",
+    method: "post",
+    data: {
+      email,
+      password,
+    },
+    onSuccess: (data: any) => Router.push("/"),
+  });
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      const response = await axios.post("/api/users/signup", {
-        email,
-        password,
-      });
-      console.log(response.data);
-    } catch (err) {
-      if (err.response?.data?.errors.length > 0) {
-        setErrors(err.response.data.errors);
-      } else {
-        setErrors([{ message: "Something went wrong" }]);
-      }
-    }
+    await doRequest();
   };
 
   return (
     <form onSubmit={onSubmit}>
       <div className="shadow-lg sm:rounded-md sm:overflow-hidden">
         <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
-          {errors.length > 0 && (
-            <div className="p-2">
-              <Alert variant="danger" title="Oops...">
-                <ul className="text-xs font-light text-gray-500">
-                  {errors.map((error) => (
-                    <li key={error.message}>{error.message}</li>
-                  ))}
-                </ul>
-              </Alert>
-            </div>
-          )}
+          {errors}
           <InputGroup
             id="email-control"
             inputType="email"

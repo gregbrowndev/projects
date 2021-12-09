@@ -1,6 +1,6 @@
 import { ChangeEvent } from "react";
 
-interface InputGroupProps {
+export interface InputGroupProps {
   id: string;
   label?: string;
   value?: string;

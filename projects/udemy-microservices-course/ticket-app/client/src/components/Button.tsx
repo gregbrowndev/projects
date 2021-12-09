@@ -1,7 +1,7 @@
 type Variant = "primary" | "secondary" | "tertiary";
 type Size = "small" | "medium" | "large";
 
-interface ButtonProps {
+export interface ButtonProps {
   /**
    * Is this the principal call to action on the page?
    */
