@@ -3,14 +3,23 @@ import { ReactElement, useState } from "react";
 import Alert from "../components/Alert";
 import { Error } from "../common/models/error";
 
-export interface UseRequestProps {
+export interface UseRequestConfig<T = any, D = any> {
   url: string;
   method: Method;
-  data: any;
-  onSuccess?: (data: any) => void;
+  data: D;
+  onSuccess?: (obj: T) => void;
 }
 
-const useRequest = ({ url, method, data, onSuccess }: UseRequestProps) => {
+export interface UseRequestOutput<T> {
+  doRequest: () => Promise<T>;
+  errors: ReactElement | undefined;
+}
+
+export interface UseRequestFunc {
+  <T = any, D = any>(config: UseRequestConfig<T, D>): UseRequestOutput<T>;
+}
+
+const useRequest: UseRequestFunc = ({ url, method, data, onSuccess }) => {
   const [errors, setErrors] = useState<ReactElement | undefined>(undefined);
 
   const doRequest = async () => {

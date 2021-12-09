@@ -3,19 +3,21 @@ import InputGroup from "../../components/InputGroup";
 import { FormEvent, useState } from "react";
 import useRequest from "../../hooks/use-request";
 import Router from "next/router";
+import { User } from "../../common/models/user";
+
 export interface SignUpFormProps {}
 
 const SignUpForm = ({}: SignUpFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { doRequest, errors } = useRequest({
+  const { doRequest, errors } = useRequest<User>({
     url: "/api/users/signup",
     method: "post",
     data: {
       email,
       password,
     },
-    onSuccess: (data: any) => Router.push("/"),
+    onSuccess: (obj: User) => Router.push("/"),
   });
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
