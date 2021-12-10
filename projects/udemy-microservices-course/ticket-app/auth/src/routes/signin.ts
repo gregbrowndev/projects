@@ -16,6 +16,7 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
+    console.log('[signin] request received');
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });

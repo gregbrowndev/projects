@@ -7,6 +7,7 @@ router.get(
   '/api/users/currentuser',
   currentUser,
   (req: Request, res: Response) => {
+    console.log('[currentuser] request received');
     res.send({ currentUser: req.currentUser || null });
   },
 );

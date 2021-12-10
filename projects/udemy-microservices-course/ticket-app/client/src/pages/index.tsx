@@ -1,20 +1,28 @@
 import type { NextPage, NextPageContext } from "next";
+import axios from "axios";
+import { User } from "../common/models/user";
 
 export interface HomeProps {
-  colour: string;
+  currentUser?: User;
 }
 
-const Home: NextPage<HomeProps> = ({ colour }: HomeProps) => {
+const Home: NextPage<HomeProps> = ({ currentUser }: HomeProps) => {
   return (
     <div>
-      <h1 className={`text-${colour}-600`}>Welcome</h1>
+      <h1>Welcome {currentUser?.email}</h1>
     </div>
   );
 };
 
-Home.getInitialProps = (ctx: NextPageContext) => {
-  console.log("I am on the server!");
-  return { colour: "red" };
+Home.getInitialProps = async (ctx: NextPageContext) => {
+  try {
+    console.log("I'm on the server");
+    const response = await axios.get<User>("/api/users/currentuser");
+    return { currentUser: response.data };
+  } catch (err: Error | any) {
+    console.log("Error when fetching current user");
+    return {};
+  }
 };
 
 export default Home;
