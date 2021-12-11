@@ -8,6 +8,7 @@ router.get(
   currentUser,
   (req: Request, res: Response) => {
     console.log('[currentuser] request received');
+    console.log('[currentuser] current user: ', req.currentUser);
     res.send({ currentUser: req.currentUser || null });
   },
 );

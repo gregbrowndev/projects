@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
   {
     toJSON: {
       transform(doc, ret) {
-        ret.id = ret._id;
+        ret.id = ret._id.toHexString();
         delete ret._id;
         delete ret.password;
       },
