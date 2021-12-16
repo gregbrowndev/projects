@@ -14,7 +14,7 @@ const Home: NextPage<HomeProps> = ({ currentUser }: HomeProps) => {
   console.log("Current user: ", currentUser);
   return (
     <div>
-      <h1>Welcome {currentUser?.email}</h1>
+      <h1>{currentUser ? "You are signed in" : "You are not signed in"}</h1>
     </div>
   );
 };
@@ -30,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async (
     );
     return { props: { currentUser: data?.currentUser } };
   } catch (err: Error | any) {
-    console.log("Error when fetching current user");
+    console.log("ApiError when fetching current user");
     console.error(err);
     return { props: {} };
   }

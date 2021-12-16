@@ -1,58 +1,92 @@
 import Button from "../../components/Button";
 import InputGroup from "../../components/InputGroup";
-import { FormEvent, useState } from "react";
-import useRequest from "../../hooks/use-request";
-import Router from "next/router";
-import { User } from "../../common/models/user";
+import { Formik, Field, Form } from "formik";
+import { FormikHelpers } from "formik/dist/types";
+import { passThroughSymbol } from "next/dist/server/web/spec-compliant/fetch-event";
+import { FieldAttributes, FieldProps } from "formik/dist/Field";
 
-export interface SignUpFormProps {}
+export interface SignUpFormValues {
+  email: string;
+  password: string;
+}
 
-const SignUpForm = ({}: SignUpFormProps) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { doRequest, errors } = useRequest<User>({
-    url: "/api/users/signup",
-    method: "post",
-    data: {
-      email,
-      password,
-    },
-    onSuccess: (obj: User) => Router.push("/"),
-  });
+export interface SignUpFormSubmitError {
+  title: string;
+  detail?: string;
+  errors: FieldErrors;
+}
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    await doRequest();
+export type FieldErrors = {
+  [k in keyof SignUpFormValues]?: string;
+};
+
+export interface SignUpFormProps {
+  initialValues: SignUpFormValues;
+  onSubmit: (values: SignUpFormValues) => Promise<SignUpFormSubmitError | null>;
+}
+
+const SignUpForm = ({
+  initialValues = { email: "", password: "" },
+  onSubmit,
+}: SignUpFormProps) => {
+  const onSubmitWrapper = async (
+    values: SignUpFormValues,
+    actions: FormikHelpers<SignUpFormValues>
+  ) => {
+    console.log("[SignUpForm] onSubmit called with: ", values);
+    onSubmit(values).then((result) => {
+      console.log("[SignUpForm] submission result: ", result);
+      if (result) {
+        actions.setErrors(result.errors || {});
+      }
+    });
   };
-
   return (
-    <form onSubmit={onSubmit}>
-      <div className="shadow-lg sm:rounded-md sm:overflow-hidden">
-        <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
-          {errors}
-          <InputGroup
-            id="email-control"
-            inputType="email"
-            value={email}
-            label="Email Address"
-            required
-            placeholder="you@example.com"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <InputGroup
-            id="password-control"
-            inputType="password"
-            value={password}
-            label="Password"
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
+    <Formik initialValues={initialValues} onSubmit={onSubmitWrapper}>
+      <Form>
+        <div className="shadow-lg sm:rounded-md sm:overflow-hidden">
+          <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
+            {/*{errors}*/}
+            <Field name="email">
+              {({ field, form, meta }: FieldProps) => (
+                <InputGroup
+                  id="email-control"
+                  inputType="email"
+                  label="Email Address"
+                  required
+                  placeholder="you@example.com"
+                  value={field.value}
+                  name={field.name}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  error={meta.error}
+                  touched={meta.touched}
+                />
+              )}
+            </Field>
+            <Field name="password">
+              {({ field, form, meta }: FieldProps) => (
+                <InputGroup
+                  id="password-control"
+                  inputType="password"
+                  label="Password"
+                  required
+                  value={field.value}
+                  name={field.name}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  error={meta.error}
+                  touched={meta.touched}
+                />
+              )}
+            </Field>
+          </div>
+          <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+            <Button type="submit" label="Sign Up" />
+          </div>
         </div>
-        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
-          <Button label="Sign Up" />
-        </div>
-      </div>
-    </form>
+      </Form>
+    </Formik>
   );
 };
 

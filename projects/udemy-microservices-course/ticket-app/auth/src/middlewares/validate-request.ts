@@ -10,7 +10,10 @@ export const validateRequest = (
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    throw new RequestValidationError(errors.array());
+    const invalidParams = errors
+      .array()
+      .map((err) => ({ name: err.param, reason: err.msg, value: err.value }));
+    throw new RequestValidationError(invalidParams);
   }
 
   next();

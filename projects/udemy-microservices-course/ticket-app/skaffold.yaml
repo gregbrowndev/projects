@@ -4,7 +4,7 @@ metadata:
   name: ticket-app
 build:
   artifacts:
-  - image: us.gcr.io/ticketing-dev-306115/auth
+  - image: eu.gcr.io/ticketing-app-334921/auth
     context: auth
     docker:
       dockerfile: Dockerfile
@@ -12,7 +12,7 @@ build:
       manual:
         - src: 'src/**/*.ts'
           dest: .
-  - image: us.gcr.io/ticketing-dev-306115/client
+  - image: eu.gcr.io/ticketing-app-334921/client
     context: client
     docker:
       dockerfile: Dockerfile

@@ -24,7 +24,9 @@ router.post(
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      throw new BadRequestError('Email in use');
+      throw new BadRequestError('Validation error', [
+        { name: 'email', reason: 'Email already exists' },
+      ]);
     }
 
     console.log('Creating a user...');

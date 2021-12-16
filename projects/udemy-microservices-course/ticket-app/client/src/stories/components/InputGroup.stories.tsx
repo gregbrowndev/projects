@@ -41,3 +41,13 @@ InputRequired.args = {
   description: "Optional description",
   required: true,
 };
+
+export const InputWithError = Template.bind({});
+InputWithError.args = {
+  inputType: "email",
+  label: "Label",
+  description: "Optional description",
+  required: true,
+  value: "test@test.com",
+  error: "Email already in use",
+};

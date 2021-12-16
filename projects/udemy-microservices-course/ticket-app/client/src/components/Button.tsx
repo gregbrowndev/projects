@@ -7,6 +7,10 @@ export interface ButtonProps {
    */
   variant?: Variant;
   /**
+   * HTML type of the component
+   */
+  type: "button" | "submit" | "reset";
+  /**
    * How large should the button be?
    */
   size?: Size;
@@ -22,6 +26,7 @@ export interface ButtonProps {
 
 const Button = ({
   variant = "primary",
+  type = "button",
   size = "medium",
   label,
   ...props
@@ -40,6 +45,7 @@ const Button = ({
 
   return (
     <button
+      type={type}
       className={
         variantMap.get(variant) + " " + sizeMap.get(size) + " font-bold rounded"
       }

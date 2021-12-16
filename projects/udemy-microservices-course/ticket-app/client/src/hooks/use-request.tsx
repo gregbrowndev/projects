@@ -1,7 +1,7 @@
 import axios, { Method } from "axios";
 import { ReactElement, useState } from "react";
 import Alert from "../components/Alert";
-import { Error } from "../common/models/error";
+import { ApiError } from "../common/models/api-error";
 
 export interface UseRequestConfig<T = any, D = any> {
   url: string;
@@ -33,21 +33,19 @@ const useRequest: UseRequestFunc = ({ url, method, data, onSuccess }) => {
       }
 
       return response.data;
-    } catch (err: Error | any) {
-      let errors: Error[] = [{ message: "Something went wrong" }];
+    } catch (err: ApiError | any) {
+      let error: ApiError = { title: "Something went wrong", statusCode: 500 };
 
-      if (err.response?.data?.errors.length > 0) {
-        errors = err.response.data.errors;
+      if (err.response?.data) {
+        error = err.response.data;
       }
 
       const renderErrors = (
         <div className="p-2">
           <Alert variant="danger" title="Oops...">
-            <ul className="text-sm font-light text-gray-500">
-              {errors.map((error) => (
-                <li key={error.message}>{error.message}</li>
-              ))}
-            </ul>
+            <h3 className="text-base font-light text-gray-500">
+              {error.title}
+            </h3>
           </Alert>
         </div>
       );
