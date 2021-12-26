@@ -42,6 +42,8 @@ executable unit1-foundations-exe
       Lesson3.LambdaFunctions
       Lesson4.FirstClassFunctions
       Lesson4.ReturningFunctions
+      Lesson5.Closures
+      Lesson5.RequestBuilder
       Paths_unit1_foundations
   hs-source-dirs:
       app
