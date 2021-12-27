@@ -48,6 +48,7 @@ executable unit1-foundations-exe
       Lesson7.EuclidsAlgorithm
       Lesson7.HeadAndTail
       Lesson8.MoreRecursion
+      Lesson9.HigherOrderFunctions
       Paths_unit1_foundations
   hs-source-dirs:
       app
