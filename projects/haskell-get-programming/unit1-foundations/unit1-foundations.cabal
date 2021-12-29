@@ -39,6 +39,8 @@ executable unit1-foundations-exe
   other-modules:
       Lesson1.FirstProg
       Lesson1.HelloWorld
+      Lesson10.Cup
+      Lesson10.Robots
       Lesson3.LambdaFunctions
       Lesson4.FirstClassFunctions
       Lesson4.ReturningFunctions
