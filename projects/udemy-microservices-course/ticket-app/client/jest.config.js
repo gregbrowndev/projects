@@ -9,18 +9,9 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   // Add more setup options before each test is run
   preset: "ts-jest",
-  // globals: {
-  //   "ts-jest": {
-  //     tsConfig: {
-  //       sourceMap: true,
-  //       inlineSourceMap: true,
-  //     },
-  //   },
-  // },
-  // testEnvironment: "node",
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
-  // moduleDirectories: ["node_modules", "<rootDir>/src"],
+  moduleDirectories: ["node_modules", "<rootDir>"],
   testEnvironment: "jest-environment-jsdom",
 };
 
