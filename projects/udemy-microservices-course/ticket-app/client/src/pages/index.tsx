@@ -1,5 +1,5 @@
 import type { GetServerSideProps, NextPage } from "next";
-import { User } from "../common/models/user";
+import { User } from "../adapters/auth/models/user";
 import buildClient from "../api/build-client";
 
 interface CurrentUserResponse {

@@ -1,7 +1,7 @@
 import axios, { Method } from "axios";
 import { ReactElement, useState } from "react";
 import Alert from "../components/Alert";
-import { ApiError } from "../common/models/api-error";
+import { ApiError } from "../adapters/auth/models/api-error";
 
 export interface UseRequestConfig<T = any, D = any> {
   url: string;

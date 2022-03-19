@@ -13,6 +13,7 @@ export type SignInPayload = {
 
 export type SignInSuccess = {
   state: "success";
+  user: User;
 };
 
 export type SignInError = {
@@ -24,25 +25,42 @@ export type SignInError = {
 
 export type SignInResult = SignInSuccess | SignInError;
 
+type ErrorResponse = {
+  // RFC 7807 standard error handling (not full adherence)
+  // https://datatracker.ietf.org/doc/html/rfc7807#section-3
+
+  title: string;
+  detail?: string;
+  statusCode: number;
+  invalidParams?: InvalidParam[];
+};
+
 export function signIn(payload: SignInPayload): Promise<SignInResult> {
   return axios
     .post<User>("/api/users/signin", payload)
     .then((res) => {
-      console.log("[signin] response received: ", res);
-      return { state: "success" } as SignInSuccess;
+      console.debug("[signin] response received: ", res);
+      // TODO - separate Auth's User DTO from pure User type
+      const result: SignInSuccess = { state: "success", user: res.data };
+      return result;
     })
     .catch((err) => {
-      console.log("[signin] error caught: ", err);
+      console.debug("[signin] error caught: ", err);
       let submitError: SignInError = {
         state: "error",
         title: "Something went wrong",
         errors: {},
       };
 
-      if (axios.isAxiosError(err)) {
-        console.log("[signin] error response: ", err.response);
-        const invalidParams: InvalidParam[] =
-          err.response?.data?.invalidParams || [];
+      // waiting for https://github.com/axios/axios/pull/3816 to merge
+      // to make isAxiosError<T, D> type safe
+      if (axios.isAxiosError(err) && err.response) {
+        console.debug("[signin] error response: ", err.response);
+
+        const response = err.response.data as ErrorResponse;
+        submitError.title = response.title;
+
+        const invalidParams: InvalidParam[] = response.invalidParams || [];
 
         // set fieldError on response
         for (let invalidParam of invalidParams) {
@@ -80,11 +98,11 @@ export function signUp(payload: SignUpPayload): Promise<SignUpResult> {
   return axios
     .post<User>("/api/users/signup", payload)
     .then((res) => {
-      console.log("[signup] response received: ", res);
+      console.debug("[signup] response received: ", res);
       return { state: "success" } as SignUpSuccess;
     })
     .catch((err) => {
-      console.log("[signup] error caught: ", err);
+      console.debug("[signup] error caught: ", err);
       let submitError: SignUpError = {
         state: "error",
         title: "Something went wrong",
@@ -92,7 +110,7 @@ export function signUp(payload: SignUpPayload): Promise<SignUpResult> {
       };
 
       if (axios.isAxiosError(err)) {
-        console.log("[signin] error response: ", err.response);
+        console.debug("[signin] error response: ", err.response);
         const invalidParams: InvalidParam[] =
           err.response?.data?.invalidParams || [];
 
