@@ -1,6 +1,7 @@
 import axios from "axios";
 import { User } from "./models/user";
 import { InvalidParam } from "./models/api-error";
+import * as httpClient from "./http/client";
 
 export type PayloadErrors<T> = {
   [k in keyof T]?: string;

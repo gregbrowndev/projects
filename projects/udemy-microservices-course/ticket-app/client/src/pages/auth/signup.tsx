@@ -3,7 +3,7 @@ import AuthForm, {
   AuthFormSubmitError,
 } from "../../modules/auth/AuthForm";
 import Router from "next/router";
-import { signUp } from "../../adapters/auth/client";
+import { signUp } from "../../adapters/auth/adapter";
 
 const SignUp = () => {
   const onSubmit = async (

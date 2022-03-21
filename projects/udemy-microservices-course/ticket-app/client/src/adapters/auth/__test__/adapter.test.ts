@@ -1,4 +1,4 @@
-import { signIn, SignInError, SignInSuccess } from "../client";
+import { signIn, SignInError, SignInSuccess } from "../adapter";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { ErrorResponse } from "../../../../../auth/src/middlewares/error-handling";
