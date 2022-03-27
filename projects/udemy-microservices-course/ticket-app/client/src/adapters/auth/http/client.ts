@@ -106,6 +106,6 @@ export function signUp(
         );
       }
 
-      throw new Error("Sign in request failed for unknown reason");
+      throw new Error("Sign up request failed for unknown reason");
     });
 }
