@@ -33,7 +33,6 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-
 ## Notes:
 
-* Learn about Tailwind Forms Plugin: https://youtu.be/pONeWAzDsQg?t=300
+- Learn about Tailwind Forms Plugin: https://youtu.be/pONeWAzDsQg?t=300

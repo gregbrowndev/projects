@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 
-import { ErrorResponseDTO, SignInSuccessDTO, UserDTO } from '../dtos';
+import { ErrorResponseDTO, SignInSuccessDTO, UserDTO } from "../dtos";
 import { signIn } from "../client";
 
 describe("auth/http/client", () => {

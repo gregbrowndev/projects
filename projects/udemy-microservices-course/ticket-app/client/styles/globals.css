@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 abbr[title].no-underline {
-    text-decoration: none;
+  text-decoration: none;
 }
