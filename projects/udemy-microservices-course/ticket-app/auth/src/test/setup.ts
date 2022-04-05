@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { app } from '../app';
 import request from 'supertest';
+import { makeApp } from '../adapters/api/app';
 
 declare global {
   var signin: () => Promise<string[]>;
@@ -39,8 +39,10 @@ global.signin = async () => {
   const email = 'test@test.com';
   const password = 'password';
 
+  const app = makeApp();
+
   const response = await request(app)
-    .post('/api/users/signup')
+    .post('/api/users/signUpHandler')
     .send({
       email,
       password,
