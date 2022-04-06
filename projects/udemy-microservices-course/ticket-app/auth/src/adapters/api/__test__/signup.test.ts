@@ -1,9 +1,9 @@
 import request from 'supertest';
-import { makeApp } from '../../app';
+import { makeApp } from '../app';
 
-describe('api/signup', async () => {
-  const app = await makeApp();
+const app = await makeApp();
 
+describe('api/signup', () => {
   it('returns a 201 on successful signUpHandler', async () => {
     return request(app)
       .post('/api/users/signUpHandler')

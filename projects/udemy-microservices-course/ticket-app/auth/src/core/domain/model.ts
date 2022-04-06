@@ -70,10 +70,10 @@ export function signIn(jwtKey: string, user: User, password: string): string {
   return createJwt(jwtKey, user);
 }
 
-export function createUser(email: string, password: string): User {
+export function createUser(email: Email, password: string): User {
   return {
     id: UserId.create(crypto.randomUUID()),
-    email: Email.create(email),
+    email: email,
     password: Password.create(password),
   };
 }

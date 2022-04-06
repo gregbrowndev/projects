@@ -1,30 +1,18 @@
 import { CoreApp } from './application/ports';
 import { signInHandler } from './application/commandHandlers/signInHandler';
-import { MongoDBAdapter } from '../adapters/mongodb/adapter';
 import { signUpHandler } from './application/commandHandlers/signUpHandler';
-import mongoose from 'mongoose';
+import { MongoUnitOfWork } from '../adapters/mongodb/mongoUnitOfWork';
 
-export async function bootstrap(): Promise<CoreApp> {
-  if (!process.env.JWT_KEY) {
-    throw new Error("Environment variable 'JWT_KEY' must be defined");
-  }
+export interface AppConfig {
+  DB_URL: string;
+  JWT_KEY: string;
+}
 
-  try {
-    await mongoose.connect('mongodb://auth-mongo-srv:27017/auth', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-    });
-    console.log('Connected to MongoDb');
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-
-  const mongoDbAdapter: MongoDBAdapter = new MongoDBAdapter();
+export async function bootstrap(appConfig: AppConfig): Promise<CoreApp> {
+  const uow: MongoUnitOfWork = await MongoUnitOfWork.create(appConfig.DB_URL);
 
   return {
-    signIn: (command) => signInHandler(mongoDbAdapter, command),
-    signUp: (command) => signUpHandler(mongoDbAdapter, command),
+    signIn: (command) => signInHandler(uow, command),
+    signUp: (command) => signUpHandler(uow, command),
   };
 }

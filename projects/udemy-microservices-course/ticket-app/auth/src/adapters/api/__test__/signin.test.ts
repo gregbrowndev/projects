@@ -1,10 +1,9 @@
 import request from 'supertest';
-import { makeApp } from '../../app';
+import { makeApp } from '../app';
 
-describe('api/signin', async () => {
-  const app = await makeApp();
-
+describe('api/signin', () => {
   it('fails when an email that does not exist is supplied', async () => {
+    const app = await makeApp();
     await request(app)
       .post('/api/users/signin')
       .send({
@@ -15,6 +14,7 @@ describe('api/signin', async () => {
   });
 
   it('fails when an incorrect password is supplied', async () => {
+    const app = await makeApp();
     await request(app)
       .post('/api/users/signUpHandler')
       .send({
@@ -33,6 +33,7 @@ describe('api/signin', async () => {
   });
 
   it('responds with a cookie when given valid credentails', async () => {
+    const app = await makeApp();
     await request(app)
       .post('/api/users/signUpHandler')
       .send({

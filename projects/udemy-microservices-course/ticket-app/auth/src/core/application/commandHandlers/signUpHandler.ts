@@ -1,33 +1,41 @@
 import { BadRequestError } from '../../../adapters/api/errors/bad-request-error';
-import { DatabaseAdapter, SignUpCommand, UserSignedUp } from '../ports';
+import { SignUpCommand, UnitOfWork, UserSignedUp } from '../ports';
 import { createUser, signIn } from '../../domain/model';
 
 export async function signUpHandler(
-  databaseAdapter: DatabaseAdapter,
+  uow: UnitOfWork,
   command: SignUpCommand,
 ): Promise<UserSignedUp> {
-  // Validate email
-  const existingUser = await databaseAdapter.getUserByEmail(command.email);
-  if (existingUser) {
-    throw new BadRequestError('Validation error', [
-      { name: 'email', reason: 'Email already exists' },
-    ]);
-  }
+  return uow.start(async (ctx) => {
+    // Validate email
+    const existingUser = await ctx.databaseAdapter.getUserByEmail(
+      command.email,
+    );
 
-  // Create user
-  console.log('Creating a user...');
-  const user = createUser(command.email, command.password);
+    // TODO - replace with domain error
+    if (existingUser) {
+      throw new BadRequestError('Validation error', [
+        { name: 'email', reason: 'Email already exists' },
+      ]);
+    }
 
-  // Persist to DB
-  await databaseAdapter.addUser(user);
+    // Create user
+    console.log('Creating a user...');
+    const user = createUser(command.email, command.password);
 
-  // Try to sign in user
-  // (most likely you would require email verification before issuing the JWT)
-  const userJwt = signIn(process.env.JWT_KEY!, user, command.password);
+    // Persist to DB
+    await ctx.databaseAdapter.addUser(user);
 
-  return {
-    id: user.id.value,
-    email: user.email.value,
-    token: userJwt,
-  };
+    // Try to sign in user
+    // (most likely you would require email verification before issuing the JWT)
+    const userJwt = signIn(process.env.JWT_KEY!, user, command.password);
+
+    await ctx.commit();
+
+    return {
+      id: user.id,
+      email: user.email,
+      token: userJwt,
+    };
+  });
 }

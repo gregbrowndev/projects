@@ -1,10 +1,9 @@
 import request from 'supertest';
-import { makeApp } from '../../app';
+import { makeApp } from '../app';
 
-describe('api/current-user', async () => {
-  const app = await makeApp();
-
+describe('api/current-user', () => {
   it('responds with details about the current user', async () => {
+    const app = await makeApp();
     const cookie = await global.signin();
     const response = await request(app)
       .get('/api/users/currentuser')
@@ -16,6 +15,7 @@ describe('api/current-user', async () => {
   });
 
   it('responds with null if not authenticated', async () => {
+    const app = await makeApp();
     const response = await request(app)
       .get('/api/users/currentuser')
       .send()

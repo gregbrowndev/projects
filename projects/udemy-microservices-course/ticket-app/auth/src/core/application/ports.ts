@@ -1,14 +1,14 @@
-import { User } from '../domain/model';
+import { Email, User, UserId } from '../domain/model';
 
 /// Sign In
 export type SignInCommand = {
-  email: string;
+  email: Email;
   password: string;
 };
 
 export type UserSignedIn = {
-  id: string;
-  email: string;
+  id: UserId;
+  email: Email;
   token: string;
 };
 
@@ -18,13 +18,13 @@ export interface SignInCommandHandler {
 
 /// Sign Up
 export type SignUpCommand = {
-  email: string;
+  email: Email;
   password: string;
 };
 
 export type UserSignedUp = {
-  id: string;
-  email: string;
+  id: UserId;
+  email: Email;
   token: string;
 };
 
@@ -49,5 +49,26 @@ export interface DatabaseAdapter {
   /**
    * Returns a user by email
    */
-  getUserByEmail: (email: string) => Promise<User | undefined>;
+  getUserByEmail: (email: Email) => Promise<User | undefined>;
+}
+
+export interface UnitOfWorkContext {
+  databaseAdapter: DatabaseAdapter;
+
+  /**
+   * Commits the currently active unit of work
+   */
+  commit: () => Promise<void>;
+
+  /**
+   * Rollback the currently active unit of work
+   */
+  rollback: () => Promise<void>;
+}
+
+export interface UnitOfWork {
+  /**
+   * Starts a unit of work
+   */
+  start<T>(fn: (ctx: UnitOfWorkContext) => Promise<T>): Promise<T>;
 }

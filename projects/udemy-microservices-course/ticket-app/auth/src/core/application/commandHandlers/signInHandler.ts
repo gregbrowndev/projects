@@ -1,25 +1,32 @@
 import { BadRequestError } from '../../../adapters/api/errors/bad-request-error';
-import { DatabaseAdapter, SignInCommand, UserSignedIn } from '../ports';
+import { SignInCommand, UnitOfWork, UserSignedIn } from '../ports';
 import { signIn } from '../../domain/model';
 
 export async function signInHandler(
-  databaseAdapter: DatabaseAdapter,
+  uow: UnitOfWork,
   command: SignInCommand,
 ): Promise<UserSignedIn> {
-  // Fetch user
-  const user = await databaseAdapter.getUserByEmail(command.email);
-  if (!user) {
-    throw new BadRequestError('Invalid credentials');
-  }
+  return uow.start(async (ctx) => {
+    // Fetch user
+    const user = await ctx.databaseAdapter.getUserByEmail(command.email);
 
-  // Try to sign in user
-  const userJwt = signIn(process.env.JWT_KEY!, user, command.password);
+    // TODO - replace with domain error
+    if (!user) {
+      throw new BadRequestError('Invalid credentials');
+    }
 
-  // TODO - handle errors
+    // TODO - replace process.env with ConfigAdapter
+    // Try to sign in user
+    const userJwt = signIn(process.env.JWT_KEY!, user, command.password);
 
-  return {
-    id: user.id.value,
-    email: user.email.value,
-    token: userJwt,
-  };
+    // TODO - handle errors
+
+    await ctx.commit();
+
+    return {
+      id: user.id,
+      email: user.email,
+      token: userJwt,
+    };
+  });
 }

@@ -1,10 +1,9 @@
 import request from 'supertest';
-import { makeApp } from '../../app';
+import { makeApp } from '../app';
 
-describe('api/signout', async () => {
-  const app = await makeApp();
-
+describe('api/signout', () => {
   it('clears the cookie after signing out', async () => {
+    const app = await makeApp();
     await request(app)
       .post('/api/users/signUpHandler')
       .send({
