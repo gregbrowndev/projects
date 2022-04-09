@@ -10,7 +10,7 @@ declare global {
 }
 
 let mongod: MongoMemoryReplSet;
-let coreApp: CoreApp;
+export let coreApp: CoreApp;
 
 export function getMongoUri(): string {
   if (mongod) {
@@ -20,34 +20,32 @@ export function getMongoUri(): string {
 }
 
 beforeAll(async () => {
-  // brute force approach to set environment variables for testing
-  process.env.JWT_KEY = 'asdf';
-
   // TODO - need to replace this with bootstrap function so boostrap is only
   //  called once for each test
 
   // TODO - shouldn't need to run in-memory server for unit tests
+  console.log('[setup] Starting InMemory MongoDB');
   mongod = await MongoMemoryReplSet.create({ replSet: { count: 1 } });
   const mongoUri = mongod.getUri();
 
   // coreApp = await bootstrap({
   //   DB_URL: mongoUri,
-  //   JWT_KEY: process.env.JWT_KEY,
+  //   JWT_KEY: 'abc',
   // });
 });
 
-// beforeEach(async () => {
-//   // TODO - This can be used for e2e tests but shouldn't be necessary for unit tests
-//   const collections = await mongoose.connection.db.collections();
-//
-//   for (let collection of collections) {
-//     await collection.deleteMany({});
-//   }
-// });
+beforeEach(async () => {
+  // TODO - This can be used for e2e tests but shouldn't be necessary for unit tests
+  // const collections = await mongoose.connection.db.collections();
+  //
+  // for (let collection of collections) {
+  //   await collection.deleteMany({});
+  // }
+});
 
 afterAll(async () => {
   await mongod.stop();
-  // await mongoose.connection.close();
+  await mongoose.connection.close();
 });
 
 global.signin = async () => {

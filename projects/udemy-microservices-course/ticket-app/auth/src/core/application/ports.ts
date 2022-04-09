@@ -1,4 +1,5 @@
-import { Email, User, UserId } from '../domain/model';
+import { Email, JwtToken, User, UserId } from '../domain/model';
+import { Jwt } from 'jsonwebtoken';
 
 /// Sign In
 export type SignInCommand = {
@@ -9,7 +10,7 @@ export type SignInCommand = {
 export type UserSignedIn = {
   id: UserId;
   email: Email;
-  token: string;
+  token: JwtToken;
 };
 
 export interface SignInCommandHandler {
@@ -25,7 +26,7 @@ export type SignUpCommand = {
 export type UserSignedUp = {
   id: UserId;
   email: Email;
-  token: string;
+  token: JwtToken;
 };
 
 export interface SignUpCommandHandler {
@@ -39,6 +40,10 @@ export interface CoreApp {
 }
 
 /// Outbound Ports
+
+export interface JwtAdapter {
+  sign: (user: User) => JwtToken;
+}
 
 export interface DatabaseAdapter {
   /**
@@ -54,6 +59,7 @@ export interface DatabaseAdapter {
 
 export interface UnitOfWorkContext {
   databaseAdapter: DatabaseAdapter;
+  jwtAdapter: JwtAdapter;
 
   /**
    * Commits the currently active unit of work

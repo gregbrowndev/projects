@@ -2,6 +2,7 @@ import { randomBytes, scryptSync } from 'crypto';
 import { ValueObject } from './valueObject';
 import jwt from 'jsonwebtoken';
 import { BadRequestError } from '../../adapters/api/errors/bad-request-error';
+import { JwtAdapter } from '../application/ports';
 
 const crypto = require('crypto');
 
@@ -41,23 +42,23 @@ export class Password extends ValueObject<string> {
   }
 }
 
+export class JwtToken extends ValueObject<string> {
+  public static create(token: string): JwtToken {
+    return new JwtToken(token);
+  }
+}
+
 export type User = {
   id: UserId;
   email: Email;
   password: Password;
 };
 
-function createJwt(jwtKey: string, user: User): string {
-  return jwt.sign(
-    {
-      id: user.id.value,
-      email: user.email.value,
-    },
-    jwtKey,
-  );
-}
-
-export function signIn(jwtKey: string, user: User, password: string): string {
+export function signIn(
+  jwtAdapter: JwtAdapter,
+  user: User,
+  password: string,
+): JwtToken {
   // Validate credentials
   const passwordMatch = Password.compare(user.password, password);
 
@@ -67,7 +68,7 @@ export function signIn(jwtKey: string, user: User, password: string): string {
   }
 
   // Generate JWT
-  return createJwt(jwtKey, user);
+  return jwtAdapter.sign(user);
 }
 
 export function createUser(email: Email, password: string): User {

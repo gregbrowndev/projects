@@ -1,7 +1,7 @@
 import { CoreApp } from './application/ports';
 import { signInHandler } from './application/commandHandlers/signInHandler';
 import { signUpHandler } from './application/commandHandlers/signUpHandler';
-import { MongoUnitOfWork } from '../adapters/mongodb/mongoUnitOfWork';
+import { MongoUnitOfWork } from '../adapters/mongodb';
 
 export interface AppConfig {
   DB_URL: string;
@@ -9,10 +9,14 @@ export interface AppConfig {
 }
 
 export async function bootstrap(appConfig: AppConfig): Promise<CoreApp> {
-  const uow: MongoUnitOfWork = await MongoUnitOfWork.create(appConfig.DB_URL);
+  console.log('[bootstrap] Bootstrapping core...');
+  const uow: MongoUnitOfWork = await MongoUnitOfWork.create(
+    appConfig.DB_URL,
+    appConfig.JWT_KEY,
+  );
 
   return {
-    signIn: (command) => signInHandler(uow, command),
-    signUp: (command) => signUpHandler(uow, command),
+    signIn: signInHandler(uow),
+    signUp: signUpHandler(uow),
   };
 }
