@@ -4,7 +4,7 @@ metadata:
   name: ticket-app
 build:
   artifacts:
-  - image: us.gcr.io/ticketing-dev-306115/auth
+  - image: eu.gcr.io/ticketing-app-334921/auth
     context: auth
     docker:
       dockerfile: Dockerfile
