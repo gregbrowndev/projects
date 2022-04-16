@@ -71,7 +71,7 @@ export function signUp(
   return axios
     .post("/api/users/signup", data)
     .then((res) => {
-      console.debug("[signup] response received: ", res);
+      console.debug("[signUpHandler] response received: ", res);
       return pipe(
         SignUpSuccessDTO.decode(res.data),
         fold(
@@ -84,7 +84,7 @@ export function signUp(
       );
     })
     .catch((error) => {
-      console.debug("[signup] error caught: ", error);
+      console.debug("[signUpHandler] error caught: ", error);
 
       if (!axios.isAxiosError(error)) {
         // We didn't expect this and we don't know how to handle it, rethrow

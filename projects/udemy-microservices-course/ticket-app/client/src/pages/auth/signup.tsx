@@ -9,10 +9,10 @@ const SignUp = () => {
   const onSubmit = async (
     values: AuthFormValues
   ): Promise<AuthFormSubmitError | null> => {
-    console.log("[signup] onSubmit called");
+    console.log("[signUpHandler] onSubmit called");
     return signUp({ email: values.email, password: values.password }).then(
       (result) => {
-        console.log("[signup] response received: ", result);
+        console.log("[signUpHandler] response received: ", result);
         switch (result.state) {
           case "success":
             Router.push("/");
