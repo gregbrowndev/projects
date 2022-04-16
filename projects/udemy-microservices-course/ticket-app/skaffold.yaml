@@ -12,6 +12,14 @@ build:
       manual:
         - src: 'src/**/*.ts'
           dest: .
+  - image: eu.gcr.io/ticketing-app-334921/client
+    context: client
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+        - src: '**/*.{ts,tsx,js,jsx,mdx,svg,css,scss,sass}'
+          dest: .
 deploy:
   kubectl:
     manifests:
