@@ -1,12 +1,13 @@
-import { Email, Password, User, UserId } from '../../../core/domain/model';
+import { User, UserId } from '../../../core/domain/user';
 import { MongoUnitOfWork } from '../mongoUnitOfWork';
 import { getMongoUri } from '../../../test/setup';
+import { Email } from '../../../core/domain/email';
+import { Password } from '../../../core/domain/password';
 
 describe('adapters/mongodb/MongoUnitOfWork', () => {
   let uow: MongoUnitOfWork;
 
   beforeAll(async () => {
-    jest.setTimeout(60 * 1000);
     const dbUri = getMongoUri();
     const jwtKey = 'abc';
     uow = await MongoUnitOfWork.create(dbUri, jwtKey);
@@ -36,8 +37,8 @@ describe('adapters/mongodb/MongoUnitOfWork', () => {
   it('should rollback uow', async () => {
     // Given
     const user: User = {
-      id: UserId.create('f2b3e45d-0704-4517-b660-85c733b55bd5'),
-      email: Email.create('test@test.com'),
+      id: UserId.create('d23deee7-c14a-4b46-bac5-c634a8b0928b'),
+      email: Email.create('test2@test.com'),
       password: Password.create('password123'),
     };
 
@@ -71,8 +72,8 @@ describe('adapters/mongodb/MongoUnitOfWork', () => {
   it('should rollback by default', async () => {
     // Given
     const user: User = {
-      id: UserId.create('f2b3e45d-0704-4517-b660-85c733b55bd5'),
-      email: Email.create('test@test.com'),
+      id: UserId.create('9511bc0f-6a73-4f7e-94a9-ebcb6194b9ba'),
+      email: Email.create('test3@test.com'),
       password: Password.create('password123'),
     };
 
@@ -91,8 +92,8 @@ describe('adapters/mongodb/MongoUnitOfWork', () => {
   it('should rollback on exception', async () => {
     // Given
     const user: User = {
-      id: UserId.create('f2b3e45d-0704-4517-b660-85c733b55bd5'),
-      email: Email.create('test@test.com'),
+      id: UserId.create('b5ef4e0a-5686-4f59-b8b5-94211a6ee66e'),
+      email: Email.create('test4@test.com'),
       password: Password.create('password123'),
     };
 

@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { validateRequest } from '../middlewares/validate-request';
 import { CoreApp, SignUpCommand } from '../../../core/application/ports';
+import { Email } from '../../../core/domain/email';
+import { Password } from '../../../core/domain/password';
 
 export function getSignUpRouter(coreApp: CoreApp): express.Router {
   const router = express.Router();
@@ -22,22 +24,26 @@ export function getSignUpRouter(coreApp: CoreApp): express.Router {
       // Parse input
       const { email, password } = req.body;
       const command: SignUpCommand = {
-        email,
-        password,
+        email: Email.create(email),
+        password: Password.create(password),
       };
 
       // Call core service
-      const userSignedUp = await coreApp.signUp(command);
+      try {
+        const userSignedUp = await coreApp.signUp(command);
+        // Store JWT on session
+        req.session = {
+          jwt: userSignedUp.token.value,
+        };
 
-      // Store JWT on session
-      req.session = {
-        jwt: userSignedUp.token,
-      };
-
-      res.status(201).send({
-        id: userSignedUp.id,
-        email: userSignedUp.email,
-      });
+        res.status(201).send({
+          id: userSignedUp.id.value,
+          email: userSignedUp.email.value,
+        });
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
     },
   );
 

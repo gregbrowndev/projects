@@ -6,6 +6,7 @@ import {
 } from '../../application/ports';
 import { JwtAdapterIml } from '../../../adapters/jwt';
 import { FakeDBAdapter } from './fakeDBAdapter';
+import { SignOptions } from 'jsonwebtoken';
 
 class FakeUnitOfWorkContext implements UnitOfWorkContext {
   state: 'started' | 'committed' | 'rolledback';
@@ -15,7 +16,13 @@ class FakeUnitOfWorkContext implements UnitOfWorkContext {
   constructor(jwtKey: string) {
     this.state = 'started';
     this.databaseAdapter = new FakeDBAdapter();
-    this.jwtAdapter = new JwtAdapterIml(jwtKey);
+
+    const signOptions: SignOptions = {
+      // Don't include timestamp `iat` when signing JWTs as this makes the test nondeterministic. Note, we could also
+      // just return a predefined static JWT
+      noTimestamp: true,
+    };
+    this.jwtAdapter = new JwtAdapterIml(jwtKey, signOptions);
   }
 
   async commit(): Promise<void> {
@@ -33,24 +40,23 @@ class FakeUnitOfWorkContext implements UnitOfWorkContext {
 
 export class FakeUnitOfWork implements UnitOfWork {
   private readonly jwtKey: string;
-  history: FakeUnitOfWorkContext[];
+  context: FakeUnitOfWorkContext;
 
   constructor(jwtKey: string) {
     this.jwtKey = jwtKey;
-    this.history = [];
+    // Note: keep context as long-lived object to allow changes to persist after
+    // UoW finishes. The context can be used by tester for set up and making assertions
+    this.context = new FakeUnitOfWorkContext(this.jwtKey);
   }
 
   async start<T>(fn: (ctx: UnitOfWorkContext) => Promise<T>): Promise<T> {
-    const context = new FakeUnitOfWorkContext(this.jwtKey);
-
     try {
-      return await fn(context);
+      return await fn(this.context);
     } finally {
-      if (context.inTransaction()) {
+      if (this.context.inTransaction()) {
         // Rollback by default
-        await context.rollback();
+        await this.context.rollback();
       }
-      this.history.push(context);
     }
   }
 }

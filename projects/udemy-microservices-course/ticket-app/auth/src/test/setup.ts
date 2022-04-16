@@ -1,16 +1,14 @@
-import { MongoMemoryReplSet, MongoMemoryServer } from 'mongodb-memory-server';
+import { MongoMemoryReplSet } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { makeApp } from '../adapters/api/app';
-import { CoreApp } from '../core/application/ports';
-import { bootstrap } from '../core/bootstrap';
+import { createConnection } from '../adapters/mongodb';
 
 declare global {
   var signin: () => Promise<string[]>;
 }
 
 let mongod: MongoMemoryReplSet;
-export let coreApp: CoreApp;
 
 export function getMongoUri(): string {
   if (mongod) {
@@ -20,32 +18,30 @@ export function getMongoUri(): string {
 }
 
 beforeAll(async () => {
-  // TODO - need to replace this with bootstrap function so boostrap is only
-  //  called once for each test
-
   // TODO - shouldn't need to run in-memory server for unit tests
   console.log('[setup] Starting InMemory MongoDB');
   mongod = await MongoMemoryReplSet.create({ replSet: { count: 1 } });
   const mongoUri = mongod.getUri();
 
-  // coreApp = await bootstrap({
-  //   DB_URL: mongoUri,
-  //   JWT_KEY: 'abc',
-  // });
+  // Create default Mongoose connection so the beforeEach hook can clean down collections
+  await createConnection(mongoUri);
+  console.log('[setup] Connected to InMemory MongoDB');
 });
 
 beforeEach(async () => {
-  // TODO - This can be used for e2e tests but shouldn't be necessary for unit tests
-  // const collections = await mongoose.connection.db.collections();
-  //
-  // for (let collection of collections) {
-  //   await collection.deleteMany({});
-  // }
+  console.log('[setup] Cleaning down MongoDB collections');
+  const collections = await mongoose.connection.db.collections();
+  for (let collection of collections) {
+    await collection.deleteMany({});
+  }
+  console.log('[setup] Done');
 });
 
 afterAll(async () => {
-  await mongod.stop();
+  console.log('[setup] Cleaning up connection and InMemory MongoDB');
   await mongoose.connection.close();
+  await mongod.stop();
+  console.log('[setup] Done');
 });
 
 global.signin = async () => {

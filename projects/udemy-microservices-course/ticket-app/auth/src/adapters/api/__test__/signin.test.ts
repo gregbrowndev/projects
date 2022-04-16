@@ -1,9 +1,16 @@
 import request from 'supertest';
 import { makeApp } from '../app';
+import { Express } from 'express';
 
 describe('api/signin', () => {
+  let app: Express;
+
+  beforeEach(async () => {
+    process.env.JWT_KEY = 'abc';
+    app = await makeApp();
+  });
+
   it('fails when an email that does not exist is supplied', async () => {
-    const app = await makeApp();
     await request(app)
       .post('/api/users/signin')
       .send({
@@ -14,7 +21,6 @@ describe('api/signin', () => {
   });
 
   it('fails when an incorrect password is supplied', async () => {
-    const app = await makeApp();
     await request(app)
       .post('/api/users/signUpHandler')
       .send({
@@ -33,7 +39,6 @@ describe('api/signin', () => {
   });
 
   it('responds with a cookie when given valid credentails', async () => {
-    const app = await makeApp();
     await request(app)
       .post('/api/users/signUpHandler')
       .send({

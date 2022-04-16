@@ -1,12 +1,15 @@
 import { JwtAdapter } from '../../core/application/ports';
-import { JwtToken, User } from '../../core/domain/model';
-import jwt from 'jsonwebtoken';
+import { User } from '../../core/domain/user';
+import jwt, { SignOptions } from 'jsonwebtoken';
+import { JwtToken } from '../../core/domain/jwtToken';
 
 export class JwtAdapterIml implements JwtAdapter {
   private readonly jwtKey: string;
+  protected signOptions?: SignOptions;
 
-  constructor(jwtKey: string) {
+  constructor(jwtKey: string, signOptions?: SignOptions) {
     this.jwtKey = jwtKey;
+    this.signOptions = signOptions;
   }
 
   sign(user: User): JwtToken {
@@ -16,6 +19,7 @@ export class JwtAdapterIml implements JwtAdapter {
         email: user.email.value,
       },
       this.jwtKey,
+      this.signOptions,
     );
     return JwtToken.create(token);
   }

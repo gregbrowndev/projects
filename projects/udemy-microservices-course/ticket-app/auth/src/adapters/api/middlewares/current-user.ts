@@ -24,6 +24,7 @@ export const currentUser = (
   }
 
   try {
+    // TODO - refactor into use case
     req.currentUser = jwt.verify(
       req.session.jwt,
       process.env.JWT_KEY!,

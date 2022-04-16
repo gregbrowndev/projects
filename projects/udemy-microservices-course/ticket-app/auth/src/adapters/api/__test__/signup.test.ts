@@ -1,9 +1,15 @@
 import request from 'supertest';
 import { makeApp } from '../app';
-
-const app = await makeApp();
+import { Express } from 'express';
 
 describe('api/signup', () => {
+  let app: Express;
+
+  beforeEach(async () => {
+    process.env.JWT_KEY = 'abc';
+    app = await makeApp();
+  });
+
   it('returns a 201 on successful signUpHandler', async () => {
     return request(app)
       .post('/api/users/signUpHandler')

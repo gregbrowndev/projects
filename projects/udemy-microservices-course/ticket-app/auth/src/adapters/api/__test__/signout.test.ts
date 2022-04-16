@@ -1,9 +1,16 @@
 import request from 'supertest';
+import { Express } from 'express';
 import { makeApp } from '../app';
 
 describe('api/signout', () => {
+  let app: Express;
+
+  beforeEach(async () => {
+    process.env.JWT_KEY = 'abc';
+    app = await makeApp();
+  });
+
   it('clears the cookie after signing out', async () => {
-    const app = await makeApp();
     await request(app)
       .post('/api/users/signUpHandler')
       .send({

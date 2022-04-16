@@ -1,15 +1,29 @@
-import { Email, Password, User, UserId } from '../../../core/domain/model';
+import { User, UserId } from '../../../core/domain/user';
 import { MongoDBAdapter } from '../adapter';
 import mongoose from 'mongoose';
+import { Email } from '../../../core/domain/email';
+import { Password } from '../../../core/domain/password';
 
 describe('adapters/mongodb', () => {
   let session: mongoose.ClientSession;
   let mongoAdapter: MongoDBAdapter;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     console.log('[test] Starting InMemory MongoDB');
     session = await mongoose.startSession();
     mongoAdapter = new MongoDBAdapter(session);
+  });
+
+  beforeEach(async () => {
+    session.startTransaction();
+  });
+
+  afterEach(async () => {
+    await session.abortTransaction();
+  });
+
+  afterAll(async () => {
+    await session.endSession();
   });
 
   it('should add a user', async () => {
@@ -24,7 +38,7 @@ describe('adapters/mongodb', () => {
     await mongoAdapter.addUser(user);
 
     // Then
-    const userSearch = await mongoAdapter.getUserByEmail(user.email);
-    expect(userSearch).toEqual(user);
+    const result = await mongoAdapter.getUserByEmail(user.email);
+    expect(result).toEqual(user);
   });
 });

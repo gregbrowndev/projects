@@ -1,6 +1,6 @@
 import { BadRequestError } from '../../../adapters/api/errors/bad-request-error';
 import { SignInCommand, SignInCommandHandler, UnitOfWork } from '../ports';
-import { signIn } from '../../domain/model';
+import { signIn } from '../../domain/user';
 
 export function signInHandler(uow: UnitOfWork): SignInCommandHandler {
   return (command: SignInCommand) => {

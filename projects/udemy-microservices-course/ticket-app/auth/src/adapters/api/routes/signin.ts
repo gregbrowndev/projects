@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { validateRequest } from '../middlewares/validate-request';
 import { CoreApp, SignInCommand } from '../../../core/application/ports';
+import { Email } from '../../../core/domain/email';
+import { UnhashedPassword } from '../../../core/domain/unhashedPassword';
 
 export function getSignInRouter(coreApp: CoreApp): express.Router {
   const router = express.Router();
@@ -22,8 +24,8 @@ export function getSignInRouter(coreApp: CoreApp): express.Router {
       // Parse input
       const { email, password } = req.body;
       const signInCommand: SignInCommand = {
-        email,
-        password,
+        email: Email.create(email),
+        password: UnhashedPassword.create(password),
       };
 
       // Call core service
@@ -31,12 +33,12 @@ export function getSignInRouter(coreApp: CoreApp): express.Router {
 
       // Store JWT on session
       req.session = {
-        jwt: userSignedIn.token,
+        jwt: userSignedIn.token.value,
       };
 
       res.status(200).send({
-        id: userSignedIn.id,
-        email: userSignedIn.email,
+        id: userSignedIn.id.value,
+        email: userSignedIn.email.value,
       });
     },
   );

@@ -1,10 +1,13 @@
-import { Email, JwtToken, User, UserId } from '../domain/model';
-import { Jwt } from 'jsonwebtoken';
+import { User, UserId } from '../domain/user';
+import { Email } from '../domain/email';
+import { JwtToken } from '../domain/jwtToken';
+import { UnhashedPassword } from '../domain/unhashedPassword';
+import { Password } from '../domain/password';
 
 /// Sign In
 export type SignInCommand = {
   email: Email;
-  password: string;
+  password: UnhashedPassword;
 };
 
 export type UserSignedIn = {
@@ -20,7 +23,7 @@ export interface SignInCommandHandler {
 /// Sign Up
 export type SignUpCommand = {
   email: Email;
-  password: string;
+  password: Password;
 };
 
 export type UserSignedUp = {
@@ -46,6 +49,11 @@ export interface JwtAdapter {
 }
 
 export interface DatabaseAdapter {
+  /**
+   * Returns a globally unique user id
+   */
+  nextUserId: () => Promise<UserId>;
+
   /**
    * Adds a user to the database
    */

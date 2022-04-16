@@ -1,5 +1,7 @@
 import { UserDoc, UserModel } from './models/user';
-import { Email, Password, User, UserId } from '../../core/domain/model';
+import { User, UserId } from '../../core/domain/user';
+import { Email } from '../../core/domain/email';
+import { Password } from '../../core/domain/password';
 
 export function userToDb(user: User): UserDoc {
   return new UserModel({
@@ -13,6 +15,6 @@ export function userFromDb(userDb: UserDoc): User {
   return {
     id: UserId.create(userDb._id),
     email: Email.create(userDb.email),
-    password: Password.createUnsafe(userDb.password),
+    password: Password.create(userDb.password, true),
   };
 }
