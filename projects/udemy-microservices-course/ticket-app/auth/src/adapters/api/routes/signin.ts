@@ -4,42 +4,63 @@ import { validateRequest } from '../middlewares/validate-request';
 import { CoreApp, SignInCommand } from '../../../core/application/ports';
 import { Email } from '../../../core/domain/email';
 import { UnhashedPassword } from '../../../core/domain/unhashedPassword';
+import { SignInPayloadDTO, SignInSuccessDTO } from '../dtos';
+
+import { fold, left } from 'fp-ts/Either';
+import { pipe } from 'fp-ts/function';
+import { validator } from '../middlewares/validator';
 
 export function getSignInRouter(coreApp: CoreApp): express.Router {
   const router = express.Router();
+  const decoder = SignInPayloadDTO.asDecoder();
 
   router.post(
     '/api/users/signin',
-    [
-      body('email').isEmail().withMessage('Email must be valid'),
-      body('password')
-        .trim()
-        .notEmpty()
-        .withMessage('Password must be provided'),
-    ],
-    validateRequest,
+    // [
+    //   body('email').isEmail().withMessage('Email must be valid'),
+    //   body('password')
+    //     .trim()
+    //     .notEmpty()
+    //     .withMessage('Password must be provided'),
+    // ],
+    // validateRequest,
+    validator(decoder),
     async (req: Request, res: Response) => {
       console.log('[signin] request received');
 
-      // Parse input
-      const { email, password } = req.body;
-      const signInCommand: SignInCommand = {
-        email: Email.create(email),
-        password: UnhashedPassword.create(password),
-      };
+      // req.body
 
-      // Call core service
-      const userSignedIn = await coreApp.signIn(signInCommand);
+      return pipe(
+        SignInPayloadDTO.decode(req.body),
+        fold(
+          (error) => {
+            // return 400
+          },
+          async (data) => {
+            const signInCommand: SignInCommand = {
+              email: Email.create(data.email),
+              password: UnhashedPassword.create(data.password),
+            };
 
-      // Store JWT on session
-      req.session = {
-        jwt: userSignedIn.token.value,
-      };
+            // Call core service
+            const userSignedIn = await coreApp.signIn(signInCommand);
 
-      res.status(200).send({
-        id: userSignedIn.id.value,
-        email: userSignedIn.email.value,
-      });
+            // Store JWT on session
+            // TODO - should this be in the core? How do sessions work for other
+            //  server libraries, e.g. gRPC, graphQL?
+            req.session = {
+              jwt: userSignedIn.token.value,
+            };
+
+            const dto: SignInSuccessDTO = {
+              id: userSignedIn.id.value,
+              email: userSignedIn.email.value,
+            };
+
+            res.status(200).send(SignInSuccessDTO.encode(dto));
+          },
+        ),
+      );
     },
   );
 

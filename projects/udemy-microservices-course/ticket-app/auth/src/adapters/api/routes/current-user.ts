@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { currentUser } from '../middlewares/current-user';
 import { CoreApp } from '../../../core/application/ports';
+import { CurrentUserDTO } from '../dtos';
 
 export function getCurrentUserRouter(coreApp: CoreApp): express.Router {
   const router = express.Router();
@@ -11,7 +12,12 @@ export function getCurrentUserRouter(coreApp: CoreApp): express.Router {
     (req: Request, res: Response) => {
       console.log('[currentuser] request received');
       console.log('[currentuser] current user: ', req.currentUser);
-      res.send({ currentUser: req.currentUser || null });
+
+      let currentUserDTO: CurrentUserDTO = {
+        currentUser: req.currentUser,
+      };
+
+      res.send(CurrentUserDTO.encode(currentUserDTO));
     },
   );
 

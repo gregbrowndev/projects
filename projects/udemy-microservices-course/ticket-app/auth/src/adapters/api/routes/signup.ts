@@ -4,6 +4,7 @@ import { validateRequest } from '../middlewares/validate-request';
 import { CoreApp, SignUpCommand } from '../../../core/application/ports';
 import { Email } from '../../../core/domain/email';
 import { Password } from '../../../core/domain/password';
+import { SignUpSuccessDTO } from '../dtos';
 
 export function getSignUpRouter(coreApp: CoreApp): express.Router {
   const router = express.Router();
@@ -29,21 +30,19 @@ export function getSignUpRouter(coreApp: CoreApp): express.Router {
       };
 
       // Call core service
-      try {
-        const userSignedUp = await coreApp.signUp(command);
-        // Store JWT on session
-        req.session = {
-          jwt: userSignedUp.token.value,
-        };
+      const userSignedUp = await coreApp.signUp(command);
 
-        res.status(201).send({
-          id: userSignedUp.id.value,
-          email: userSignedUp.email.value,
-        });
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
+      // Store JWT on session
+      req.session = {
+        jwt: userSignedUp.token.value,
+      };
+
+      const dto: SignUpSuccessDTO = {
+        id: userSignedUp.id.value,
+        email: userSignedUp.email.value,
+      };
+
+      res.status(201).send(SignUpSuccessDTO.encode(dto));
     },
   );
 
