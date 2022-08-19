@@ -87,10 +87,11 @@ object Recursion extends App {
 
   // 1. Concatenate
   @tailrec
-  def concatenate(aString: String, n: Int,  accumulator: String): String = {
-    if(n <= 0) accumulator
+  def concatenate(aString: String, n: Int, accumulator: String): String = {
+    if (n <= 0) accumulator
     else concatenate(aString, n - 1, accumulator + aString)
   }
+
   println("Concatenate")
   println(concatenate("Bob", 4, ""))
 
@@ -105,6 +106,7 @@ object Recursion extends App {
 
     inner(num / 2)
   }
+
   println("Is Prime")
   println("0 is prime: " + isPrime(0))
   println("1 is prime: " + isPrime(1))
@@ -123,6 +125,7 @@ object Recursion extends App {
 
     inner(0, 1, 0)
   }
+
   println("Fibonacci")
   println(fibonacci(0))
   println(fibonacci(1))

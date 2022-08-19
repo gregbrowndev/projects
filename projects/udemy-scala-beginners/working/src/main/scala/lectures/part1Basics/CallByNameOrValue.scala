@@ -35,6 +35,7 @@ object CallByNameOrValue extends App {
 
   // Let's look at another example.
   def infinite(): Int = 1 + infinite()
+
   def printFirst(x: Int, y: => Int): Unit = println(x)
 
   // Here we have two not very useful functions but let us
@@ -42,7 +43,7 @@ object CallByNameOrValue extends App {
   // printFirst(infinite(), 42)   // of course, this causes a StackOverflowError
 
   // however, if we call it like:
-  printFirst(42, infinite())  // no error!
+  printFirst(42, infinite()) // no error!
 
   // This is because the call by name argument has lazy semantics
 }

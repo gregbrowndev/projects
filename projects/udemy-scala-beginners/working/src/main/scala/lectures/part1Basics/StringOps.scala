@@ -16,10 +16,10 @@ object StringOps extends App {
 
   // There are some Scala specific utilities
   val aNumberString = "45"
-  val aNumber = aNumberString.toInt  // parsing an int
-  println('a' +: aNumberString :+ 'z')  // append and prepend operators
-  println(aString.reverse)  // reverse the string
-  println(aString.take(2))  // take first n characters
+  val aNumber = aNumberString.toInt // parsing an int
+  println('a' +: aNumberString :+ 'z') // append and prepend operators
+  println(aString.reverse) // reverse the string
+  println(aString.take(2)) // take first n characters
 
   // String interpolators
 
@@ -41,7 +41,7 @@ object StringOps extends App {
 
   // F-interpolated strings can all check for type correctness. E.g.
   val x = 1.1f
-//  val str = f"$x%3d"  // error because %3d expects integer value
+  //  val str = f"$x%3d"  // error because %3d expects integer value
 
 
   // Raw-interpolator

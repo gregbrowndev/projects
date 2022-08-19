@@ -25,7 +25,7 @@ object Functions extends App {
   // In FP, we use functions instead of loops
   def aRepeatedFunction(aString: String, n: Int): String = {
     if (n == 1) aString
-    else aString + aRepeatedFunction(aString, n-1)
+    else aString + aRepeatedFunction(aString, n - 1)
   }
 
   println(aRepeatedFunction("hello", 3))
@@ -43,7 +43,7 @@ object Functions extends App {
   def aBigFunction(n: Int): Int = {
     def aSmallFunction(a: Int, b: Int): Int = a + b
 
-    aSmallFunction(n, n-1)
+    aSmallFunction(n, n - 1)
   }
 
   /* Tasks - write a function to:
@@ -57,6 +57,7 @@ object Functions extends App {
   def greet(name: String, age: Int) = {
     "Hi, my name is " + name + " and I am " + age + " years old."
   }
+
   println("Greeting")
   println(greet("Bob", 2))
 
@@ -65,6 +66,7 @@ object Functions extends App {
     if (n <= 0) 1
     else n * factorial(n - 1)
   }
+
   println("Factorial")
   println(factorial(0))
   println(factorial(1))
@@ -76,6 +78,7 @@ object Functions extends App {
     if (n <= 1) 1
     else fibonacci(n - 1) + fibonacci(n - 2)
   }
+
   println("Fibonacci")
   println(fibonacci(0))
   println(fibonacci(1))
@@ -86,12 +89,14 @@ object Functions extends App {
   // 4
   def isPrime(n: Int): Boolean = {
     def isPrimeUntil(t: Int): Boolean = {
-//      println("n=" + n + ", t=" + t)
+      //      println("n=" + n + ", t=" + t)
       if (t <= 1) true
       else n % t != 0 && isPrimeUntil(t - 1)
     }
+
     isPrimeUntil(n / 2)
   }
+
   println("Is Prime")
   println("0 is prime: " + isPrime(0))
   println("1 is prime: " + isPrime(1))
