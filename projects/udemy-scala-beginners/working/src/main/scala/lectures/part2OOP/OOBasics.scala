@@ -46,19 +46,19 @@ class Person(val name: String, val age: Int) {
   // default constructors. We could more easily solve this by using default parameters
   // in the primary constructor
 
-
   // exercises
   val author = new Writer("Charles", "Dickens", 1812)
   val imposter = new Writer("Charles", "Dickens", 1812)
   val novel = new Novel("Great Expectations", 1861, author)
 
   println(novel.authorAge())
-  println(novel.isWrittenBy(imposter)) // returns false as it compares by object reference
+  println(
+    novel.isWrittenBy(imposter)
+  ) // returns false as it compares by object reference
 
   val counter = new Counter()
   counter.inc().print()
 }
-
 
 /**
  * Exercise
@@ -88,7 +88,6 @@ class Novel(name: String, yearOfRelease: Int, var author: Writer) {
 // Note: isWrittenBy compares the two authors by reference. However, in this
 // case, we'd expect to use compare by value. We'll look at that in a following lesson
 
-
 /**
  * 2) Write a Counter class
  *   - receives an int value
@@ -112,7 +111,9 @@ class Counter2(var count: Int) {
 class Counter3(val count: Int) {
   def inc(): Counter3 = inc(1)
 
-  def inc(amount: Int = 1): Counter3 = new Counter3(count + amount) // immutability
+  def inc(amount: Int = 1): Counter3 = new Counter3(
+    count + amount
+  ) // immutability
 
   def dec(): Counter3 = dec(1)
 

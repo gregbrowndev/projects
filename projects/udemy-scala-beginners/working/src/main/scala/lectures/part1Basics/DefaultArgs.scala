@@ -27,7 +27,8 @@ object DefaultArgs extends App {
   // accumulator if they wanted.
 
   // lets look at another example.
-  def savePicture(format: String = "jpg", width: Int, height: Int): Unit = println("saving")
+  def savePicture(format: String = "jpg", width: Int, height: Int): Unit =
+    println("saving")
 
   // The format has a default value "jpg". However, we need to be careful, as in the code below,
   // the argument 800 is interpreted to be the format
@@ -35,6 +36,5 @@ object DefaultArgs extends App {
 
   // instead, we can call the function with kwargs (or provide all arguments positionally)
   savePicture(width = 800, height = 600)
-
 
 }

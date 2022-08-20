@@ -43,7 +43,6 @@ object StringOps extends App {
   val x = 1.1f
   //  val str = f"$x%3d"  // error because %3d expects integer value
 
-
   // Raw-interpolator
   println(raw"This is a \n newline")
   val escaped = "This is a \n newline"

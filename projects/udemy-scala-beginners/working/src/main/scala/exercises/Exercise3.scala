@@ -28,7 +28,6 @@ import scala.annotation.tailrec
  * important. However, the implementations are more involved and would detract for this exercise.
  */
 
-
 trait MyPredicate[-T] {
   def test(elem: T): Boolean
 }
@@ -44,7 +43,6 @@ class EvenPredicate extends MyPredicate[Int] {
 class StringToIntTransformer extends MyTransformer[String, Int] {
   override def transform(elem: String): Int = elem.toInt
 }
-
 
 abstract class MyList[+A] {
   def head(): A
@@ -83,7 +81,9 @@ object Empty extends MyList[Nothing] {
 
   override def filter(predicate: MyPredicate[Nothing]): MyList[Nothing] = Empty
 
-  override def flatMap[B](transformer: MyTransformer[Nothing, MyList[B]]): MyList[B] = Empty
+  override def flatMap[B](
+      transformer: MyTransformer[Nothing, MyList[B]]
+  ): MyList[B] = Empty
 
   override def ++[B >: Nothing](other: MyList[B]): MyList[B] = other
 }
@@ -132,7 +132,9 @@ class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
    * = [1,2] ++ [2,3] ++ Empty
    * = [1,2,2,3]
    */
-  override def flatMap[B](transformer: MyTransformer[A, MyList[B]]): MyList[B] = {
+  override def flatMap[B](
+      transformer: MyTransformer[A, MyList[B]]
+  ): MyList[B] = {
     transformer.transform(h) ++ t.flatMap(transformer)
   }
 
@@ -147,7 +149,6 @@ class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
   }
 }
 
-
 object Exercise3 extends App {
   val listOfIntegers: MyList[Int] = new Cons(1, new Cons(2, new Cons(3, Empty)))
   val listOfStrings: MyList[String] = new Cons("1", new Cons("2", Empty))
@@ -156,11 +157,13 @@ object Exercise3 extends App {
   val transformer = new StringToIntTransformer()
   println(listOfStrings.map(transformer).toString)
   println(
-    listOfIntegers.map(
-      new MyTransformer[Int, Int] {
-        override def transform(elem: Int): Int = elem * 2
-      }
-    ).toString
+    listOfIntegers
+      .map(
+        new MyTransformer[Int, Int] {
+          override def transform(elem: Int): Int = elem * 2
+        }
+      )
+      .toString
   )
 
   // filter
@@ -169,10 +172,13 @@ object Exercise3 extends App {
 
   // flatMap
   println(
-    listOfIntegers.flatMap(
-      new MyTransformer[Int, MyList[Int]] {
-        override def transform(elem: Int): MyList[Int] = new Cons(elem, new Cons(elem * 2, Empty))
-      }
-    ).toString
+    listOfIntegers
+      .flatMap(
+        new MyTransformer[Int, MyList[Int]] {
+          override def transform(elem: Int): MyList[Int] =
+            new Cons(elem, new Cons(elem * 2, Empty))
+        }
+      )
+      .toString
   )
 }

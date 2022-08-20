@@ -13,7 +13,6 @@ object Functions extends App {
 
   println(anotherFunction("hello", 3))
 
-
   def aParameterlessFunction(): Int = 42
 
   println(aParameterlessFunction())
@@ -51,7 +50,7 @@ object Functions extends App {
   2. compute nth Factorial 1 * 2 * 3 * ... * n
   3. compute nth Fibonacci number 1 + 1 + 2 + 3 + 5 + 8 + ...
   4. test is a number of prime
-  */
+   */
 
   // 1
   def greet(name: String, age: Int) = {

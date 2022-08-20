@@ -8,7 +8,8 @@ object MethodNotations extends App {
     // Infix notation
     def likes(movie: String): Boolean = movie == favoriteMovie
 
-    def hangoutWith(person: Person): String = s"${this.name} is hanging out with ${person.name}"
+    def hangoutWith(person: Person): String =
+      s"${this.name} is hanging out with ${person.name}"
 
     def +(person: Person): String = s"${this.name} + ${person.name}"
 
@@ -24,13 +25,16 @@ object MethodNotations extends App {
     def apply(): String = s"Hi, my name is $name and I like $favoriteMovie"
 
     // Exercises
-    def +(nickname: String): Person = new Person(s"${this.name} (${nickname})", this.favoriteMovie, this.age)
+    def +(nickname: String): Person =
+      new Person(s"${this.name} (${nickname})", this.favoriteMovie, this.age)
 
-    def unary_+ : Person = new Person(this.name, this.favoriteMovie, this.age + 1)
+    def unary_+ : Person =
+      new Person(this.name, this.favoriteMovie, this.age + 1)
 
     def learns(subject: String): String = s"${this.name} learns ${subject}"
 
-    def apply(number: Int): String = s"${this.name} watched ${this.favoriteMovie} ${number} times"
+    def apply(number: Int): String =
+      s"${this.name} watched ${this.favoriteMovie} ${number} times"
   }
 
   val mary = new Person("Mary", "Inception", 20)
@@ -72,7 +76,6 @@ object MethodNotations extends App {
   // Defining a function named apply on a class has a special property. It makes the instance callable
   println(mary.apply())
   println(mary()) // equivalent
-
 
   /**
    * Exercises

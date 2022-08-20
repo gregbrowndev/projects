@@ -38,7 +38,6 @@ object Generics extends App {
   // can we add a Dog to a covariant list of Animals?
   // animalList.add(new Dog)  ?? HARD QUESTION
 
-
   // 2. Invariance
   // Means that you can use only the type originally specified. An invariant generic type parameter is neither covariant nor contravariant.
   // You cannot assign an instance of List<Base> to a variable of type List<Derived> or vice versa.
@@ -47,7 +46,6 @@ object Generics extends App {
   class InvariantList[A]
 
   val invariantList: InvariantList[Animal] = new InvariantList[Animal]
-
 
   // 3. Contravariance
   // Enables you to use a more generic (less derived) type than originally specified.
@@ -62,7 +60,6 @@ object Generics extends App {
   // in the Cat type parameter, this means we can assign a more generic Animal trainer.
   // What we are saying is: we want someone to train our cat, but it can be any more generic
   // trainer, they don't specifically have to be a cat trainer!
-
 
   // Bounded types
   // The Cage has type parameter A that is bound to be a subtype of Animal

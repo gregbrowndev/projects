@@ -84,7 +84,6 @@ class Cons(h: Int, t: MyList2) extends MyList2 {
   }
 }
 
-
 object Exercise1MyList extends App {
   val list = new NaiveList(List[Int]())
 
