@@ -5,15 +5,10 @@ import lectures.part2OOP.Generics.Mylist
 object MyListExercise3 {
   abstract class MyList[+A] {
     def head(): A
-
     def tail(): MyList[A]
-
     def isEmpty: Boolean
-
     def add[B >: A](item: B): MyList[B]
-
     override def toString: String = "[" + printElements + "]"
-
     def printElements: String
 
     // HOFs
@@ -52,10 +47,15 @@ object MyListExercise3 {
 
     override def forEach[B](func: Nothing => Unit): Unit = ()
 
-    override def sort(compare: (Nothing, Nothing) => Int): MyList[Nothing] = Empty
+    override def sort(compare: (Nothing, Nothing) => Int): MyList[Nothing] =
+      Empty
 
-    override def zipWith[B, C](other: MyList[B], func: (Nothing, B) => C): MyList[C] = 
-      if (!other.isEmpty) throw RuntimeException("Lists do not have the same length")
+    override def zipWith[B, C](
+        other: MyList[B],
+        func: (Nothing, B) => C
+    ): MyList[C] =
+      if (!other.isEmpty)
+        throw RuntimeException("Lists do not have the same length")
       else Empty
 
     override def fold[B](start: B)(func: (B, Nothing) => B): B = start
@@ -101,88 +101,92 @@ object MyListExercise3 {
     }
 
     override def sort(compare: (A, A) => Int): MyList[A] = {
-        def insert(x: A, sortedList: MyList[A]): MyList[A] = 
-            if (sortedList.isEmpty) new Cons(x, Empty)
-            else if (compare(x, sortedList.head()) <= 0) new Cons(x, sortedList)
-            else new Cons(sortedList.head(), insert(x, sortedList.tail()))
+      def insert(x: A, sortedList: MyList[A]): MyList[A] =
+        if (sortedList.isEmpty) new Cons(x, Empty)
+        else if (compare(x, sortedList.head()) <= 0) new Cons(x, sortedList)
+        else new Cons(sortedList.head(), insert(x, sortedList.tail()))
 
-        val sortedTail = t.sort(compare)
-        insert(h, sortedTail)
+      val sortedTail = t.sort(compare)
+      insert(h, sortedTail)
     }
 
-    override def zipWith[B, C](other: MyList[B], func: (A, B) => C): MyList[C] = {
-        if (other.isEmpty) throw RuntimeException("Lists do not have the same length")
-        else new Cons(func(h, other.head()), t.zipWith(other.tail(), func)) 
+    override def zipWith[B, C](
+        other: MyList[B],
+        func: (A, B) => C
+    ): MyList[C] = {
+      if (other.isEmpty)
+        throw RuntimeException("Lists do not have the same length")
+      else new Cons(func(h, other.head()), t.zipWith(other.tail(), func))
     }
 
-    override def fold[B](start: B)(func: (B, A) => B): B = 
+    override def fold[B](start: B)(func: (B, A) => B): B =
       t.fold(func(start, h))(func)
   }
 }
 
 object Exercise3 extends App {
 
-    /**
-     *   1. Expand MyList
-     *      - foreach A => Unit [1,2,3].foreach(x => println(x))
-     *
-     *   - sort ((A, A) => Int) => MyList [1,2,3].sort((x, y) => y - x) == [3,2,1]
-     *
-     *   - zipWith (list, (A, A) => B) => MyList[B]
-     *        [1,2,3].zipWith([4,5,6], (x, y) => x * y) == [4,10,18]
-     *
-     *   - fold (start)(function) => a value ^ curried [1,2,3].fold(0)(x + y) == 6
-     *
-     * 2. Write two functions to transform a function to/from curried version
-     *   - toCurry(f: (Int, Int) => Int) => (Int => Int => Int)
-     *   - fromCurry(f: (Int => Int => Int)) => (Int, Int) => Int
-     *
-     * 3. Write two functions that can compose two functions and apply another
-     *   - compose(f, g) => f(g(x))
-     *   - andThen(f, g) => g(f(x))
-     */
+  /**
+   *   1. Expand MyList
+   *      - foreach A => Unit [1,2,3].foreach(x => println(x))
+   *
+   *   - sort ((A, A) => Int) => MyList [1,2,3].sort((x, y) => y - x) == [3,2,1]
+   *
+   *   - zipWith (list, (A, A) => B) => MyList[B] [1,2,3].zipWith([4,5,6], (x,
+   *     y) => x * y) == [4,10,18]
+   *
+   *   - fold (start)(function) => a value ^ curried [1,2,3].fold(0)(x + y) == 6
+   *
+   * 2. Write two functions to transform a function to/from curried version
+   *   - toCurry(f: (Int, Int) => Int) => (Int => Int => Int)
+   *   - fromCurry(f: (Int => Int => Int)) => (Int, Int) => Int
+   *
+   * 3. Write two functions that can compose two functions and apply another
+   *   - compose(f, g) => f(g(x))
+   *   - andThen(f, g) => g(f(x))
+   */
 
-    // 1 - MyList
-    import MyListExercise3._
+  // 1 - MyList
+  import MyListExercise3._
 
-    val listOfIntegers: MyList[Int] = Cons(1, Cons(2, Cons(3, Empty)))
-    listOfIntegers.forEach(println)
+  val listOfIntegers: MyList[Int] = Cons(1, Cons(2, Cons(3, Empty)))
+  listOfIntegers.forEach(println)
 
-    println(listOfIntegers.sort((x, y) => y - x))
+  println(listOfIntegers.sort((x, y) => y - x))
 
-    val anotherListOfIntegers: MyList[Int] = Cons(4, Cons(5, Cons(6, Empty)))
-    println(listOfIntegers.zipWith(anotherListOfIntegers, (x, y) => x * y))
+  val anotherListOfIntegers: MyList[Int] = Cons(4, Cons(5, Cons(6, Empty)))
+  println(listOfIntegers.zipWith(anotherListOfIntegers, (x, y) => x * y))
 
-    println(listOfIntegers.fold(0)(_ + _))
+  println(listOfIntegers.fold(0)(_ + _))
 
-    // 2 - toCurry/fromCurry
-    def toCurry(f: (Int, Int) => Int): (Int => (Int => Int)) = {
-      (x: Int) => (y: Int) => f(x, y)
-    }
+  // 2 - toCurry/fromCurry
+  def toCurry(f: (Int, Int) => Int): (Int => (Int => Int)) = {
+    (x: Int) => (y: Int) => f(x, y)
+  }
 
-    def fromCurry(f: (Int => Int => Int)): (Int, Int) => Int = {
-      (x: Int, y: Int) => f(x)(y)
-    }
+  def fromCurry(f: (Int => Int => Int)): (Int, Int) => Int = {
+    (x: Int, y: Int) => f(x)(y)
+  }
 
-    val curried = toCurry((x: Int, y: Int) => x + y)
-    println(curried(4)(5))
+  val curried = toCurry((x: Int, y: Int) => x + y)
+  println(curried(4)(5))
 
-    val uncurried = fromCurry((x: Int) => (y: Int) => x + y)
-    println(uncurried(2, 9))
+  val uncurried = fromCurry((x: Int) => (y: Int) => x + y)
+  println(uncurried(2, 9))
 
-    // 3 - compose/andThen
-    def compose[A, B, C](f: B => C, g: A => B): A => C =
-      x => f(g(x))
-      
-    def andThen[A, B, C](f: A => B, g: B => C): A => C =
-      x => g(f(x))
+  // 3 - compose/andThen
+  def compose[A, B, C](f: B => C, g: A => B): A => C =
+    x => f(g(x))
 
-    val add3: (Int => Int) = 
-      x => x + 3
+  def andThen[A, B, C](f: A => B, g: B => C): A => C =
+    x => g(f(x))
 
-    val mul5: (Int => Int) =
-      x => x * 5
+  val add3: (Int => Int) =
+    x => x + 3
 
-    println(compose(add3, mul5)(2))
-    println(andThen(add3, mul5)(2))
+  val mul5: (Int => Int) =
+    x => x * 5
+
+  println(compose(add3, mul5)(2))
+  println(andThen(add3, mul5)(2))
 }
