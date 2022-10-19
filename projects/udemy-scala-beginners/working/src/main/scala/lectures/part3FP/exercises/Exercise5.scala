@@ -1,8 +1,6 @@
 package lectures.part3FP.exercises
 
-import scala.collection.mutable.{HashSet, Queue}
 import scala.annotation.tailrec
-
 
 object Exercise5 extends App {
   /* Exercises for Tuples and Maps
@@ -29,135 +27,89 @@ object Exercise5 extends App {
   // The above prints: Map(greg -> 44). Clearly, the last occurrence is kept
 
   // 2 - social network
-  type Friends = Set[String]
-  type Graph = Map[String, Friends]
-
-  case class Network(graph: Graph)
+  type Network = Map[String, Set[String]]
   object Network {
-    def apply() = new Network(graph = Map())
+    def apply(): Network = Map()
     def add(n: Network, person: String): Network = {
-      val newGraph = n.graph + (person -> Set())
-      n.copy(graph = newGraph)
+      n + (person -> Set())
     }
     def remove(n: Network, person: String): Network = {
-      // 1. This is not too efficient because it maps all values in the network.
-      // Instead, recursively unfriend each person in the person to remove's friend list
-      // val newGraph =
-      //   (network.graph - person).mapValues(_ - person).toMap
-      // network.copy(graph = newGraph)
-
-      // 2. Better implementatin
-      // def removeAux(network: Network, friends: Friends): Network = {
-      //   if (friends.isEmpty) network
-      //   else removeAux(unfriend(network, person, friends.head), friends.tail)
-      // }
-      
-      // val friends = n.graph(person)
-      // val newGraph = removeAux(n, friends).graph - person
-      // n.copy(graph = newGraph)
-      
-      // 3. Most concise implementation
-      val newGraph = n.graph(person).foldLeft(n)((n, friend) => unfriend(n, person, friend)).graph - person
-      n.copy(graph = newGraph)
-
-      
+      n(person).foldLeft(n)((n, friend) => unfriend(n, person, friend)) - person
     }
     def friend(n: Network, sender: String, receiver: String): Network = {
-      val graph = n.graph
-      val senderFriends = graph(sender) + receiver
-      val receiverFriends = graph(receiver) + sender
-      val newGraph =
-        graph + (sender -> senderFriends) + (receiver -> receiverFriends)
-      n.copy(graph = newGraph)
+      val senderFriends = n(sender) + receiver
+      val receiverFriends = n(receiver) + sender
+      n + (sender -> senderFriends) + (receiver -> receiverFriends)
     }
-    def unfriend(
-        n: Network,
-        sender: String,
-        receiver: String
-    ): Network = {
-      val graph = n.graph
-      val senderFriends = graph(sender) - receiver
-      val receiverFriends = graph(receiver) - sender
-      val newGraph =
-        graph + (sender -> senderFriends) + (receiver -> receiverFriends)
-      n.copy(graph = newGraph)
+    def unfriend(n: Network, sender: String, receiver: String): Network = {
+      val senderFriends = n(sender) - receiver
+      val receiverFriends = n(receiver) - sender
+      n + (sender -> senderFriends) + (receiver -> receiverFriends)
     }
 
     // stats
     def numberOfFriends(n: Network, person: String): Int = {
-      if (!n.graph.contains(person)) 0
-      else n.graph(person).size
+      if (!n.contains(person)) 0
+      else n(person).size
     }
     def mostFriends(n: Network): String = {
-      n.graph.maxBy(_._2.size)._1
+      n.maxBy(_._2.size)._1
     }
     def numberWithNoFriends(n: Network): Int = {
-      n.graph.count((person, friends) => friends.isEmpty)
+      n.count((person, friends) => friends.isEmpty)
     }
     def hasConnection(
         n: Network,
         person: String,
         target: String
     ): Boolean = {
-      def bfs(g: Graph, person: String, target: String): Boolean = {
-        // Solution 1:
-        // @tailrec
-        // def _bfs(seen: Set[String], queue: Set[String]): Boolean = {
-        //     if (queue.isEmpty) false
-        //     else {
-        //       val currentPerson = queue.head
-        //       if (currentPerson == target) true
-        //       else if (seen.contains(currentPerson)) _bfs(seen, queue.tail)
-        //       else _bfs(seen + currentPerson, queue ++ g(currentPerson))
-        //     }
-        // }
-
-        @tailrec
-        def _bfs(seen: Set[String], currentLevel: Set[String]): Boolean = {
-            if (currentLevel.isEmpty) false
-            else if (currentLevel.contains(target)) true
-            else {
-              // build set of all unseen people at the next level in the graph
-              val nextLevel = currentLevel.foldLeft(Set[String]())((s, currentPerson) => s ++ g(currentPerson)) -- seen
-              _bfs(seen ++ currentLevel, nextLevel)
-            }
+      @tailrec
+      def _bfs(seen: Set[String], currentLevel: Set[String]): Boolean = {
+        if (currentLevel.isEmpty) false
+        else if (currentLevel.contains(target)) true
+        else {
+          // build set of all unseen people at the next level in the graph
+          val nextLevel =
+            currentLevel.foldLeft(Set[String]())((s, currentPerson) =>
+              s ++ n(currentPerson)
+            ) -- seen
+          _bfs(seen ++ currentLevel, nextLevel)
         }
-        
-        // add person to currentLevel so we can evaluate hasConnection(person, person), i.e. person with itself
-        _bfs(Set(person), g(person) + person)
       }
 
-      bfs(n.graph, person, target)
+      // add person to currentLevel so we can evaluate hasConnection(person, person), i.e. person with itself
+      _bfs(Set(person), n(person) + person)
     }
   }
 
+  import Network._
   var network = Network()
-  network = Network.add(network, "Greg")
-  network = Network.add(network, "Lewis")
-  network = Network.add(network, "Mary")
-  network = Network.add(network, "Luke")
+  network = add(network, "Greg")
+  network = add(network, "Lewis")
+  network = add(network, "Mary")
+  network = add(network, "Luke")
   println(network)
 
-  network = Network.friend(network, "Greg", "Lewis")
-  network = Network.friend(network, "Greg", "Mary")
+  network = friend(network, "Greg", "Lewis")
+  network = friend(network, "Greg", "Mary")
   println(network)
 
-  println(Network.numberOfFriends(network, "Greg"))
-  println(Network.numberOfFriends(network, "Lewis"))
-  println(Network.mostFriends(network))
-  println(Network.numberWithNoFriends(network))
+  println(numberOfFriends(network, "Greg"))
+  println(numberOfFriends(network, "Lewis"))
+  println(mostFriends(network))
+  println(numberWithNoFriends(network))
 
-  network = Network.remove(network, "Lewis")
+  network = remove(network, "Lewis")
   println(network)
 
-  network = Network.unfriend(network, "Greg", "Mary")
+  network = unfriend(network, "Greg", "Mary")
   println(network)
-  println(Network.numberWithNoFriends(network))
-  
-  network = Network.add(network, "Lewis")
-  network = Network.friend(network, "Greg", "Mary")
-  network = Network.friend(network, "Mary", "Luke")
+  println(numberWithNoFriends(network))
+
+  network = add(network, "Lewis")
+  network = friend(network, "Greg", "Mary")
+  network = friend(network, "Mary", "Luke")
   println(network)
-  println(Network.hasConnection(network, "Greg", "Luke"))
-  println(Network.hasConnection(network, "Greg", "Lewis"))
+  println(hasConnection(network, "Greg", "Luke"))
+  println(hasConnection(network, "Greg", "Lewis"))
 }
