@@ -108,7 +108,7 @@ simple x = x
 -- 2. Write a version of head that returns an empty list instead of error when
 -- given an empty list
 head2 :: [a] -> [a]
-head2 [] = []
+head2 []     = []
 head2 (x:xs) = [x]
 
 -- 3. Define the type signature of the myFoldl function from lesson 9

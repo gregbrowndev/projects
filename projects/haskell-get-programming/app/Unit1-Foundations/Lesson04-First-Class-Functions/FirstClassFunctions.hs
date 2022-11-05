@@ -1,4 +1,4 @@
-import Data.List (sort, sortBy)
+import           Data.List (sort, sortBy)
 
 names :: [([Char], [Char])]
 names =

@@ -42,8 +42,9 @@ packages:
 extra-deps:
 #  - stylish-haskell-0.14.3.0
 #  - Cabal-3.8.1.0@sha256:155d64beeecbae2b19e5d67844532494af88bc8795d4db4146a0c29296f59967,12220
-#  - ghc-lib-parser-9.2.4.20220729@sha256:02c229a122d698f055615f2794fbcb01ce4241aaf16ee990068189193c61e228,12741
-#  - ghc-lib-parser-ex-9.2.1.1@sha256:5c8a31fd7fa1f7c4f4f191c869007bf64eb2e12575f6874cd59ebeec83ae177d,3493
+  # Allow install of stylish-haskell
+  - ghc-lib-parser-9.2.4.20220729@sha256:02c229a122d698f055615f2794fbcb01ce4241aaf16ee990068189193c61e228,12741
+  - ghc-lib-parser-ex-9.2.1.1@sha256:5c8a31fd7fa1f7c4f4f191c869007bf64eb2e12575f6874cd59ebeec83ae177d,3493
 
 
 # Override default flag values for local packages and extra-deps

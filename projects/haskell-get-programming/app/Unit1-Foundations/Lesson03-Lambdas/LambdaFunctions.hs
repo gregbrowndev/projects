@@ -17,6 +17,6 @@ overwrite x =
    in let x = 3
        in let x = 4
            in x
- 
+
 counter :: Num a => a -> a
 counter x = (\x -> x + 1) ((\x -> x + 1) ((\x -> x) x))

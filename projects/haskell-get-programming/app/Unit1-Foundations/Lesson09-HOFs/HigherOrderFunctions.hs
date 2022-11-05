@@ -1,26 +1,26 @@
-import Data.Char (toLower)
+import           Data.Char (toLower)
 
 -- The functions below follow the same pattern of
 -- applying some operation element-wise to a list
-add3ToAll [] = []
+add3ToAll []       = []
 add3ToAll (x : xs) = (x + 3) : add3ToAll xs
 
-mul3ToAll [] = []
+mul3ToAll []       = []
 mul3ToAll (x : xs) = (x * 3) : mul3ToAll xs
 
 -- we can abstract out the operation to create a
 -- higher-order function
-applyToAll _ [] = []
+applyToAll _ []          = []
 applyToAll func (x : xs) = (func x) : applyToAll func xs
 
 -- 9.2 Understanding how map works
 -- try to implement the two functions below without using map
 -- map ("a " ++) ["train", "plane", "boat"]
-addAToAll [] = []
+addAToAll []       = []
 addAToAll (x : xs) = ("a " ++ x) : addAToAll xs
 
 -- map (^2) [1,2,3]
-squareAll [] = []
+squareAll []       = []
 squareAll (x : xs) = (x ^ 2) : squareAll xs
 
 -- filter
@@ -39,7 +39,7 @@ remove pred (x : xs) = if pred x then rest else x : rest
 -- Using foldl
 -- Write a function to calculate the product
 -- foldl (*) 1 [1,2,3,4]
-myProduct [] = 1
+myProduct []       = 1
 myProduct (x : xs) = x * myProduct xs
 
 -- Using map and foldl to create sumOfSquares
@@ -53,7 +53,7 @@ rcons x y = y : x
 myReverse xs = foldl rcons [] xs
 
 -- implement foldl yourself
-myFoldl _ init [] = init
+myFoldl _ init []          = init
 myFoldl func init (x : xs) = func x (myFoldl func init xs)
 
 myFoldr _ init [] = init
@@ -63,7 +63,7 @@ myFoldr func init (x : xs) = func x rightResult
 
 -- Questions
 -- Use the filter and length to re-create the elem function
-myElem2 _ [] = False
+myElem2 _ []         = False
 myElem2 val (x : xs) = (val == x) || myElem2 val xs
 
 myElem val xs = length filtered /= 0
@@ -83,8 +83,8 @@ harmonic2 n = harmonic2 (n -1) + 1 / n
 harmonic n = sum (take n series)
   where
     series = map (1 /) [1 ..]
-    
-    
+
+
 harmonic3 n = sum (take n seriesValues)
   where
     seriesPairs = zip (repeat 1.0) [1.0, 2.0 ..]

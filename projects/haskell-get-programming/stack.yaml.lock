@@ -3,7 +3,21 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: ghc-lib-parser-9.2.4.20220729@sha256:02c229a122d698f055615f2794fbcb01ce4241aaf16ee990068189193c61e228,12741
+    pantry-tree:
+      sha256: 482231a8a7c20b42a914cd7144a1b684383df0ff9d0684c3201c3e71ba75b8a2
+      size: 27633
+  original:
+    hackage: ghc-lib-parser-9.2.4.20220729@sha256:02c229a122d698f055615f2794fbcb01ce4241aaf16ee990068189193c61e228,12741
+- completed:
+    hackage: ghc-lib-parser-ex-9.2.1.1@sha256:5c8a31fd7fa1f7c4f4f191c869007bf64eb2e12575f6874cd59ebeec83ae177d,3493
+    pantry-tree:
+      sha256: 508d3e70a5002ce9b4a3ddf00c71cb4ff8716c953e29524bea03f791e3b31ad5
+      size: 1954
+  original:
+    hackage: ghc-lib-parser-ex-9.2.1.1@sha256:5c8a31fd7fa1f7c4f4f191c869007bf64eb2e12575f6874cd59ebeec83ae177d,3493
 snapshots:
 - completed:
     sha256: e5f56f619132209b826084cacd6374d7f0344cc88a9d1d305878190e4204ae1f

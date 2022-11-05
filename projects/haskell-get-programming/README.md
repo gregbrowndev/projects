@@ -47,7 +47,13 @@ crashed my IDE ([see issue](https://githubplus.com/carymrobbins/intellij-haskfor
 
 #### Formatting
 
-The plugin provides a few formatting options, e.g.
+Run the format script:
+
+```bash
+./bin/format
+```
+
+The [IntelliJ-Haskell plugin](https://github.com/rikvdkleij/intellij-haskell/blob/master/README.md) provides a few formatting options, e.g.
 
 * _Code_ > _Haskell_ > _Reformat Code by Ormolu_
 * _Code_ > _Haskell_ > _Reformat Code by Stylish-Haskell_

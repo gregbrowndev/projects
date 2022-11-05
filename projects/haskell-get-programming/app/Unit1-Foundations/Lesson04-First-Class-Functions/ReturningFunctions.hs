@@ -19,7 +19,7 @@ renoOffice :: (a, [Char]) -> [Char]
 renoOffice name = nameText ++ " - PO Box 456 - Reno, NV 89523"
   where
     nameText = snd name
-    
+
 -- Washington DC office address
 dcOffice :: ([Char], [Char]) -> [Char]
 dcOffice name = nameText ++ " PO Box 1337 - Washington DC, 20001"
@@ -28,16 +28,16 @@ dcOffice name = nameText ++ " PO Box 1337 - Washington DC, 20001"
 -- Dispatch function
 getLocationFunction :: [Char] -> ([Char], [Char]) -> [Char]
 getLocationFunction location = case location of
-  "ny" -> nyOffice
-  "sf" -> sfOffice
+  "ny"   -> nyOffice
+  "sf"   -> sfOffice
   "reno" -> renoOffice
-  _ -> (\name -> fst name ++ " " ++ snd name)
-  
+  _      -> (\name -> fst name ++ " " ++ snd name)
+
 -- Function to generate the postal address for different offices
 addressLetter :: ([Char], [Char]) -> [Char] -> [Char]
 addressLetter name location = locationFunction name
   where locationFunction = getLocationFunction location
-  
+
 main :: IO ()
 main = do
   print address

@@ -43,11 +43,11 @@ main = do
   where
     fastRobot = createRobot ("Fastbot", 15, 40)
     slowRobot = createRobot ("Slowbot", 20, 30)
-    
+
     fastRobotRound3 = fight slowRobotRound3 fastRobotRound2
     fastRobotRound2 = fight slowRobotRound2 fastRobotRound1
-    fastRobotRound1 = fight slowRobotRound1 fastRobot 
+    fastRobotRound1 = fight slowRobotRound1 fastRobot
     slowRobotRound3 = fight fastRobotRound2 slowRobotRound2
     slowRobotRound2 = fight fastRobotRound1 slowRobotRound1
-    slowRobotRound1 = fight fastRobot slowRobot 
-    
+    slowRobotRound1 = fight fastRobot slowRobot
+

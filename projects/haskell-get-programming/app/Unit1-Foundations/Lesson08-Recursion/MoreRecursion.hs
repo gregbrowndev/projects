@@ -1,11 +1,11 @@
 -- Drop
 myDrop :: (Eq t, Num t) => t -> [a] -> [a]
-myDrop 0 xs = xs
-myDrop _ [] = []
+myDrop 0 xs       = xs
+myDrop _ []       = []
 myDrop n (_ : xs) = myDrop (n -1) xs
 
 -- Length
-myLength [] = 0
+myLength []       = 0
 myLength (_ : xs) = 1 + myLength xs
 
 -- Take
@@ -32,7 +32,7 @@ collatz n =
     else 1 + collatz (n * 3 + 1)
 
 -- Reverse
-myReverse [] = []
+myReverse []       = []
 myReverse (x : xs) = myReverse xs ++ [x]
 
 -- Slow Fibonacci numbers (exponential complexity)
