@@ -4,8 +4,11 @@
 
 ### Stack
 
-I've used [Stack](https://docs.haskellstack.org/en/stable/README/) to initialise a project space for
-each unit in the book.
+I've used [Stack](https://docs.haskellstack.org/en/stable/README/) to create this project, e.g.
+
+```shell
+stack new haskell-get-programming
+```
 
 Install some packages (globally, i.e. not directly in the project) for formatting:
 
@@ -13,11 +16,6 @@ Install some packages (globally, i.e. not directly in the project) for formattin
 stack install hindent stylish-haskell
 ```
 
-Create a project:
-
-```shell
-stack new unit1-foundations 
-```
 
 Useful commands:
 
