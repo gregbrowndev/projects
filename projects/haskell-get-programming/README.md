@@ -16,7 +16,6 @@ Install some packages (globally, i.e. not directly in the project) for formattin
 stack install hindent stylish-haskell
 ```
 
-
 Useful commands:
 
 * Setup - downloads an isolated compiler 
@@ -39,7 +38,12 @@ Useful commands:
   
 ### IDE: IntelliJ
 
-I installed the [IntelliJ-Haskell plugin](https://github.com/rikvdkleij/intellij-haskell/blob/master/README.md)
+I installed the [IntelliJ-Haskell plugin](https://github.com/rikvdkleij/intellij-haskell/blob/master/README.md).
+
+Note: There is also the [HaskForce plugin](https://plugins.jetbrains.com/plugin/7602-haskforce).
+However, you cannot have both install at the same time. Additionally, this plugin
+crashed my IDE ([see issue](https://githubplus.com/carymrobbins/intellij-haskforce/issues/452))
+
 
 #### Formatting
 

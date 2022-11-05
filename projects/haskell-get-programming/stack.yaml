@@ -17,8 +17,7 @@
 #
 # resolver: ./custom-snapshot.yaml
 # resolver: https://example.com/snapshots/2018-01-01.yaml
-resolver:
-  url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/19.yaml
+resolver: lts-19.31
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -40,7 +39,12 @@ packages:
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
-# extra-deps: []
+extra-deps:
+#  - stylish-haskell-0.14.3.0
+#  - Cabal-3.8.1.0@sha256:155d64beeecbae2b19e5d67844532494af88bc8795d4db4146a0c29296f59967,12220
+#  - ghc-lib-parser-9.2.4.20220729@sha256:02c229a122d698f055615f2794fbcb01ce4241aaf16ee990068189193c61e228,12741
+#  - ghc-lib-parser-ex-9.2.1.1@sha256:5c8a31fd7fa1f7c4f4f191c869007bf64eb2e12575f6874cd59ebeec83ae177d,3493
+
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
