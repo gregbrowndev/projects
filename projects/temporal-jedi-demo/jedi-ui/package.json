@@ -12,7 +12,8 @@
     "start:worker": "nodemon ./temporal/lib/worker",
     "lint": "next lint",
     "test": "jest --watch",
-    "format": "prettier --write ."  
+    "test:ci": "jest --ci",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@temporalio/activity": "^1.4.4",
