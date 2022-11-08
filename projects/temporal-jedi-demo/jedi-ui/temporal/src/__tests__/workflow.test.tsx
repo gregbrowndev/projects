@@ -7,7 +7,12 @@ import { DefaultLogger, Runtime, LogEntry, Worker } from '@temporalio/worker';
 import { Client } from '@temporalio/client';
 
 import type * as activities from '../activities'; // Uses types to ensure our mock signatures match
-import {jediBusiness, orderSignal, orderStatusQuery, teaDrunkQuery} from '../workflows';
+import {
+  jediBusiness,
+  orderSignal,
+  orderStatusQuery,
+  teaDrunkQuery,
+} from '../workflows';
 import { uuid4 } from '@temporalio/workflow';
 
 // See full example at https://github.com/vkarpov15/temporal-ecommerce-ts/blob/95b7be70d0b2a8d95cea93ec719453c94fa68f2e/src/test/workflows.test.ts#L65-L80
@@ -15,8 +20,7 @@ import { uuid4 } from '@temporalio/workflow';
 // creating TestWorkflowEnvironment can cause test to time out
 // the first time it is executed as it needs to download a Java binary
 // Note, if tests get stuck check/delete the file at /tmp/temporalite-sdk-typescript-1.4.4.downloading
-jest.setTimeout(20_000)
-
+jest.setTimeout(20_000);
 
 describe('Workflow', () => {
   let env: TestWorkflowEnvironment;
@@ -24,11 +28,11 @@ describe('Workflow', () => {
   let runPromise: Promise<void>;
   let client: Client;
 
-  let ordersReceived: string[]
+  let ordersReceived: string[];
   const mockActivities: Partial<typeof activities> = {
     executeOrder: async (id) => {
-      ordersReceived.push(id)
-      return id
+      ordersReceived.push(id);
+      return id;
     },
   };
 
@@ -49,18 +53,18 @@ describe('Workflow', () => {
       workflowsPath: require.resolve('../workflows'),
       activities: mockActivities,
     });
-    runPromise = worker.run()
+    runPromise = worker.run();
   });
 
   afterAll(async () => {
-    worker?.shutdown()
-    await runPromise
+    worker?.shutdown();
+    await runPromise;
     await env?.teardown();
   });
 
   beforeEach(() => {
-    ordersReceived = []
-  })
+    ordersReceived = [];
+  });
 
   it('handles order 67 and drinks tea', async () => {
     const handle = await client.workflow.start(jediBusiness, {
@@ -75,9 +79,12 @@ describe('Workflow', () => {
     let teaDrunk = await handle.query(teaDrunkQuery);
     expect(teaDrunk).toEqual(0);
 
-    expect(ordersReceived).toStrictEqual([])
+    expect(ordersReceived).toStrictEqual([]);
 
-    await handle.signal(orderSignal, {type: 'Order67', fromUser: 'Darth Sidious'})
+    await handle.signal(orderSignal, {
+      type: 'Order67',
+      fromUser: 'Darth Sidious',
+    });
 
     orderStatus = await handle.query(orderStatusQuery);
     expect(orderStatus).toEqual('EXECUTING');
@@ -85,9 +92,9 @@ describe('Workflow', () => {
     teaDrunk = await handle.query(teaDrunkQuery);
     expect(teaDrunk).toEqual(1);
 
-    expect(ordersReceived).toStrictEqual(["Order67"])
+    expect(ordersReceived).toStrictEqual(['Order67']);
 
-    await handle.terminate()  // terminate dangling workflow
+    await handle.terminate(); // terminate dangling workflow
   });
 
   it('completes when it receives order 66', async () => {
@@ -96,7 +103,10 @@ describe('Workflow', () => {
       taskQueue: 'test',
     });
 
-    await handle.signal(orderSignal, {type: 'Order66', fromUser: 'Darth Sidious'})
+    await handle.signal(orderSignal, {
+      type: 'Order66',
+      fromUser: 'Darth Sidious',
+    });
 
     let orderStatus = await handle.query(orderStatusQuery);
     expect(orderStatus).toEqual('EXECUTING');
@@ -105,14 +115,14 @@ describe('Workflow', () => {
     expect(teaDrunk).toEqual(0);
 
     // skip time 10s
-    await env.sleep(10000)
+    await env.sleep(10000);
 
     orderStatus = await handle.query(orderStatusQuery);
     expect(orderStatus).toEqual('DONE');
 
-    expect(ordersReceived).toStrictEqual(["Order66"])
+    expect(ordersReceived).toStrictEqual(['Order66']);
 
-    const result = await handle.result()
-    expect(result).toBeUndefined()  // check the workflow completes
-  })
+    const result = await handle.result();
+    expect(result).toBeUndefined(); // check the workflow completes
+  });
 });

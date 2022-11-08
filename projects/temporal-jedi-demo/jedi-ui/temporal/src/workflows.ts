@@ -1,6 +1,6 @@
 import * as wf from '@temporalio/workflow';
 import type * as activities from './activities';
-import {sleep} from "@temporalio/workflow"; // purely for type safety
+import { sleep } from '@temporalio/workflow'; // purely for type safety
 
 const { executeOrder } = wf.proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',
@@ -16,13 +16,13 @@ export const orderSignal = wf.defineSignal<[Order]>('order');
 export type OrderStatus = 'WAITING' | 'EXECUTING' | 'DONE';
 export const orderStatusQuery = wf.defineQuery<OrderStatus>('orderStatus');
 
-export const teaDrunkQuery = wf.defineQuery<number>("teaDrunkQuery")
+export const teaDrunkQuery = wf.defineQuery<number>('teaDrunkQuery');
 
 export async function jediBusiness(): Promise<void> {
   let awaitingOrder66 = true;
   let orderStatus: OrderStatus = 'WAITING';
   let orders: Order[] = [];
-  let teaDrunk = 0
+  let teaDrunk = 0;
 
   wf.setHandler(orderSignal, (order) => {
     orders = [...orders, order];
@@ -41,10 +41,10 @@ export async function jediBusiness(): Promise<void> {
 
     if (order.type == 'Order66') {
       await executeOrder(order.type);
-      awaitingOrder66 = false
+      awaitingOrder66 = false;
     } else {
       await executeOrder(order.type);
-      ++teaDrunk
+      ++teaDrunk;
     }
 
     await sleep(5000);
