@@ -8,12 +8,11 @@ describe('Activity', () => {
     env = new MockActivityEnvironment({ attempt: 2 });
   });
 
-  describe('purchase', () => {
-
-    it('returns the activity ID', async () => {
+  describe('executeOrder', () => {
+    it('returns the order ID', async () => {
       // some stuff
-      const result = await env.run(activities.purchase, '2');
-      expect(result).toBe("test")
+      const result = await env.run(activities.executeOrder, '66');
+      expect(result).toBe('66');
     });
   });
 });
