@@ -5,4 +5,4 @@ coverage
 
 package.json
 package-lock.json
-temporal/lib
+src/temporal/lib
