@@ -1,17 +1,21 @@
 import type { NextPage } from 'next';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   deleteWorkflow,
+  getOrderStatus,
   getWorkflowIdCookie,
   startWorkflow,
 } from '../services/DataService';
 import Button from '../components/Button';
 import Head from 'next/head';
+import { OrderStatus } from '../temporal/lib/workflows';
+import { useInterval } from '../hooks/useInterval';
+import { isErrorData } from './api/utils';
 
 interface StartBlockProps {
   onStart: () => Promise<void>;
 }
-const StartBlock = ({ onStart }: StartBlockProps) => {
+const StartBlock: React.FC<StartBlockProps> = ({ onStart }) => {
   // const onStart = async (e: React.MouseEvent<HTMLButtonElement>) => {};
   return (
     <div>
@@ -30,12 +34,20 @@ const StartBlock = ({ onStart }: StartBlockProps) => {
 
 interface WorkflowBlockProps {
   workflowId: string;
+  orderStatus: OrderStatus;
+  setOrderStatus: (orderStatus: OrderStatus) => void;
   onStartAgain: () => {};
 }
-const WorkflowBlock = ({ workflowId, onStartAgain }: WorkflowBlockProps) => {
+const WorkflowBlock: React.FC<WorkflowBlockProps> = ({
+  workflowId,
+  onStartAgain,
+  orderStatus,
+  setOrderStatus,
+}) => {
   return (
     <div>
       <h2 className="text-2xl">Workflow started: {workflowId}</h2>
+      <p>Status: {orderStatus}</p>
       <div className="mt-3">
         <Button
           type="button"
@@ -62,11 +74,36 @@ const ResultBlock = () => {
 
 const Home: NextPage = () => {
   const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
+  const [orderStatus, setOrderStatus] = useState<OrderStatus>('WAITING');
+  const [resultConfirmed, setResultConfirmed] = useState<boolean>(true);
 
   useEffect(() => {
     const cookieVal = getWorkflowIdCookie();
     setWorkflowId(cookieVal);
   }, []);
+
+  const fetchOrderStatus = useCallback(async () => {
+    console.log('UseCallBack called');
+    // const orderStatus = undefined;
+    const orderStatus = await getOrderStatus().then((res) => {
+      if (!isErrorData(res)) {
+        return res.orderStatus;
+      }
+    });
+
+    setOrderStatus(orderStatus || 'WAITING');
+  }, [getOrderStatus]);
+
+  // useInterval(
+  //   () => {
+  //     if (!workflowId) {
+  //       return;
+  //     }
+  //     fetchOrderStatus().catch(console.error);
+  //   },
+  //   1000,
+  //   [workflowId, fetchOrderStatus],
+  // );
 
   const startWorkflowAndSaveID = async () => {
     return await startWorkflow().then(() => {
@@ -86,6 +123,8 @@ const Home: NextPage = () => {
   if (workflowId) {
     block = WorkflowBlock({
       workflowId,
+      orderStatus,
+      setOrderStatus,
       onStartAgain: deleteWorkflowAndRemoveId,
     });
   }

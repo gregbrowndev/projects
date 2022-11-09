@@ -1,5 +1,5 @@
-type Variant = "primary" | "secondary" | "tertiary";
-type Size = "small" | "medium" | "large";
+type Variant = 'primary' | 'secondary' | 'tertiary';
+type Size = 'small' | 'medium' | 'large';
 
 export interface ButtonProps {
   /**
@@ -9,7 +9,7 @@ export interface ButtonProps {
   /**
    * HTML type of the component
    */
-  type: "button" | "submit" | "reset";
+  type: 'button' | 'submit' | 'reset';
   /**
    * How large should the button be?
    */
@@ -25,29 +25,29 @@ export interface ButtonProps {
 }
 
 const Button = ({
-  variant = "primary",
-  type = "button",
-  size = "medium",
+  variant = 'primary',
+  type = 'button',
+  size = 'medium',
   label,
   ...props
 }: ButtonProps) => {
   const variantMap = new Map<Variant, string>([
-    ["primary", "bg-indigo-600 hover:bg-indigo-800 text-white"],
-    ["secondary", "bg-indigo-200 hover:bg-indigo-400 text-indigo-800"],
-    ["tertiary", "bg-white hover:bg-indigo-400 text-indigo-800"],
+    ['primary', 'bg-indigo-600 hover:bg-indigo-800 text-white'],
+    ['secondary', 'bg-indigo-200 hover:bg-indigo-400 text-indigo-800'],
+    ['tertiary', 'bg-white hover:bg-indigo-400 text-indigo-800'],
   ]);
 
   const sizeMap = new Map<Size, string>([
-    ["small", "py-1 px-2"],
-    ["medium", "py-2 px-4"],
-    ["large", "py-4 px-8"],
+    ['small', 'py-1 px-2'],
+    ['medium', 'py-2 px-4'],
+    ['large', 'py-4 px-8'],
   ]);
 
   return (
     <button
       type={type}
       className={
-        variantMap.get(variant) + " " + sizeMap.get(size) + " font-bold rounded"
+        variantMap.get(variant) + ' ' + sizeMap.get(size) + ' rounded font-bold'
       }
       onClick={props.onClick}
     >

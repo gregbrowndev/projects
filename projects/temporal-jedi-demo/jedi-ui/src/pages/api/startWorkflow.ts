@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { jediBusiness } from '../../temporal/src/workflows';
 import { TASK_QUEUE } from '../../temporal/src/worker';
@@ -16,7 +15,9 @@ export default async function handler(
 
   let workflowId = getWorkflowId({ req, res });
   if (workflowId) {
-    res.status(400).json({ message: 'Workflow already started' });
+    res
+      .status(400)
+      .json({ type: 'error', message: 'Workflow already started' });
     return;
   }
 

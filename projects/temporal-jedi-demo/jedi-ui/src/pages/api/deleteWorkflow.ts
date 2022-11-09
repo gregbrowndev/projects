@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   deleteWorkflowId,
@@ -16,13 +15,10 @@ export default async function handler(
   res: NextApiResponse<null | ErrorData>,
 ) {
   const client = await createClient();
-  console.log(
-    `API cookies: ${Object.entries(req.cookies).map(([k, v]) => `${k}=${v}`)}`,
-  );
 
   let workflowId = getWorkflowId({ req, res });
   if (!workflowId) {
-    res.status(400).json({ message: 'No workflow found' });
+    res.status(400).json({ type: 'error', message: 'No workflow found' });
     return;
   }
 

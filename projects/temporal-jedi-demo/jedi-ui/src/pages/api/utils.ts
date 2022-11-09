@@ -28,6 +28,7 @@ export function deleteWorkflowId(options?: OptionsType): void {
 }
 
 export interface ErrorData {
+  type: 'error';
   message: string;
   detail?: string;
 }
@@ -38,4 +39,8 @@ export async function createClient(): Promise<WorkflowClient> {
       address: TEMPORAL_URL,
     }),
   }*/);
+}
+
+export function isErrorData(object: any): object is ErrorData {
+  return 'type' in object && object.type == 'Error';
 }

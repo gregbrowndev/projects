@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Order, orderSignal } from '../../temporal/src/workflows';
 import { ErrorData, getWorkflowId, createClient } from './utils';
@@ -13,14 +12,16 @@ export default async function handler(
 ) {
   const workflowId = getWorkflowId({ req, res });
   if (!workflowId) {
-    res.status(400).json({ message: 'Workflow not started' });
+    res.status(400).json({ type: 'error', message: 'Workflow not started' });
     return;
   }
 
   const body = req.body;
 
   if (!body.type || !body.fromUser) {
-    return res.status(400).json({ message: 'type or fromUser not found' });
+    return res
+      .status(400)
+      .json({ type: 'error', message: 'type or fromUser not found' });
   }
 
   const order: Order = {

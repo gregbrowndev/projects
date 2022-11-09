@@ -11,7 +11,6 @@ async function run() {
     activities, // directly imported in Node.js
     taskQueue: TASK_QUEUE,
   });
-  console.log('Hello there');
   await worker.run();
 }
 
