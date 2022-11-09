@@ -3,14 +3,14 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { teaDrunkQuery } from '../../temporal/src/workflows';
 import { getWorkflowId, ErrorData, createClient } from './utils';
 
-type Data = {
+export type GetTeaDrunkData = {
   workflowId: string;
   teaDrunk: number;
 };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data | ErrorData>,
+  res: NextApiResponse<GetTeaDrunkData | ErrorData>,
 ) {
   const client = await createClient();
 

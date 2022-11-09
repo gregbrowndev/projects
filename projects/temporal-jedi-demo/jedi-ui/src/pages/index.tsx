@@ -1,5 +1,4 @@
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import React, { useEffect, useState } from 'react';
 import {
   deleteWorkflow,
@@ -7,6 +6,7 @@ import {
   startWorkflow,
 } from '../services/DataService';
 import Button from '../components/Button';
+import Head from 'next/head';
 
 interface StartBlockProps {
   onStart: () => Promise<void>;
@@ -15,7 +15,15 @@ const StartBlock = ({ onStart }: StartBlockProps) => {
   // const onStart = async (e: React.MouseEvent<HTMLButtonElement>) => {};
   return (
     <div>
-      <Button type="button" variant="primary" onClick={onStart} label="Start" />
+      <h2 className="text-2xl">Workflow not started</h2>
+      <div className="mt-3">
+        <Button
+          type="button"
+          variant="primary"
+          onClick={onStart}
+          label="Start"
+        />
+      </div>
     </div>
   );
 };
@@ -27,7 +35,7 @@ interface WorkflowBlockProps {
 const WorkflowBlock = ({ workflowId, onStartAgain }: WorkflowBlockProps) => {
   return (
     <div>
-      <p className="text-2xl">Workflow started: {workflowId}</p>
+      <h2 className="text-2xl">Workflow started: {workflowId}</h2>
       <div className="mt-3">
         <Button
           type="button"
@@ -53,18 +61,12 @@ const ResultBlock = () => {
 };
 
 const Home: NextPage = () => {
-  // const workflowId = 'dummyID';
   const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const cookieVal = getWorkflowIdCookie();
     setWorkflowId(cookieVal);
   }, []);
-
-  // TODO - try to get workflowId from cookie
-
-  // TODO - pass onClick handler into StartBlock which calls /api/startWorkflow
-  //  and extracts workflowId from cookie
 
   const startWorkflowAndSaveID = async () => {
     return await startWorkflow().then(() => {
@@ -89,13 +91,13 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/public/favicon.ico" />
+        <title>Jedi Demo</title>
+        <link rel="icon" href="/static/temporal.ico" />
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
+      <section>
         <h1 className="text-6xl font-bold">
           <a className="text-blue-600" href="https://temporal.io">
             Temporal
@@ -104,14 +106,17 @@ const Home: NextPage = () => {
         </h1>
 
         <p className="mt-3 text-2xl">
-          Doing important Jedi work using Orchestration
+          Doing important Jedi work using orchestration
         </p>
+      </section>
 
-        <section className="mt-6 flex max-w-4xl justify-around sm:w-full">
+      <section className="mt-16">
+        <div className="bg-white p-8 shadow-lg sm:rounded-md">
+          {/* Inner content */}
           {block}
-        </section>
-      </main>
-    </div>
+        </div>
+      </section>
+    </>
   );
 };
 

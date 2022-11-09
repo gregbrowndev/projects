@@ -4,13 +4,13 @@ import { jediBusiness } from '../../temporal/src/workflows';
 import { TASK_QUEUE } from '../../temporal/src/worker';
 import { ErrorData, getWorkflowId, setWorkflowId, createClient } from './utils';
 
-type Data = {
+export type StartWorkflowData = {
   workflowId: string;
 };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data | ErrorData>,
+  res: NextApiResponse<StartWorkflowData | ErrorData>,
 ) {
   const client = await createClient();
 

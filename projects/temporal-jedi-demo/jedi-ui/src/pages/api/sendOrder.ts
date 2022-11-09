@@ -3,13 +3,13 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { Order, orderSignal } from '../../temporal/src/workflows';
 import { ErrorData, getWorkflowId, createClient } from './utils';
 
-type Data = {
+export type SendOrderData = {
   workflowId: string;
 };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data | ErrorData>,
+  res: NextApiResponse<SendOrderData | ErrorData>,
 ) {
   const workflowId = getWorkflowId({ req, res });
   if (!workflowId) {
