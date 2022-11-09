@@ -15,7 +15,7 @@
     "test": "jest --watch",
     "test:ci": "jest --ci",
     "format": "prettier --write .",
-    "clean": "rm -rf node_modules .next src/temporal/lib **/*.tsbuildinfo",
+    "clean": "rm -rf node_modules .next src/temporal/lib src/temporal/*.tsbuildinfo",
     "WIP:dev": "npm-run-all -l --parallel dev:worker dev:next",
     "WIP:dev:worker": "nodemon --watch 'src/temporal/**/*.ts' --exec 'yarn compile:worker && node src/temporal/lib/worker'",
     "WIP:compile:worker": "tsc --build src/temporal/tsconfig.json"
@@ -51,6 +51,6 @@
     "prettier": "^2.7.1",
     "prettier-plugin-tailwindcss": "^0.1.13",
     "tailwindcss": "^3.2.2",
-    "webpack": "^5.74.0"
+    "ts-node-dev": "^2.0.0"
   }
 }

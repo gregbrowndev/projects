@@ -1,10 +1,21 @@
 import { getCookie } from 'cookies-next';
-import { Order, OrderStatus } from '../temporal/src/workflows';
-import { GetOrderStatusData } from '../pages/api/getOrderStatus';
-import { StartWorkflowData } from '../pages/api/startWorkflow';
 import { ErrorData } from '../pages/api/utils';
-import { GetTeaDrunkData } from '../pages/api/getTeaDrunk';
-import { SendOrderData } from '../pages/api/sendOrder';
+
+// Seeing some perplexing issues due to Temporal. Avoid importing any modules that depend on Temporal
+// This is probably because these modules can't be loaded client-side
+import {
+  GetOrderStatusData,
+  GetTeaDrunkData,
+  Order,
+  SendOrderData,
+  StartWorkflowData,
+} from './hack';
+// import { Order, OrderStatus } from '../temporal/src/workflows';
+// import { GetOrderStatusData } from '../pages/api/getOrderStatus';
+// import { StartWorkflowData } from '../pages/api/startWorkflow';
+// import { ErrorData } from '../pages/api/utils';
+// import { GetTeaDrunkData } from '../pages/api/getTeaDrunk';
+// import { SendOrderData } from '../pages/api/sendOrder';
 
 export function getWorkflowIdCookie(): string | undefined {
   const cookieVal = getCookie('workflowId');
