@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { teaDrunkQuery } from '../../temporal/src/workflows';
-import createClient from '../../temporal/src/client';
+import { getWorkflowId, ErrorData, createClient } from './utils';
 
 type Data = {
   workflowId: string;
@@ -10,12 +10,15 @@ type Data = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse<Data | ErrorData>,
 ) {
   const client = await createClient();
 
-  // TODO - get workflowId from session
-  const workflowId = 'business-meaningful-id';
+  const workflowId = getWorkflowId({ req, res });
+  if (!workflowId) {
+    res.status(400).json({ message: 'Workflow not started' });
+    return;
+  }
 
   const workflow = client.getHandle(workflowId);
   const teaDrunk = await workflow.query(teaDrunkQuery);

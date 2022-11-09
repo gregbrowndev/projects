@@ -4,16 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "npm-run-all -l build:temporal --parallel dev:temporal dev:next start:worker",
-    "dev:next": "next dev",
     "dev:temporal": "tsc --build --watch src/temporal/tsconfig.json",
-    "build:next": "next build",
+    "dev:next": "next dev",
+    "build": "npm-run-all -l --parallel build:next build:temporal",
     "build:temporal": "tsc --build src/temporal/tsconfig.json",
+    "build:next": "next build",
     "start": "next start",
     "start:worker": "nodemon src/temporal/lib/worker",
     "lint": "next lint",
     "test": "jest --watch",
     "test:ci": "jest --ci",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+
+    "WIP:dev": "npm-run-all -l --parallel dev:worker dev:next",
+    "WIP:dev:worker": "nodemon --watch 'src/temporal/**/*.ts' --exec 'yarn compile:worker && node src/temporal/lib/worker'",
+    "WIP:compile:worker": "tsc --build src/temporal/tsconfig.json"
   },
   "dependencies": {
     "@temporalio/activity": "^1.4.4",
@@ -23,6 +28,7 @@
     "@types/node": "18.11.9",
     "@types/react": "18.0.25",
     "@types/react-dom": "18.0.8",
+    "cookies-next": "^2.1.1",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.2",
     "next": "13.0.2",

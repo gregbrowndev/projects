@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { jediBusiness } from '../../temporal/src/workflows';
 import { TASK_QUEUE } from '../../temporal/src/worker';
-import createClient from '../../temporal/src/client';
+import { ErrorData, getWorkflowId, setWorkflowId, createClient } from './utils';
 
 type Data = {
   workflowId: string;
@@ -10,13 +10,20 @@ type Data = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse<Data | ErrorData>,
 ) {
-  // TODO - inject WorkflowClient?
   const client = await createClient();
 
-  // TODO - add workflowId to the session
-  const workflowId = 'business-meaningful-id';
+  let workflowId = getWorkflowId({ req, res });
+  if (workflowId) {
+    res.status(400).json({ message: 'Workflow already started' });
+    return;
+  }
+
+  workflowId = 'business-meaningful-id';
+
+  // Save workflowID as cookie so UI can track workflow
+  setWorkflowId(workflowId, { req, res });
 
   const handle = await client.start(jediBusiness, {
     workflowId: workflowId,

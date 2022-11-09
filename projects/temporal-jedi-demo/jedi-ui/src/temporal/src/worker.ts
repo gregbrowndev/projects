@@ -1,8 +1,6 @@
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
 
-run().catch((err) => console.log(err));
-
 export const TASK_QUEUE = 'tutorial';
 export const TEMPORAL_URL = 'localhost:7233';
 
@@ -13,5 +11,8 @@ async function run() {
     activities, // directly imported in Node.js
     taskQueue: TASK_QUEUE,
   });
+  console.log('Hello there');
   await worker.run();
 }
+
+run().catch((err) => console.log(err));
