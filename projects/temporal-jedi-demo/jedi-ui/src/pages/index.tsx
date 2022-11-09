@@ -11,6 +11,8 @@ import Head from 'next/head';
 import { useInterval } from '../hooks/useInterval';
 import { isErrorData, OrderStatus } from '../services/hack';
 
+const REFRESH_INTERVAL_MS = 5000;
+
 interface StartBlockProps {
   onStart: () => Promise<void>;
 }
@@ -34,14 +36,12 @@ const StartBlock: React.FC<StartBlockProps> = ({ onStart }) => {
 interface WorkflowBlockProps {
   workflowId: string;
   orderStatus: OrderStatus;
-  setOrderStatus: (orderStatus: OrderStatus) => void;
   onStartAgain: () => {};
 }
 const WorkflowBlock: React.FC<WorkflowBlockProps> = ({
   workflowId,
   onStartAgain,
   orderStatus,
-  setOrderStatus,
 }) => {
   return (
     <div>
@@ -83,7 +83,6 @@ const Home: NextPage = () => {
 
   const fetchOrderStatus = useCallback(async () => {
     console.log('UseCallBack called');
-    // const orderStatus = undefined;
     const orderStatus = await getOrderStatus().then((res) => {
       if (!isErrorData(res)) {
         return res.orderStatus;
@@ -93,16 +92,16 @@ const Home: NextPage = () => {
     setOrderStatus(orderStatus || 'WAITING');
   }, [getOrderStatus]);
 
-  // useInterval(
-  //   () => {
-  //     if (!workflowId) {
-  //       return;
-  //     }
-  //     fetchOrderStatus().catch(console.error);
-  //   },
-  //   1000,
-  //   [workflowId, fetchOrderStatus],
-  // );
+  useInterval(
+    () => {
+      if (!workflowId) {
+        return;
+      }
+      fetchOrderStatus().catch(console.error);
+    },
+    REFRESH_INTERVAL_MS,
+    [REFRESH_INTERVAL_MS, workflowId, fetchOrderStatus],
+  );
 
   const startWorkflowAndSaveID = async () => {
     return await startWorkflow().then(() => {
@@ -123,7 +122,6 @@ const Home: NextPage = () => {
     block = WorkflowBlock({
       workflowId,
       orderStatus,
-      setOrderStatus,
       onStartAgain: deleteWorkflowAndRemoveId,
     });
   }

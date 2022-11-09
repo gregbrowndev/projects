@@ -44,13 +44,12 @@ export async function deleteWorkflow(): Promise<void> {
 export async function getOrderStatus(): Promise<
   GetOrderStatusData | ErrorData
 > {
-  // return fetch('/api/getOrderStatus', {
-  //   method: 'GET',
-  //   headers: { 'Content-Type': 'application/json' },
-  // }).then((res) => {
-  //   return res.json();
-  // });
-  return { workflowId: 'asdasdas', orderStatus: 'EXECUTING' };
+  return fetch('/api/getOrderStatus', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => {
+    return res.json();
+  });
 }
 
 export async function getTeaDrunk(): Promise<GetTeaDrunkData | ErrorData> {
