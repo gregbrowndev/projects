@@ -53,8 +53,8 @@ const Button: React.FC<ButtonProps> = ({
 
   const sizeMap = new Map<Size, string>([
     ['small', 'py-1 px-2 text-sm'],
-    ['medium', 'py-2 px-4 text-md'],
-    ['large', 'py-2 px-6 text-lg'],
+    ['medium', 'py-1 px-2 text-sm md:py-2 md:px-4 md:text-base'],
+    ['large', 'py-2 px-4 text-base md:py-2 md:px-6 md:text-lg'],
   ]);
 
   return (

@@ -4,9 +4,9 @@ import React from 'react';
 export default function Document() {
   return (
     // eslint-disable-next-line react/jsx-no-undef
-    <Html className="h-full bg-gray-50">
+    <Html className="h-full w-full bg-gray-50 font-sans text-gray-600 antialiased">
       <Head />
-      <body className="flex min-h-full flex-col font-sans text-gray-600 antialiased">
+      <body className="h-full w-full">
         <Main />
         <NextScript />
       </body>

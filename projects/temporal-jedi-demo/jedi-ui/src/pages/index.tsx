@@ -54,7 +54,7 @@ const WorkflowBlock: React.FC<WorkflowBlockProps> = ({
   return (
     <div>
       <div className="flex flex-row items-center justify-between">
-        <h2 className="text-2xl">Workflow started: {workflowId}</h2>
+        <h2 className="text-lg md:text-2xl">Workflow started: {workflowId}</h2>
         <Button
           type="button"
           variant={orderStatus == 'DONE' ? 'primary' : 'tertiary'}
@@ -120,7 +120,7 @@ const Home: NextPage = () => {
     });
 
     setOrderStatus(orderStatus || 'WAITING');
-  }, [getOrderStatus]);
+  }, []);
 
   const fetchTeaDrunk = useCallback(async () => {
     console.log('fetchTeaDrunk called');
@@ -133,7 +133,7 @@ const Home: NextPage = () => {
     if (teaDrunk) {
       setTeaDrunk(teaDrunk);
     }
-  }, [getTeaDrunk]);
+  }, []);
 
   useInterval(
     () => {
@@ -186,20 +186,20 @@ const Home: NextPage = () => {
       </Head>
 
       <section>
-        <h1 className="text-6xl font-bold">
+        <h1 className="text-2xl font-bold md:text-6xl">
           <a className="text-blue-600" href="https://temporal.io">
             Temporal
           </a>{' '}
           Demo
         </h1>
 
-        <p className="mt-3 text-2xl">
+        <p className="mt-1 text-lg md:mt-3 md:text-2xl">
           Doing important Jedi work using orchestration
         </p>
       </section>
 
-      <section className="mt-16">
-        <div className="bg-white px-8 py-6 shadow-lg sm:rounded-md">
+      <section className="mt-6 md:mt-16">
+        <div className="bg-white px-4 py-3 shadow-lg sm:rounded-md md:px-8 md:py-6">
           {/* Inner content */}
           {block}
         </div>

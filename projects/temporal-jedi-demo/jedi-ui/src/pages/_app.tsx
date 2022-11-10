@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <main
       role="main"
-      className="mx-auto max-w-screen-lg overflow-hidden py-12 px-4 sm:px-6 lg:px-8"
+      className="mx-auto max-w-screen-lg overflow-hidden py-6 px-4 md:py-12 md:px-6 lg:px-8"
     >
       <Head>
         <title>Jedi Demo</title>
