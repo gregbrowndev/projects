@@ -19,28 +19,42 @@ export interface ButtonProps {
    */
   label: string;
   /**
+   * Disabled
+   */
+  disabled?: boolean;
+  /**
    * Optional click handler
    */
   onClick?: () => void;
 }
 
-const Button = ({
+const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   type = 'button',
   size = 'medium',
+  disabled = false,
   label,
   ...props
-}: ButtonProps) => {
+}) => {
   const variantMap = new Map<Variant, string>([
-    ['primary', 'bg-indigo-600 hover:bg-indigo-800 text-white'],
-    ['secondary', 'bg-indigo-200 hover:bg-indigo-400 text-indigo-800'],
-    ['tertiary', 'bg-white hover:bg-indigo-400 text-indigo-800'],
+    [
+      'primary',
+      'bg-indigo-600 hover:bg-indigo-800 text-white disabled:bg-gray-300',
+    ],
+    [
+      'secondary',
+      'bg-indigo-200 hover:bg-indigo-400 text-indigo-800 disabled:bg-gray-300',
+    ],
+    [
+      'tertiary',
+      'bg-white hover:bg-indigo-400 text-indigo-800 disabled:bg-gray-300',
+    ],
   ]);
 
   const sizeMap = new Map<Size, string>([
-    ['small', 'py-1 px-2'],
-    ['medium', 'py-2 px-4'],
-    ['large', 'py-4 px-8'],
+    ['small', 'py-1 px-2 text-sm'],
+    ['medium', 'py-2 px-4 text-md'],
+    ['large', 'py-2 px-6 text-lg'],
   ]);
 
   return (
@@ -50,6 +64,7 @@ const Button = ({
         variantMap.get(variant) + ' ' + sizeMap.get(size) + ' rounded font-bold'
       }
       onClick={props.onClick}
+      disabled={disabled}
     >
       {label}
     </button>

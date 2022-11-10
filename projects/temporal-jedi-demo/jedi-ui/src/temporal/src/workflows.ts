@@ -41,13 +41,14 @@ export async function jediBusiness(): Promise<void> {
 
     if (order.type == 'Order66') {
       await executeOrder(order.type);
+      await sleep(5000);
       awaitingOrder66 = false;
     } else {
       await executeOrder(order.type);
+      await sleep(5000);
       ++teaDrunk;
     }
 
-    await sleep(5000);
     orderStatus = 'WAITING';
   }
 
