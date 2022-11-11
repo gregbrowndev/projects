@@ -1,4 +1,4 @@
-import Data.List
+import           Data.List
 
 -- In this lesson, we'll look at how to implement existing type classes.
 -- Overview:
