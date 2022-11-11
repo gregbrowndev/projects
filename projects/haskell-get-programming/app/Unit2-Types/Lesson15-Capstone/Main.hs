@@ -312,3 +312,89 @@ instance Cipher OneTimePad where
 --  * Created a powerful cryptographic tool, One-Time Pad
 --  * Defined a generic Cipher type class as an interface for different cipher
 --    implementations and implemented it for rotN and OTP for strings.
+
+
+-- Project Extension
+-- We can improve the impl of One-Time Pad. The problem is the pad needs to be
+-- as long as the message we want to send. We can generate such a string, like
+-- we did above, but this means we can only use the pad once per message.
+-- Clearly, we'd need to share or persist the pad somehow for each message.
+
+-- An alternative technique is to use pseudo-random number generator (PRNG) to
+-- generate the pad from a known, sharable seed. Whenever we want to encrypt a
+-- message we can generate an effectively infinitely long one-time pad. This
+-- technique of encrypting a message from the output of a PRNG is called a
+-- stream cipher.
+
+-- A linear congruential generator (a PRNG):
+prng :: Int -> Int -> Int -> Int -> Int
+prng a b maxNumber seed = (a*seed + b) `mod` maxNumber
+
+-- a and b are initialisation params that help determine the randomness,
+-- maxNumber determines the upper bound of the number that can be produced, and
+-- the last param is the seed, an integer value.
+
+-- Using partial application to generate random numbers less than 100
+examplePRNG :: Int -> Int
+examplePRNG = prng 1337 7 100
+
+  -- ghci> examplePRNG 12345
+  -- 72
+  -- ghci> examplePRNG 12345   -- returns the same value
+  -- 72
+  -- ghci> examplePRNG 72
+  -- 71
+  -- ghci> examplePRNG 71
+  -- 34
+  -- ghci> examplePRNG 34
+  -- 65
+  -- ghci> examplePRNG 65
+  -- 12
+
+-- Note: using the same seed returns the same random number. We use this initial
+-- random number as the seed for the next random number.
+
+-- Let's write a function to generate a pad of size n using the PRNG
+genStreamCipher :: (Int -> Int) -> Int -> Int -> [Int]
+genStreamCipher prng seed n = if n == 0
+                              then []
+                              else padVal : genStreamCipher prng padVal (n-1)
+  where padVal = prng seed
+
+  -- ghci> genStreamCipher examplePRNG 12345 5
+  -- [72,71,34,65,12]
+
+-- we get the same result as above!
+
+-- Implementing a StreamCipher type
+
+data StreamCipher = StreamCipher (Int -> Int) Int
+-- I've defined the StreamCipher constructor to require two args, the PRNG func
+-- and the seed. Maybe, we could have exposed all the args, a, b, maxNumber, and
+-- seed, and called the PRNG directly. However, I think this is cleaner
+
+instance Cipher StreamCipher where
+  encode (StreamCipher prng seed) text = applyOTP pad text
+    where padStream = genStreamCipher prng seed (length text)
+          pad = map toEnum padStream
+  decode (StreamCipher prng seed) text = applyOTP pad text
+    where padStream = genStreamCipher prng seed (length text)
+          pad = map toEnum padStream
+
+  -- ghci> sc = StreamCipher examplePRNG 12345
+  -- ghci>
+  -- ghci> encode sc "Hello world"
+  -- "\NUL\"N-c\DC3):FsR"
+  -- ghci>
+  -- ghci> encode sc "\NUL\"N-c\DC3):FsR"
+  -- "Hello world"
+
+-- We can make a different PRNG with a larger maxNumber (not sure if this
+-- improves the robustness or not...
+
+  -- ghci> robustPRNG = prng 1337 7 1000000
+  -- ghci> sc = StreamCipher robustPRNG 12345
+  -- ghci> encode sc "Hello world"
+  -- "\505328\548698\573090\280073\580715\278219\21549\871294\774306\308731\639682"
+  -- ghci> encode sc "\505328\548698\573090\280073\580715\278219\21549\871294\774306\308731\639682"
+  -- "Hello world"
