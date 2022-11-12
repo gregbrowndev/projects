@@ -1,6 +1,8 @@
 -- Questions
 -- Q17.1: Make Colour an instance of Monoid
-data Colour = Red
+-- Add a Clear colour as the identity
+data Colour = Clear
+  | Red
   | Yellow
   | Blue
   | Green
@@ -9,6 +11,8 @@ data Colour = Red
   | Brown deriving (Show, Eq, Enum)
 
 instance Semigroup Colour where
+  (<>) Clear any                                      = any
+  (<>) any Clear                                        = any
   (<>) a b | a == b                                   = a
            | all (`elem` [Red,Blue,Purple]) [a,b]     = Purple
            | all (`elem` [Blue,Yellow,Green]) [a,b]   = Green
@@ -16,8 +20,19 @@ instance Semigroup Colour where
            | otherwise                                = Brown
 
 instance Monoid Colour where
-  mempty = Blue
+  mempty = Clear
   mappend = (<>)
+
+{-
+  ghci> Clear <> Blue
+  Blue
+  ghci> Red <> Clear
+  Red
+  ghci> Red <> Blue
+  Purple
+
+Looks good
+-}
 
 
 -- Q17.2: If Events and Probs were data types rather than just synonyms, they
