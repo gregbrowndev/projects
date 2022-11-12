@@ -142,8 +142,9 @@ data StoreItem = BookItem Book
 -- Note: a massive short coming of Haskell is that the record syntax generates
 -- boilerplate functions for getters, etc. so we get naming collisions for
 -- properties with the same name in different records. Because of this, we have
--- to use different names, e.g. bookPrice and recordPrice. There are some
--- proposals to fix it: https://wiki.haskell.org/TypeDirectedNameResolution
+-- to use different names, e.g. bookPrice and recordPrice.
+-- See https://stackoverflow.com/questions/4260507/avoiding-namespace-pollution-in-haskell
+-- There are is a proposal to fix it: https://wiki.haskell.org/TypeDirectedNameResolution
 
 -- we can define functions that work on all types
 price :: StoreItem -> Double
