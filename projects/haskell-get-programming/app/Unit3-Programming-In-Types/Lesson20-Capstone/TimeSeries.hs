@@ -511,3 +511,10 @@ movingAverageTS (TS ts vs) n = TS ts smoothedValues
   35|220.22500000000002
   36|NA
 -}
+
+{-
+Extensions:
+  - Using the median for smoothing
+  - A function to compute the div (% change) rather than the diff
+  - A function to compute the standard deviation
+-}
