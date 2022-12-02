@@ -33,6 +33,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , random
   default-language: Haskell2010
 
 executable haskell-get-programming-exe
@@ -46,6 +47,7 @@ executable haskell-get-programming-exe
       base >=4.7 && <5
     , containers
     , haskell-get-programming
+    , random
   default-language: Haskell2010
 
 test-suite haskell-get-programming-test
@@ -60,4 +62,5 @@ test-suite haskell-get-programming-test
       base >=4.7 && <5
     , containers
     , haskell-get-programming
+    , random
   default-language: Haskell2010
