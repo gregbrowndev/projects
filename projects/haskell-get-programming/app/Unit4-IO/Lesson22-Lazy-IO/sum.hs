@@ -1,5 +1,5 @@
+import           Control.Monad
 import           System.Environment
-import Control.Monad
 
 {-
 main :: IO ()

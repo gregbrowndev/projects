@@ -20,7 +20,7 @@ calculate equation =
           ((x', ""), "+", (y', "")) -> x' + y'
           ((x', ""), "*", (y', "")) -> x' * y'
           -- Otherwise, return 0.
-          _ -> 0
+          _                         -> 0
 
       -- If the list has any other number of elements, return 0.
       _ -> 0

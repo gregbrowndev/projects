@@ -24,7 +24,7 @@ parseInputs = map parseInput . lines
 
 parseInput :: String -> Command
 parseInput "n" = Exit
-parseInput s = makePrintQuote (read s)
+parseInput s   = makePrintQuote (read s)
 
 processCommand :: Command -> String
 processCommand (PrintQuote n) = quotes !! n

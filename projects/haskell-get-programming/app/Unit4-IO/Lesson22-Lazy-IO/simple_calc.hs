@@ -1,4 +1,4 @@
-import Data.List.Split
+import           Data.List.Split
 
 {-
 Questions
