@@ -20,6 +20,8 @@ import { getWorkflowId } from '../server/utils';
 
 const REFRESH_INTERVAL_MS = 1000;
 
+// TODO - rename route to orderReport
+
 function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -72,6 +74,7 @@ const OrderStatusPage: NextPage<Props> = (props) => {
     const refreshedOrderReport: OrderReportData = {
       ...props.orderReport,
       status: isExecuting ? 'EXECUTING' : 'WAITING',
+      troopersDanced: 4,
     };
     setOrderReport(refreshedOrderReport);
   }, [isExecuting]);
@@ -83,7 +86,7 @@ const OrderStatusPage: NextPage<Props> = (props) => {
       }
     },
     REFRESH_INTERVAL_MS,
-    [REFRESH_INTERVAL_MS, fetchOrderReport, orderReport, isExecuting],
+    [REFRESH_INTERVAL_MS, fetchOrderReport, orderReport],
   );
 
   const dancingGifs = useMemo(
@@ -101,12 +104,12 @@ const OrderStatusPage: NextPage<Props> = (props) => {
 
   const [selectedGifId, setSelectedGifId] = useState<number | null>(null);
   useEffect(() => {
+    // TODO - it would be better to cycle through them to avoid showing the same one. Need to store some state globally?
     setSelectedGifId(randomInt(0, dancingGifs.length - 1));
   }, [dancingGifs]);
-  // TODO - it would be better to cycle through them to avoid showing the same one. Need to store some state globally?
 
   const toggle = (
-    <div className="align-items flex flex-row">
+    <div className="flex flex-row items-center">
       <Switch
         checked={isExecuting}
         onChange={() => setIsExecuting(!isExecuting)}
@@ -146,43 +149,63 @@ const OrderStatusPage: NextPage<Props> = (props) => {
         <div className="bg-white px-4 py-3 shadow-lg sm:rounded-md md:px-8 md:py-6">
           {/* Inner content */}
           <div className="flex flex-col items-center">
-            <div className="h-96">
-              <Transition
-                appear={true}
-                show={
-                  orderReport.status == 'EXECUTING' && selectedGifId != null
-                }
-                enter="transition-opacity duration-150"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="transition-opacity duration-300"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-                className="h-full"
-              >
-                {selectedGifId != null && (
-                  <Image
-                    src={dancingGifs[selectedGifId]}
-                    alt="Dancing storm trooper"
-                    className="h-full w-full object-contain"
-                  />
-                )}
-              </Transition>
-              {/* TODO - add results section */}
-            </div>
+            {/* Executing Section */}
+            <Transition
+              appear={true}
+              show={orderReport.status == 'EXECUTING' && selectedGifId != null}
+              enter="transition-opacity duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-300"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+              className="h-96"
+            >
+              {selectedGifId != null && (
+                <Image
+                  src={dancingGifs[selectedGifId]}
+                  alt="Dancing storm trooper"
+                  className="h-full w-full object-contain"
+                />
+              )}
+            </Transition>
+
+            {/* Results Section */}
+            <Transition
+              show={orderReport.status != 'EXECUTING'}
+              enter="transition-opacity duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-300"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+              className="flex h-64 flex-col items-center"
+            >
+              <h2 className="mt-1 text-center text-2xl md:mt-8 md:text-4xl">
+                Order Complete!
+              </h2>
+              <div className="flex grow items-center">
+                <h3 className="mt-1 text-center text-xl md:mt-3 md:text-3xl">
+                  Storm Troopers Danced: {orderReport.troopersDanced || 0}
+                </h3>
+              </div>
+            </Transition>
+
+            {/* Continue Button */}
+            {/* TODO - hook up done button to navigate back to home */}
             <div className="mt-4">
               <Button
                 type="button"
                 variant="primary"
                 label={
-                  orderReport.status == 'EXECUTING'
-                    ? 'Executing...'
-                    : 'Send another'
+                  orderReport.status == 'EXECUTING' ? 'Executing...' : 'Done'
                 }
                 loading={orderReport.status == 'EXECUTING'}
                 disabled={orderReport.status == 'EXECUTING'}
               />
             </div>
+
+            {/* Debug Stuff */}
             <div className="mt-8">{toggle}</div>
             <div className="mt-8">{orderReport.status}</div>
           </div>
