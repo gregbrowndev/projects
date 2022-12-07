@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { teaDrunkQuery } from '../../temporal/src/workflows';
-import { getWorkflowId, ErrorData, createClient } from './utils';
+import { getWorkflowId, ErrorData, createWorkflowClient } from './utils';
 
 export type GetTeaDrunkData = {
   workflowId: string;
@@ -11,7 +11,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<GetTeaDrunkData | ErrorData>,
 ) {
-  const client = await createClient();
+  const client = await createWorkflowClient();
 
   const workflowId = getWorkflowId({ req, res });
   if (!workflowId) {

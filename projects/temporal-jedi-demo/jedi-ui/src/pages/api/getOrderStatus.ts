@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { OrderStatus, orderStatusQuery } from '../../temporal/src/workflows';
-import { ErrorData, getWorkflowId, createClient } from './utils';
+import { ErrorData, getWorkflowId, createWorkflowClient } from './utils';
 
 export type GetOrderStatusData = {
   workflowId: string;
@@ -11,7 +11,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<GetOrderStatusData | ErrorData>,
 ) {
-  const client = await createClient();
+  const client = await createWorkflowClient();
 
   const workflowId = getWorkflowId({ req, res });
   if (!workflowId) {

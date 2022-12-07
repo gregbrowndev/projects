@@ -1,3 +1,5 @@
+import { spans } from 'next/dist/build/webpack/plugins/profiling-plugin';
+
 type Variant = 'primary' | 'secondary' | 'tertiary';
 type Size = 'small' | 'medium' | 'large';
 
@@ -23,6 +25,10 @@ export interface ButtonProps {
    */
   disabled?: boolean;
   /**
+   * Loading - show this button in a loading state
+   */
+  loading?: boolean;
+  /**
    * Optional click handler
    */
   onClick?: () => void;
@@ -33,6 +39,7 @@ const Button: React.FC<ButtonProps> = ({
   type = 'button',
   size = 'medium',
   disabled = false,
+  loading = false,
   label,
   ...props
 }) => {
@@ -57,15 +64,27 @@ const Button: React.FC<ButtonProps> = ({
     ['large', 'py-2 px-4 text-base md:py-2 md:px-6 md:text-lg'],
   ]);
 
+  const Spinner = (
+    <svg
+      className="mr-3 h-5 w-5 animate-spin rounded-full border-2 border-transparent border-opacity-50 bg-transparent"
+      style={{ borderRight: 'white', borderTopColor: 'white' }}
+      viewBox="0 0 24 24"
+    ></svg>
+  );
+
   return (
     <button
       type={type}
       className={
-        variantMap.get(variant) + ' ' + sizeMap.get(size) + ' rounded font-bold'
+        variantMap.get(variant) +
+        ' ' +
+        sizeMap.get(size) +
+        ' inline-flex rounded font-bold'
       }
       onClick={props.onClick}
       disabled={disabled}
     >
+      {loading && Spinner}
       {label}
     </button>
   );

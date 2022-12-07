@@ -118,8 +118,7 @@ const Home: NextPage = () => {
         return res.orderStatus;
       }
     });
-
-    setOrderStatus(orderStatus || 'WAITING');
+    +setOrderStatus(orderStatus || 'WAITING');
   }, []);
 
   const fetchTeaDrunk = useCallback(async () => {

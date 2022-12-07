@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   deleteWorkflowId,
-  createClient,
+  createWorkflowClient,
   ErrorData,
   getWorkflowId,
 } from './utils';
@@ -14,7 +14,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<null | ErrorData>,
 ) {
-  const client = await createClient();
+  const client = await createWorkflowClient();
 
   let workflowId = getWorkflowId({ req, res });
   if (!workflowId) {

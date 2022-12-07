@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Order, orderSignal } from '../../temporal/src/workflows';
-import { ErrorData, getWorkflowId, createClient } from './utils';
+import { ErrorData, getWorkflowId, createWorkflowClient } from './utils';
 
 export type SendOrderData = {
   workflowId: string;
@@ -31,7 +31,7 @@ export default async function handler(
 
   console.log(`API: /api/sendOrder received ${req.body}`);
 
-  const client = await createClient();
+  const client = await createWorkflowClient();
 
   const workflow = client.getHandle(workflowId);
   await workflow.signal(orderSignal, order);

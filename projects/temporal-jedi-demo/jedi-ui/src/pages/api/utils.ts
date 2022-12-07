@@ -33,7 +33,7 @@ export interface ErrorData {
   detail?: string;
 }
 
-export async function createClient(): Promise<WorkflowClient> {
+export async function createWorkflowClient(): Promise<WorkflowClient> {
   return new WorkflowClient(/*{
     connection: await Connection.connect({
       address: TEMPORAL_URL,
