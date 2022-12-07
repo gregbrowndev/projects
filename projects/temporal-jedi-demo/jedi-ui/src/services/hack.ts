@@ -1,5 +1,5 @@
 // Redefine all the API data types clientside to avoid Temporal bundling issues
-import { ErrorData } from '../pages/api/utils';
+import { ErrorData } from '../server/types';
 
 export interface Order {
   type: 'Order66' | 'Order67';

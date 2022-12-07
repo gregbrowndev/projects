@@ -11,7 +11,7 @@ import {
   jediBusiness,
   orderSignal,
   orderStatusQuery,
-  teaDrunkQuery,
+  orderReportQuery,
 } from '../workflows';
 import { uuid4 } from '@temporalio/workflow';
 
@@ -76,7 +76,7 @@ describe('Workflow', () => {
     let orderStatus = await handle.query(orderStatusQuery);
     expect(orderStatus).toEqual('WAITING');
 
-    let teaDrunk = await handle.query(teaDrunkQuery);
+    let teaDrunk = await handle.query(orderReportQuery);
     expect(teaDrunk).toEqual(0);
 
     expect(ordersReceived).toStrictEqual([]);
@@ -89,7 +89,7 @@ describe('Workflow', () => {
     orderStatus = await handle.query(orderStatusQuery);
     expect(orderStatus).toEqual('EXECUTING');
 
-    teaDrunk = await handle.query(teaDrunkQuery);
+    teaDrunk = await handle.query(orderReportQuery);
     expect(teaDrunk).toEqual(1);
 
     expect(ordersReceived).toStrictEqual(['Order67']);
@@ -111,7 +111,7 @@ describe('Workflow', () => {
     let orderStatus = await handle.query(orderStatusQuery);
     expect(orderStatus).toEqual('EXECUTING');
 
-    let teaDrunk = await handle.query(teaDrunkQuery);
+    let teaDrunk = await handle.query(orderReportQuery);
     expect(teaDrunk).toEqual(0);
 
     // skip time 10s

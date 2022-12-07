@@ -1,5 +1,4 @@
 import { getCookie } from 'cookies-next';
-import { ErrorData } from '../pages/api/utils';
 
 // Seeing some perplexing issues due to Temporal. Avoid importing any modules that depend on Temporal
 // This is probably because these modules can't be loaded client-side
@@ -10,6 +9,7 @@ import {
   SendOrderData,
   StartWorkflowData,
 } from './hack';
+import { ErrorData } from '../server/types';
 // import { Order, OrderStatus } from '../temporal/src/workflows';
 // import { GetOrderStatusData } from '../pages/api/getOrderStatus';
 // import { StartWorkflowData } from '../pages/api/startWorkflow';
@@ -44,18 +44,12 @@ export async function deleteWorkflow(): Promise<void> {
 export async function getOrderStatus(): Promise<
   GetOrderStatusData | ErrorData
 > {
-  const response: GetOrderStatusData = {
-    workflowId: '',
-    orderStatus: 'EXECUTING',
-  };
-  return Promise.resolve(response);
-
-  // return fetch('/api/getOrderStatus', {
-  //   method: 'GET',
-  //   headers: { 'Content-Type': 'application/json' },
-  // }).then((res) => {
-  //   return res.json();
-  // });
+  return fetch('/api/getOrderStatus', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  }).then((res) => {
+    return res.json();
+  });
 }
 
 export async function getTeaDrunk(): Promise<GetTeaDrunkData | ErrorData> {

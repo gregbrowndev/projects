@@ -1,14 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { NextPage } from 'next';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
-import { getOrderStatus, getWorkflowIdCookie } from '../services/DataService';
-import { isErrorData, OrderStatus } from '../services/hack';
 import { useInterval } from '../hooks/useInterval';
 import Image from 'next/image';
 
 import dancingGif1 from '../../public/static/gifs/storm-trooper-star-wars.gif';
 import dancingGif2 from '../../public/static/gifs/dancing-stormtrooper.gif';
+import dancingGif3 from '../../public/static/gifs/star-wars-dance-bgt.gif';
+import dancingGif4 from '../../public/static/gifs/darth-vader-dance-star-wars.gif';
+import dancingGif5 from '../../public/static/gifs/ballroom-dance.gif';
+import dancingGif6 from '../../public/static/gifs/meme-star-wars.gif';
+import dancingGif7 from '../../public/static/gifs/sassy-dance.gif';
+
 import Button from '../components/Button';
+import { Switch, Transition } from '@headlessui/react';
+import { OrderReportData } from '../server/types';
+import { getOrderReport } from '../server/queries';
+import { getWorkflowId } from '../server/utils';
 
 const REFRESH_INTERVAL_MS = 1000;
 
@@ -16,45 +24,106 @@ function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const OrderStatusPage: NextPage = () => {
-  /* Get workflowId from cookie */
-  const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    const cookieVal = getWorkflowIdCookie();
-    setWorkflowId(cookieVal);
-    if (!cookieVal) {
-      // TODO - navigate to root
-    }
-  }, []);
+interface Props {
+  workflowId: string;
+  orderReport: OrderReportData;
+}
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  req,
+  res,
+}) => {
+  const workflowId = getWorkflowId({ req, res });
+  if (!workflowId) {
+    throw new Error('Workflow not started');
+  }
+
+  const orderReport = await getOrderReport(workflowId);
+  if (!orderReport) {
+    // TODO - navigate to home page
+    throw new Error('Order not started');
+  }
+
+  return {
+    props: {
+      workflowId,
+      orderReport,
+    },
+  };
+};
+
+const OrderStatusPage: NextPage<Props> = (props) => {
+  // Initial SS props contains orderReport that shows which order is executing
+
+  // DEBUGGING
+  const [isExecuting, setIsExecuting] = useState(true);
 
   /* Set up useInterval to poll getOrderStatus */
-  // TODO - need to pass across orderType too
-  const [orderStatus, setOrderStatus] = useState<OrderStatus>('EXECUTING');
-  const fetchOrderStatus = useCallback(async () => {
+  const [orderReport, setOrderReport] = useState<OrderReportData>(
+    props.orderReport,
+  );
+  const fetchOrderReport = useCallback(async () => {
     console.log('fetchOrderStatus called');
-    const orderStatus = await getOrderStatus().then((res) => {
-      if (!isErrorData(res)) {
-        return res.orderStatus;
-      }
-    });
-    +setOrderStatus(orderStatus || 'WAITING');
-  }, []);
+    // TODO - replace with real code, would be good to mock this out
+    // const orderStatus = await getOrderStatus().then((res) => {
+    //   if (!isErrorData(res)) {
+    //     return res.orderStatus;
+    //   }
+    // });
+    const refreshedOrderReport: OrderReportData = {
+      ...props.orderReport,
+      status: isExecuting ? 'EXECUTING' : 'WAITING',
+    };
+    setOrderReport(refreshedOrderReport);
+  }, [isExecuting]);
 
   useInterval(
     () => {
-      if (!workflowId) {
-        return;
+      if (orderReport.status == 'EXECUTING') {
+        fetchOrderReport().catch(console.error);
       }
-      fetchOrderStatus().catch(console.error);
     },
     REFRESH_INTERVAL_MS,
-    [REFRESH_INTERVAL_MS, workflowId, fetchOrderStatus],
+    [REFRESH_INTERVAL_MS, fetchOrderReport, orderReport, isExecuting],
   );
 
-  const dancingGifs = [dancingGif1, dancingGif2];
+  const dancingGifs = useMemo(
+    () => [
+      dancingGif1,
+      dancingGif2,
+      dancingGif3,
+      dancingGif4,
+      dancingGif5,
+      dancingGif6,
+      dancingGif7,
+    ],
+    [],
+  );
 
+  const [selectedGifId, setSelectedGifId] = useState<number | null>(null);
+  useEffect(() => {
+    setSelectedGifId(randomInt(0, dancingGifs.length - 1));
+  }, [dancingGifs]);
   // TODO - it would be better to cycle through them to avoid showing the same one. Need to store some state globally?
-  const selectedGif = dancingGifs[randomInt(0, dancingGifs.length - 1)];
+
+  const toggle = (
+    <div className="align-items flex flex-row">
+      <Switch
+        checked={isExecuting}
+        onChange={() => setIsExecuting(!isExecuting)}
+        className={`${
+          isExecuting ? 'bg-blue-600' : 'bg-gray-200'
+        } relative inline-flex h-6 w-11 items-center rounded-full`}
+      >
+        <span className="sr-only">Toggle Executing State</span>
+        <span
+          className={`${
+            isExecuting ? 'translate-x-6' : 'translate-x-1'
+          } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+        />
+      </Switch>
+      <span className="ml-2">Toggle Executing State</span>
+    </div>
+  );
 
   return (
     <>
@@ -77,24 +146,45 @@ const OrderStatusPage: NextPage = () => {
         <div className="bg-white px-4 py-3 shadow-lg sm:rounded-md md:px-8 md:py-6">
           {/* Inner content */}
           <div className="flex flex-col items-center">
-            <div>
-              <Image
-                src={selectedGif}
-                alt="Dancing storm trooper"
-                className="h-96 w-full object-contain"
-              />
+            <div className="h-96">
+              <Transition
+                appear={true}
+                show={
+                  orderReport.status == 'EXECUTING' && selectedGifId != null
+                }
+                enter="transition-opacity duration-150"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition-opacity duration-300"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+                className="h-full"
+              >
+                {selectedGifId != null && (
+                  <Image
+                    src={dancingGifs[selectedGifId]}
+                    alt="Dancing storm trooper"
+                    className="h-full w-full object-contain"
+                  />
+                )}
+              </Transition>
+              {/* TODO - add results section */}
             </div>
             <div className="mt-4">
               <Button
                 type="button"
                 variant="primary"
                 label={
-                  orderStatus == 'EXECUTING' ? 'Executing...' : 'Order again'
+                  orderReport.status == 'EXECUTING'
+                    ? 'Executing...'
+                    : 'Send another'
                 }
-                loading={orderStatus == 'EXECUTING'}
-                disabled={orderStatus == 'EXECUTING'}
+                loading={orderReport.status == 'EXECUTING'}
+                disabled={orderReport.status == 'EXECUTING'}
               />
             </div>
+            <div className="mt-8">{toggle}</div>
+            <div className="mt-8">{orderReport.status}</div>
           </div>
         </div>
       </section>

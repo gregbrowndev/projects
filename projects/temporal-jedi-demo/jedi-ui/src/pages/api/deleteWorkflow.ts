@@ -2,10 +2,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import {
   deleteWorkflowId,
   createWorkflowClient,
-  ErrorData,
   getWorkflowId,
-} from './utils';
+} from '../../server/utils';
 import * as proto from '@temporalio/proto';
+import { ErrorData } from '../../server/types';
 
 const WorkflowExecutionStatus =
   proto.temporal.api.enums.v1.WorkflowExecutionStatus;

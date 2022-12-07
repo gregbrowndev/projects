@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Order, orderSignal } from '../../temporal/src/workflows';
-import { ErrorData, getWorkflowId, createWorkflowClient } from './utils';
+import { getWorkflowId, createWorkflowClient } from '../../server/utils';
+import { ErrorData } from '../../server/types';
 
 export type SendOrderData = {
   workflowId: string;

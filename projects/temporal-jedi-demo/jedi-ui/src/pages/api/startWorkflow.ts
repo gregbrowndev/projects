@@ -2,11 +2,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { jediBusiness } from '../../temporal/src/workflows';
 import { TASK_QUEUE } from '../../temporal/src/worker';
 import {
-  ErrorData,
   getWorkflowId,
   setWorkflowId,
   createWorkflowClient,
-} from './utils';
+} from '../../server/utils';
+import { ErrorData } from '../../server/types';
 
 export type StartWorkflowData = {
   workflowId: string;
