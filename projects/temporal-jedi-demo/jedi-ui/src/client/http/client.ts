@@ -6,7 +6,7 @@ import {
   SendOrderData,
   StartWorkflowData,
   WorkflowReportData,
-} from '../server/types';
+} from '../../server/types';
 
 // Local cookie storage
 

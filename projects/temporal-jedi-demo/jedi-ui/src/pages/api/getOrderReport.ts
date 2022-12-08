@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getWorkflowId } from '../../server/utils';
 import { ErrorData, OrderReportData } from '../../server/types';
 import { getOrderReport } from '../../server/queries';
+import { getWorkflowId } from '../../server/cookies';
 
 export default async function handler(
   req: NextApiRequest,

@@ -1,17 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { orderSignal } from '../../temporal/src/workflows';
-import { getWorkflowId, createWorkflowClient } from '../../server/utils';
-import { ErrorData } from '../../server/types';
+import { ErrorData, SendOrderData } from '../../server/types';
 import { Order } from '../../temporal/src/types';
-
-export type SendOrderData = {
-  workflowId: string;
-};
+import { getWorkflowId } from '../../server/cookies';
+import { sendOrder } from '../../server/commands';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<SendOrderData | ErrorData>,
 ) {
+  console.log(`API: /api/sendOrder received ${req.body}`);
+
   const workflowId = getWorkflowId({ req, res });
   if (!workflowId) {
     res
@@ -21,7 +19,6 @@ export default async function handler(
   }
 
   const body = req.body;
-
   if (!body.type || !body.fromUser) {
     return res.status(400).json({
       type: 'error',
@@ -35,12 +32,6 @@ export default async function handler(
     fromUser: body.fromUser,
   };
 
-  console.log(`API: /api/sendOrder received ${req.body}`);
-
-  const client = await createWorkflowClient();
-
-  const workflow = client.getHandle(workflowId);
-  await workflow.signal(orderSignal, order);
-
+  sendOrder(workflowId, order);
   res.status(200).json({ workflowId: workflowId });
 }

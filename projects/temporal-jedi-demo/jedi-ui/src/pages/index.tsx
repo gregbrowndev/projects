@@ -1,34 +1,15 @@
 import type { NextPage } from 'next';
 import { GetServerSideProps } from 'next';
 import React, { useState } from 'react';
-import Button from '../components/Button';
 import Head from 'next/head';
-import { getWorkflowId } from '../server/utils';
 
-import * as client from '../client/httpClient';
+import * as client from '../client/http/client';
 import { useRouter } from 'next/router';
 import { isErrorData } from '../server/types';
+import { StartCard } from '../client/components/app/StartCard';
+import { getWorkflowId } from '../server/cookies';
 
-interface Props {}
-export const getServerSideProps: GetServerSideProps<Props> = async ({
-  req,
-  res,
-}) => {
-  const workflowId = getWorkflowId({ req, res });
-  if (workflowId) {
-    return {
-      redirect: {
-        destination: '/workflow',
-        permanent: false,
-      },
-    };
-  }
-  return {
-    props: {},
-  };
-};
-
-const HomePage: NextPage<Props> = (props) => {
+const HomePage: NextPage<ServerProps> = (props) => {
   const router = useRouter();
   const [starting, setStarting] = useState<boolean>(false);
 
@@ -70,26 +51,31 @@ const HomePage: NextPage<Props> = (props) => {
       </section>
 
       <section className="mt-6 md:mt-16">
-        <div className="bg-white px-4 py-3 shadow-lg sm:rounded-md md:px-8 md:py-6">
-          {/* Inner content */}
-          <div>
-            <h2 className="text-2xl">Workflow not started</h2>
-            <div className="mt-3 flex flex-row justify-center gap-4">
-              <Button
-                type="button"
-                size="large"
-                variant="primary"
-                onClick={startHandler}
-                disabled={starting}
-                loading={starting}
-                label={starting ? 'Starting' : 'Start'}
-              />
-            </div>
-          </div>
-        </div>
+        {/* Inner content */}
+        <StartCard onStartHandler={startHandler} starting={starting} />
       </section>
     </>
   );
+};
+
+interface ServerProps {}
+
+export const getServerSideProps: GetServerSideProps<ServerProps> = async ({
+  req,
+  res,
+}) => {
+  const workflowId = getWorkflowId({ req, res });
+  if (workflowId) {
+    return {
+      redirect: {
+        destination: '/workflow',
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
 };
 
 export default HomePage;
