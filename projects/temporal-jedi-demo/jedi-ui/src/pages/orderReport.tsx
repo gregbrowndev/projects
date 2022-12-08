@@ -15,7 +15,7 @@ import { ORDER_66_GIFS, ORDER_67_GIFS } from '../client/gifs';
 
 const REFRESH_INTERVAL_MS = 2000;
 
-const OrderStatusPage: NextPage<ServerProps> = (props) => {
+const OrderReportPage: NextPage<ServerProps> = (props) => {
   const router = useRouter();
 
   /* Set up useInterval to poll getOrderReport */
@@ -133,4 +133,4 @@ export const getServerSideProps: GetServerSideProps<ServerProps> = async ({
   };
 };
 
-export default OrderStatusPage;
+export default OrderReportPage;

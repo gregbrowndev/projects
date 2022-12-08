@@ -59,7 +59,7 @@ export const OrderReportCard: React.FC<OrderReportCardProps> = ({
             <div className="flex w-full grow flex-row items-center justify-between">
               {orderReport.type == 'Order66' && (
                 <>
-                  <span className="ml-16 text-7xl">☠️</span>
+                  <span className="ml-4 text-5xl md:ml-16 md:text-7xl">☠️</span>
                   <div className="grow">
                     <StatsList
                       items={
@@ -75,12 +75,12 @@ export const OrderReportCard: React.FC<OrderReportCardProps> = ({
                       }
                     />
                   </div>
-                  <span className="mr-16 text-7xl">☠️</span>
+                  <span className="mr-4 text-5xl md:mr-16 md:text-7xl">☠️</span>
                 </>
               )}
               {orderReport.type == 'Order67' && (
                 <>
-                  <span className="ml-16 text-7xl">💃</span>
+                  <span className="ml-4 text-5xl md:ml-16 md:text-7xl">💃</span>
                   <div className="grow">
                     <StatsList
                       items={
@@ -96,7 +96,7 @@ export const OrderReportCard: React.FC<OrderReportCardProps> = ({
                       }
                     />
                   </div>
-                  <span className="mr-16 text-7xl">🕺</span>
+                  <span className="mr-4 text-5xl md:mr-16 md:text-7xl">🕺</span>
                 </>
               )}
             </div>
