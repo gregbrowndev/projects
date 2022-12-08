@@ -89,7 +89,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     };
   }
   const workflowReport = await server.getWorkflowReport(workflowId);
-  if (workflowReport?.currentOrderStatus == "EXECUTING") {
+  if (workflowReport?.currentOrderStatus == 'EXECUTING') {
     return {
       redirect: {
         destination: '/orderReport',

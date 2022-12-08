@@ -178,14 +178,14 @@ const OrderStatusPage: NextPage<Props> = (props) => {
               <h2 className="mt-1 text-center text-2xl md:mt-8 md:text-4xl">
                 Order Complete!
               </h2>
-              <div className="flex grow items-center flex-row justify-between w-full">
-                <span className="text-7xl ml-16">💃</span>
+              <div className="flex w-full grow flex-row items-center justify-between">
+                <span className="ml-16 text-7xl">💃</span>
                 <div className="grow">
                   <h3 className="mt-1 text-center text-xl md:mt-3 md:text-3xl">
                     Storm Troopers Danced: {orderReport.troopersDanced || 0}
                   </h3>
                 </div>
-                <span className="text-7xl mr-16">🕺</span>
+                <span className="mr-16 text-7xl">🕺</span>
               </div>
             </Transition>
 
