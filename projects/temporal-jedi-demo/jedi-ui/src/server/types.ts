@@ -1,4 +1,21 @@
-import { OrderStatus, OrderType } from '../temporal/src/workflows';
+// Note: you must not import any types from the temporal subproject because
+// Webpack may try to bundle Temporal and send it to the client-side application
+
+export type OrderType = 'Order66' | 'Order67';
+export type OrderStatus = 'WAITING' | 'EXECUTING';
+
+export type StartWorkflowData = {
+  workflowId: string;
+};
+
+export interface Order {
+  type: 'Order66' | 'Order67';
+  fromUser: string;
+}
+
+export type SendOrderData = {
+  workflowId: string;
+};
 
 export type OrderReportData = {
   workflowId: string;
@@ -10,6 +27,7 @@ export type OrderReportData = {
 
 export type WorkflowReportData = {
   workflowId: string;
+  workflowComplete: boolean;
   currentOrderStatus: OrderStatus;
   troopersDanced: number;
   jediEliminated: number;
@@ -23,5 +41,5 @@ export interface ErrorData {
 }
 
 export function isErrorData(object: any): object is ErrorData {
-  return 'type' in object && object.type == 'Error';
+  return 'type' in object && object.type == 'error';
 }

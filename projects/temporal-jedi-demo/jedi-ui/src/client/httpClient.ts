@@ -1,21 +1,14 @@
 import { getCookie } from 'cookies-next';
-
-// Seeing some perplexing issues due to Temporal. Avoid importing any modules that depend on Temporal
-// This is probably because these modules can't be loaded client-side
 import {
-  GetOrderStatusData,
-  GetTeaDrunkData,
+  ErrorData,
   Order,
+  OrderReportData,
   SendOrderData,
   StartWorkflowData,
-} from './hack';
-import { ErrorData } from '../server/types';
-// import { Order, OrderStatus } from '../temporal/src/workflows';
-// import { GetOrderStatusData } from '../pages/api/getOrderStatus';
-// import { StartWorkflowData } from '../pages/api/startWorkflow';
-// import { ErrorData } from '../pages/api/utils';
-// import { GetTeaDrunkData } from '../pages/api/getTeaDrunk';
-// import { SendOrderData } from '../pages/api/sendOrder';
+  WorkflowReportData,
+} from '../server/types';
+
+// Local cookie storage
 
 export function getWorkflowIdCookie(): string | undefined {
   const cookieVal = getCookie('workflowId');
@@ -24,6 +17,8 @@ export function getWorkflowIdCookie(): string | undefined {
     return cookieVal;
   }
 }
+
+// Workflow management API
 
 export async function startWorkflow(): Promise<StartWorkflowData | ErrorData> {
   return fetch('/api/startWorkflow', {
@@ -41,10 +36,10 @@ export async function deleteWorkflow(): Promise<void> {
   });
 }
 
-export async function getOrderStatus(): Promise<
-  GetOrderStatusData | ErrorData
+export async function getWorkflowReport(): Promise<
+  WorkflowReportData | ErrorData
 > {
-  return fetch('/api/getOrderStatus', {
+  return fetch('/api/getWorkflowReport', {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   }).then((res) => {
@@ -52,14 +47,7 @@ export async function getOrderStatus(): Promise<
   });
 }
 
-export async function getTeaDrunk(): Promise<GetTeaDrunkData | ErrorData> {
-  return fetch('/api/getTeaDrunk', {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  }).then((res) => {
-    return res.json();
-  });
-}
+// Order API
 
 export async function sendOrder(
   order: Order,
@@ -68,6 +56,15 @@ export async function sendOrder(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(order),
+  }).then((res) => {
+    return res.json();
+  });
+}
+
+export async function getOrderReport(): Promise<OrderReportData | ErrorData> {
+  return fetch('/api/getOrderReport', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
   }).then((res) => {
     return res.json();
   });

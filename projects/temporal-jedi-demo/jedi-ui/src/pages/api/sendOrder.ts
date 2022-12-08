@@ -13,7 +13,9 @@ export default async function handler(
 ) {
   const workflowId = getWorkflowId({ req, res });
   if (!workflowId) {
-    res.status(400).json({ type: 'error', message: 'Workflow not started' });
+    res
+      .status(400)
+      .json({ type: 'error', message: 'Workflow not started', detail: null });
     return;
   }
 
@@ -22,7 +24,11 @@ export default async function handler(
   if (!body.type || !body.fromUser) {
     return res
       .status(400)
-      .json({ type: 'error', message: 'type or fromUser not found' });
+      .json({
+        type: 'error',
+        message: 'type or fromUser not found',
+        detail: null,
+      });
   }
 
   const order: Order = {

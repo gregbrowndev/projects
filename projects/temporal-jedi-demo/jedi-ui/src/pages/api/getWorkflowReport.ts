@@ -9,7 +9,9 @@ export default async function handler(
 ) {
   const workflowId = getWorkflowId({ req, res });
   if (!workflowId) {
-    res.status(400).json({ type: 'error', message: 'Workflow not started' });
+    res
+      .status(400)
+      .json({ type: 'error', message: 'Workflow not started', detail: null });
     return;
   }
 

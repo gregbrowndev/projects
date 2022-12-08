@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useInterval } from '../hooks/useInterval';
@@ -14,13 +14,14 @@ import dancingGif7 from '../../public/static/gifs/sassy-dance.gif';
 
 import Button from '../components/Button';
 import { Switch, Transition } from '@headlessui/react';
-import { OrderReportData } from '../server/types';
-import { getOrderReport } from '../server/queries';
+import { isErrorData, OrderReportData } from '../server/types';
 import { getWorkflowId } from '../server/utils';
+import { useRouter } from 'next/router';
 
-const REFRESH_INTERVAL_MS = 1000;
+import * as client from '../client/httpClient';
+import * as server from '../server/queries';
 
-// TODO - rename route to orderReport
+const REFRESH_INTERVAL_MS = 2000;
 
 function randomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -36,13 +37,23 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
 }) => {
   const workflowId = getWorkflowId({ req, res });
   if (!workflowId) {
-    throw new Error('Workflow not started');
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
   }
 
-  const orderReport = await getOrderReport(workflowId);
+  const orderReport = await server.getOrderReport(workflowId);
   if (!orderReport) {
-    // TODO - navigate to home page
-    throw new Error('Order not started');
+    console.error('Order not started');
+    return {
+      redirect: {
+        destination: '/workflow',
+        permanent: false,
+      },
+    };
   }
 
   return {
@@ -54,30 +65,24 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
 };
 
 const OrderStatusPage: NextPage<Props> = (props) => {
-  // Initial SS props contains orderReport that shows which order is executing
+  const router = useRouter();
 
-  // DEBUGGING
-  const [isExecuting, setIsExecuting] = useState(true);
-
-  /* Set up useInterval to poll getOrderStatus */
+  /* Set up useInterval to poll getOrderReport */
   const [orderReport, setOrderReport] = useState<OrderReportData>(
     props.orderReport,
   );
   const fetchOrderReport = useCallback(async () => {
     console.log('fetchOrderStatus called');
-    // TODO - replace with real code, would be good to mock this out
-    // const orderStatus = await getOrderStatus().then((res) => {
-    //   if (!isErrorData(res)) {
-    //     return res.orderStatus;
-    //   }
-    // });
-    const refreshedOrderReport: OrderReportData = {
-      ...props.orderReport,
-      status: isExecuting ? 'EXECUTING' : 'WAITING',
-      troopersDanced: 4,
-    };
-    setOrderReport(refreshedOrderReport);
-  }, [isExecuting]);
+    const response = await client.getOrderReport();
+
+    if (isErrorData(response)) {
+      // TODO - add toaster for error message
+      console.error(response);
+      return;
+    }
+
+    setOrderReport(response);
+  }, []);
 
   useInterval(
     () => {
@@ -102,31 +107,14 @@ const OrderStatusPage: NextPage<Props> = (props) => {
     [],
   );
 
-  const [selectedGifId, setSelectedGifId] = useState<number | null>(null);
-  useEffect(() => {
+  const selectedGifId = useMemo(() => {
     // TODO - it would be better to cycle through them to avoid showing the same one. Need to store some state globally?
-    setSelectedGifId(randomInt(0, dancingGifs.length - 1));
-  }, [dancingGifs]);
+    return randomInt(0, dancingGifs.length - 1);
+  }, [dancingGifs.length]);
 
-  const toggle = (
-    <div className="flex flex-row items-center">
-      <Switch
-        checked={isExecuting}
-        onChange={() => setIsExecuting(!isExecuting)}
-        className={`${
-          isExecuting ? 'bg-blue-600' : 'bg-gray-200'
-        } relative inline-flex h-6 w-11 items-center rounded-full`}
-      >
-        <span className="sr-only">Toggle Executing State</span>
-        <span
-          className={`${
-            isExecuting ? 'translate-x-6' : 'translate-x-1'
-          } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-        />
-      </Switch>
-      <span className="ml-2">Toggle Executing State</span>
-    </div>
-  );
+  const onDoneHandler = async () => {
+    await router.push('/workflow');
+  };
 
   return (
     <>
@@ -137,11 +125,16 @@ const OrderStatusPage: NextPage<Props> = (props) => {
 
       <section>
         <h1 className="text-2xl font-bold md:text-6xl">
-          Executing <span className="text-blue-600">Order 67</span>
+          Executing{' '}
+          <span className="text-blue-600">
+            {orderReport.type == 'Order66' ? 'Order 66' : 'Order 67'}
+          </span>
         </h1>
 
         <p className="mt-1 text-lg md:mt-3 md:text-2xl">
-          Deploying elite dance troopers
+          {orderReport.type == 'Order66'
+            ? 'Eliminate all Jedi'
+            : 'Deploying elite dance troopers'}
         </p>
       </section>
 
@@ -192,7 +185,6 @@ const OrderStatusPage: NextPage<Props> = (props) => {
             </Transition>
 
             {/* Continue Button */}
-            {/* TODO - hook up done button to navigate back to home */}
             <div className="mt-4">
               <Button
                 type="button"
@@ -200,14 +192,11 @@ const OrderStatusPage: NextPage<Props> = (props) => {
                 label={
                   orderReport.status == 'EXECUTING' ? 'Executing...' : 'Done'
                 }
+                onClick={onDoneHandler}
                 loading={orderReport.status == 'EXECUTING'}
                 disabled={orderReport.status == 'EXECUTING'}
               />
             </div>
-
-            {/* Debug Stuff */}
-            <div className="mt-8">{toggle}</div>
-            <div className="mt-8">{orderReport.status}</div>
           </div>
         </div>
       </section>

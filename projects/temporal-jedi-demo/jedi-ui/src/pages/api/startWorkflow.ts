@@ -7,6 +7,7 @@ import {
   createWorkflowClient,
 } from '../../server/utils';
 import { ErrorData } from '../../server/types';
+import { v4 as uuidv4 } from 'uuid';
 
 export type StartWorkflowData = {
   workflowId: string;
@@ -20,13 +21,15 @@ export default async function handler(
 
   let workflowId = getWorkflowId({ req, res });
   if (workflowId) {
-    res
-      .status(400)
-      .json({ type: 'error', message: 'Workflow already started' });
+    res.status(400).json({
+      type: 'error',
+      message: 'Workflow already started',
+      detail: null,
+    });
     return;
   }
 
-  workflowId = 'business-meaningful-id';
+  workflowId = uuidv4();
 
   // Save workflowID as cookie so UI can track workflow
   setWorkflowId(workflowId, { req, res });

@@ -18,7 +18,9 @@ export default async function handler(
 
   let workflowId = getWorkflowId({ req, res });
   if (!workflowId) {
-    res.status(400).json({ type: 'error', message: 'No workflow found' });
+    res
+      .status(400)
+      .json({ type: 'error', message: 'No workflow found', detail: null });
     return;
   }
 

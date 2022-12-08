@@ -1,7 +1,7 @@
 import * as wf from '@temporalio/workflow';
-import type * as activities from './activities';
+import type * as activities from './activities'; // purely for type safety
+
 import { sleep } from '@temporalio/workflow';
-import { ApplicationFailure } from '@temporalio/activity'; // purely for type safety
 
 const { executeOrder } = wf.proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',
@@ -22,6 +22,7 @@ export interface OrderReport {
   jediEliminated?: number;
 }
 export interface WorkflowReport {
+  workflowComplete: boolean;
   currentOrderStatus: OrderStatus;
   troopersDanced: number;
   jediEliminated: number;
@@ -46,7 +47,7 @@ export async function jediBusiness(): Promise<void> {
 
   wf.setHandler(orderSignal, (order) => {
     if (currentOrder) {
-      throw ApplicationFailure.retryable('Cannot do that right now');
+      throw new Error('Cannot do that right now');
     }
     currentOrder = order;
     currentOrderReport = {
@@ -55,17 +56,21 @@ export async function jediBusiness(): Promise<void> {
     };
   });
   wf.setHandler(orderReportQuery, () => currentOrderReport);
-  wf.setHandler(workflowReportQuery, () => ({
-    troopersDanced,
-    jediEliminated,
-    jediRemaining: totalJedi - jediEliminated,
-    currentOrderStatus: currentOrderReport?.status || 'WAITING',
-  }));
+  wf.setHandler(workflowReportQuery, () => {
+    console.log('Handling workflowReportQuery');
+    return {
+      workflowComplete: totalJedi - jediEliminated <= 0,
+      troopersDanced,
+      jediEliminated,
+      jediRemaining: Math.max(totalJedi - jediEliminated, 0),
+      currentOrderStatus: currentOrderReport?.status || 'WAITING',
+    };
+  });
 
   while (jediEliminated > 0) {
     await wf.condition(() => currentOrder !== undefined);
     if (currentOrder == undefined || currentOrderReport == undefined) {
-      throw ApplicationFailure.nonRetryable('Something went wrong');
+      throw new Error('Something went wrong');
     }
 
     currentOrderReport.status = 'EXECUTING';

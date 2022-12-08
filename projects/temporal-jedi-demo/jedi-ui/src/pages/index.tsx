@@ -1,181 +1,53 @@
 import type { NextPage } from 'next';
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  deleteWorkflow,
-  getOrderStatus,
-  getTeaDrunk,
-  getWorkflowIdCookie,
-  sendOrder,
-  startWorkflow,
-} from '../services/DataService';
+import { GetServerSideProps } from 'next';
+import React, { useState } from 'react';
 import Button from '../components/Button';
 import Head from 'next/head';
-import { useInterval } from '../hooks/useInterval';
-import { isErrorData, Order, OrderStatus } from '../services/hack';
+import { getWorkflowId } from '../server/utils';
 
-const REFRESH_INTERVAL_MS = 500;
-const CURRENT_USER = 'Darth Sidious';
+import * as client from '../client/httpClient';
+import { useRouter } from 'next/router';
+import { isErrorData } from '../server/types';
 
-interface StartBlockProps {
-  onStart: () => Promise<void>;
-}
-const StartBlock: React.FC<StartBlockProps> = ({ onStart }) => {
-  // const onStart = async (e: React.MouseEvent<HTMLButtonElement>) => {};
-  return (
-    <div>
-      <h2 className="text-2xl">Workflow not started</h2>
-      <div className="mt-3 flex flex-row justify-center gap-4">
-        <Button
-          type="button"
-          size="large"
-          variant="primary"
-          onClick={onStart}
-          label="Start"
-        />
-      </div>
-    </div>
-  );
-};
-
-interface WorkflowBlockProps {
-  workflowId: string;
-  orderStatus: OrderStatus;
-  teaDrunk: number;
-  onStartAgain: () => {};
-  onSendOrder: (order: Order) => {};
-}
-const WorkflowBlock: React.FC<WorkflowBlockProps> = ({
-  workflowId,
-  orderStatus,
-  teaDrunk,
-  onStartAgain,
-  onSendOrder,
+interface Props {}
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  req,
+  res,
 }) => {
-  return (
-    <div>
-      <div className="flex flex-row items-center justify-between">
-        <h2 className="text-lg md:text-2xl">Workflow started: {workflowId}</h2>
-        <Button
-          type="button"
-          variant={orderStatus == 'DONE' ? 'primary' : 'tertiary'}
-          onClick={onStartAgain}
-          label="Start Again"
-        />
-      </div>
-      <p>Status: {orderStatus}</p>
-      <p>Tea drunk: {teaDrunk}</p>
-      <div className="mt-3 flex flex-row justify-center gap-4">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() =>
-            onSendOrder({ type: 'Order66', fromUser: CURRENT_USER })
-          }
-          label="Order 66"
-          disabled={orderStatus != 'WAITING'}
-        />
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() =>
-            onSendOrder({ type: 'Order67', fromUser: CURRENT_USER })
-          }
-          label="Order 67"
-          disabled={orderStatus != 'WAITING'}
-        />
-      </div>
-    </div>
-  );
-};
-
-const WaitingBlock = () => {
-  // Waiting for order
-};
-
-const ExecutingBlock = () => {
-  // Executing for order
-};
-
-const ResultBlock = () => {
-  // View result of order
-};
-
-const Home: NextPage = () => {
-  const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
-  const [orderStatus, setOrderStatus] = useState<OrderStatus>('WAITING');
-  const [teaDrunk, setTeaDrunk] = useState<number>(0);
-  const [resultConfirmed, setResultConfirmed] = useState<boolean>(true);
-
-  useEffect(() => {
-    const cookieVal = getWorkflowIdCookie();
-    setWorkflowId(cookieVal);
-  }, []);
-
-  const fetchOrderStatus = useCallback(async () => {
-    console.log('fetchOrderStatus called');
-    const orderStatus = await getOrderStatus().then((res) => {
-      if (!isErrorData(res)) {
-        return res.orderStatus;
-      }
-    });
-    +setOrderStatus(orderStatus || 'WAITING');
-  }, []);
-
-  const fetchTeaDrunk = useCallback(async () => {
-    console.log('fetchTeaDrunk called');
-    const teaDrunk = await getTeaDrunk().then((res) => {
-      if (!isErrorData(res)) {
-        return res.teaDrunk;
-      }
-    });
-
-    if (teaDrunk) {
-      setTeaDrunk(teaDrunk);
-    }
-  }, []);
-
-  useInterval(
-    () => {
-      if (!workflowId) {
-        return;
-      }
-      fetchOrderStatus().catch(console.error);
-      fetchTeaDrunk().catch(console.error);
-    },
-    REFRESH_INTERVAL_MS,
-    [REFRESH_INTERVAL_MS, workflowId, fetchOrderStatus, fetchTeaDrunk],
-  );
-
-  const startWorkflowAndSaveID = async () => {
-    return await startWorkflow().then(() => {
-      const cookieVal = getWorkflowIdCookie();
-      setWorkflowId(cookieVal);
-    });
-  };
-
-  const deleteWorkflowAndRemoveId = async () => {
-    return await deleteWorkflow().then(() => {
-      const cookieVal = getWorkflowIdCookie();
-      setWorkflowId(cookieVal);
-      setOrderStatus('WAITING');
-      setTeaDrunk(0);
-    });
-  };
-
-  const sendOrderAndSetStatus = async (order: Order) => {
-    setOrderStatus('EXECUTING');
-    await sendOrder(order);
-  };
-  let block = StartBlock({ onStart: startWorkflowAndSaveID });
+  const workflowId = getWorkflowId({ req, res });
   if (workflowId) {
-    block = WorkflowBlock({
-      workflowId,
-      orderStatus,
-      teaDrunk,
-      onStartAgain: deleteWorkflowAndRemoveId,
-      onSendOrder: sendOrderAndSetStatus,
-    });
+    return {
+      redirect: {
+        destination: '/workflow',
+        permanent: false,
+      },
+    };
   }
+  return {
+    props: {},
+  };
+};
+
+const HomePage: NextPage<Props> = (props) => {
+  const router = useRouter();
+  const [starting, setStarting] = useState<boolean>(false);
+
+  const startHandler = async () => {
+    console.log('startHandler clicked');
+    setStarting(true);
+    const response = await client.startWorkflow();
+    if (isErrorData(response)) {
+      // TODO - add toaster for error message
+      alert('Failed to start');
+      console.error(response);
+    } else {
+      console.log('success, redirecting...');
+      await router.push('/workflow');
+    }
+    setStarting(false);
+    // TODO - add fun starting GIF?
+    // setTimeout(() => setStarting(false), 5000);
+  };
 
   return (
     <>
@@ -200,11 +72,24 @@ const Home: NextPage = () => {
       <section className="mt-6 md:mt-16">
         <div className="bg-white px-4 py-3 shadow-lg sm:rounded-md md:px-8 md:py-6">
           {/* Inner content */}
-          {block}
+          <div>
+            <h2 className="text-2xl">Workflow not started</h2>
+            <div className="mt-3 flex flex-row justify-center gap-4">
+              <Button
+                type="button"
+                size="large"
+                variant="primary"
+                onClick={startHandler}
+                disabled={starting}
+                loading={starting}
+                label={starting ? 'Starting' : 'Start'}
+              />
+            </div>
+          </div>
         </div>
       </section>
     </>
   );
 };
 
-export default Home;
+export default HomePage;

@@ -1,7 +1,6 @@
 import { OrderReportData, WorkflowReportData } from './types';
 import { createWorkflowClient } from './utils';
 import {
-  OrderReport,
   orderReportQuery,
   workflowReportQuery,
 } from '../temporal/src/workflows';
@@ -12,12 +11,7 @@ export async function getOrderReport(
   const client = await createWorkflowClient();
 
   const workflow = client.getHandle(workflowId);
-  // const report = await workflow.query(orderReportQuery);
-
-  const report: OrderReport = {
-    type: 'Order67',
-    status: 'EXECUTING',
-  };
+  const report = await workflow.query(orderReportQuery);
 
   if (!report) {
     return undefined;
@@ -42,6 +36,7 @@ export async function getWorkflowReport(
 
   return {
     workflowId: workflowId,
+    workflowComplete: report.workflowComplete,
     currentOrderStatus: report.currentOrderStatus,
     troopersDanced: report.troopersDanced,
     jediEliminated: report.jediEliminated,
