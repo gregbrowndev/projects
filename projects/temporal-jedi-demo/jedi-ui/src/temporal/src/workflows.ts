@@ -24,7 +24,7 @@ export async function jediBusiness(): Promise<void> {
   wf.setHandler(orderSignal, (order) => {
     state = setOrder(state, order);
   });
-  wf.setHandler(orderReportQuery, () => state.currentOrderReport);
+  wf.setHandler(orderReportQuery, () => getOrderReport(state));
   wf.setHandler(workflowReportQuery, () => getWorkflowReport(state));
 
   while (getJediRemaining(state) > 0) {
@@ -40,7 +40,7 @@ export async function jediBusiness(): Promise<void> {
     if (state.currentOrder?.type == 'Order66') {
       await executeOrder(order.type);
       await sleep(5000);
-      state = addJediEliminated(state, 3);
+      state = addJediEliminated(state, 4);
     } else {
       await executeOrder(order.type);
       await sleep(5000);
@@ -97,14 +97,25 @@ function getWorkflowStatus(state: State): WorkflowStatus {
 }
 
 function getWorkflowReport(state: State): WorkflowReport {
-  console.log('Handling workflowReportQuery');
-
   return {
     workflowStatus: getWorkflowStatus(state),
     troopersDanced: state.troopersDanced,
     jediEliminated: state.jediEliminated,
     jediRemaining: getJediRemaining(state),
     currentOrderStatus: state.currentOrderReport?.status,
+  };
+}
+
+function getOrderReport(state: State): OrderReport {
+  if (!state.currentOrderReport) {
+    throw new Error('Cannot do that right now');
+  }
+  const workflowReport = getWorkflowReport(state);
+  return {
+    ...state.currentOrderReport,
+    totalTroopersDanced: workflowReport.troopersDanced,
+    totalJediEliminated: workflowReport.jediEliminated,
+    totalJediRemaining: workflowReport.jediRemaining,
   };
 }
 

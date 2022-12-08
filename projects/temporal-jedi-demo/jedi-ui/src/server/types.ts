@@ -23,7 +23,10 @@ export type OrderReportData = {
   type: OrderType;
   status: OrderStatus;
   troopersDanced: number | null;
+  totalTroopersDanced: number | null;
   jediEliminated: number | null;
+  totalJediEliminated: number | null;
+  totalJediRemaining: number | null;
 };
 
 export type WorkflowReportData = {

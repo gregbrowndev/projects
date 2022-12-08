@@ -12,7 +12,10 @@ export interface OrderReport {
   type: OrderType;
   status: OrderStatus;
   troopersDanced?: number;
+  totalTroopersDanced?: number;
   jediEliminated?: number;
+  totalJediEliminated?: number;
+  totalJediRemaining?: number;
 }
 
 export interface WorkflowReport {

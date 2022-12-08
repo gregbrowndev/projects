@@ -52,13 +52,36 @@ export const OrderReportCard: React.FC<OrderReportCardProps> = ({
             Order Complete!
           </h2>
           <div className="flex w-full grow flex-row items-center justify-between">
-            <span className="ml-16 text-7xl">💃</span>
-            <div className="grow">
-              <h3 className="mt-1 text-center text-xl md:mt-3 md:text-3xl">
-                Storm Troopers Danced: {orderReport.troopersDanced || 0}
-              </h3>
-            </div>
-            <span className="mr-16 text-7xl">🕺</span>
+            {orderReport.type == 'Order66' && (
+              <>
+                <span className="ml-16 text-7xl">☠️</span>
+                <div className="grow">
+                  <ul className="mt-1 text-center text-xl md:mt-3 md:text-3xl">
+                    <li>Jedi Eliminated: {orderReport.jediEliminated || 0}</li>
+                    <li>
+                      Jedi Remaining: {orderReport.totalJediRemaining || 0}
+                    </li>
+                  </ul>
+                </div>
+                <span className="mr-16 text-7xl">☠️</span>
+              </>
+            )}
+            {orderReport.type == 'Order67' && (
+              <>
+                <span className="ml-16 text-7xl">💃</span>
+                <div className="grow">
+                  <ul className="mt-1 text-center text-xl md:mt-3 md:text-3xl">
+                    <li>
+                      Storm Troopers Danced: {orderReport.troopersDanced || 0}
+                    </li>
+                    <li>
+                      Total Danced: {orderReport.totalTroopersDanced || 0}
+                    </li>
+                  </ul>
+                </div>
+                <span className="mr-16 text-7xl">🕺</span>
+              </>
+            )}
           </div>
         </Transition>
 

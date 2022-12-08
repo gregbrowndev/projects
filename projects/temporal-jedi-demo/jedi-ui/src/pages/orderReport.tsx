@@ -3,13 +3,6 @@ import { GetServerSideProps, NextPage } from 'next';
 import Head from 'next/head';
 import { useInterval } from '../client/hooks/useInterval';
 
-import dancingGif1 from '../../public/static/gifs/storm-trooper-star-wars.gif';
-import dancingGif2 from '../../public/static/gifs/dancing-stormtrooper.gif';
-import dancingGif3 from '../../public/static/gifs/star-wars-dance-bgt.gif';
-import dancingGif4 from '../../public/static/gifs/darth-vader-dance-star-wars.gif';
-import dancingGif5 from '../../public/static/gifs/ballroom-dance.gif';
-import dancingGif6 from '../../public/static/gifs/meme-star-wars.gif';
-import dancingGif7 from '../../public/static/gifs/sassy-dance.gif';
 import { isErrorData, OrderReportData } from '../server/types';
 import { useRouter } from 'next/router';
 
@@ -18,6 +11,7 @@ import * as server from '../server/queries';
 import { OrderReportCard } from '../client/components/app/OrderReportCard';
 import { getWorkflowId } from '../server/cookies';
 import { randomInt } from '../client/utils';
+import { ORDER_66_GIFS, ORDER_67_GIFS } from '../client/gifs';
 
 const REFRESH_INTERVAL_MS = 2000;
 
@@ -52,23 +46,15 @@ const OrderStatusPage: NextPage<ServerProps> = (props) => {
     [REFRESH_INTERVAL_MS, fetchOrderReport, orderReport],
   );
 
-  const dancingGifs = useMemo(
-    () => [
-      dancingGif1,
-      dancingGif2,
-      dancingGif3,
-      dancingGif4,
-      dancingGif5,
-      dancingGif6,
-      dancingGif7,
-    ],
-    [],
-  );
+  const order66Gifs = useMemo(() => ORDER_66_GIFS, []);
+  const order67Gifs = useMemo(() => ORDER_67_GIFS, []);
 
-  const selectedGifId = useMemo(() => {
+  const orderGifs = orderReport.type == 'Order66' ? order66Gifs : order67Gifs;
+  const selectedGif = useMemo(() => {
     // TODO - it would be better to cycle through them to avoid showing the same one. Need to store some state globally?
-    return randomInt(0, dancingGifs.length - 1);
-  }, [dancingGifs.length]);
+    const index = randomInt(0, orderGifs.length - 1);
+    return orderGifs[index];
+  }, [orderGifs]);
 
   const onDoneHandler = async () => {
     await router.push('/workflow');
@@ -97,10 +83,10 @@ const OrderStatusPage: NextPage<ServerProps> = (props) => {
       </section>
 
       <section className="mt-6 md:mt-16">
-        {!!orderReport && !!selectedGifId && (
+        {!!orderReport && !!selectedGif && (
           <OrderReportCard
             orderReport={orderReport}
-            image={dancingGifs[selectedGifId]}
+            image={selectedGif}
             onDoneHandler={onDoneHandler}
           />
         )}

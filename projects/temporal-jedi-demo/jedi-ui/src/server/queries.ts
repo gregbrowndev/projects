@@ -22,7 +22,10 @@ export async function getOrderReport(
     type: report.type,
     status: report.status,
     troopersDanced: report.troopersDanced || null,
+    totalTroopersDanced: report.totalTroopersDanced || null,
     jediEliminated: report.jediEliminated || null,
+    totalJediEliminated: report.totalJediEliminated || null,
+    totalJediRemaining: report.totalJediRemaining || null,
   };
 }
 
