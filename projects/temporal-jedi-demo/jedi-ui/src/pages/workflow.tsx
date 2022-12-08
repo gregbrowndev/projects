@@ -1,9 +1,8 @@
 import type { NextPage } from 'next';
 import { GetServerSideProps } from 'next';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '../components/Button';
 import Head from 'next/head';
-import { useInterval } from '../hooks/useInterval';
 import { isErrorData, Order, WorkflowReportData } from '../server/types';
 import { getWorkflowId } from '../server/utils';
 
@@ -11,7 +10,6 @@ import * as client from '../client/httpClient';
 import * as server from '../server/queries';
 import { useRouter } from 'next/router';
 
-const REFRESH_INTERVAL_MS = 2000;
 const CURRENT_USER = 'Darth Sidious';
 
 interface WorkflowBlockProps {
@@ -34,7 +32,9 @@ const WorkflowBlock: React.FC<WorkflowBlockProps> = ({
         </h2>
         <Button
           type="button"
-          variant={workflowReport.workflowComplete ? 'primary' : 'tertiary'}
+          variant={
+            workflowReport.workflowStatus == 'DONE' ? 'primary' : 'tertiary'
+          }
           onClick={onStartAgain}
           label="Start Again"
         />
@@ -47,6 +47,7 @@ const WorkflowBlock: React.FC<WorkflowBlockProps> = ({
         <Button
           type="button"
           variant="secondary"
+          size="large"
           onClick={() =>
             onSendOrder({ type: 'Order66', fromUser: CURRENT_USER })
           }
@@ -57,6 +58,7 @@ const WorkflowBlock: React.FC<WorkflowBlockProps> = ({
         <Button
           type="button"
           variant="secondary"
+          size="large"
           onClick={() =>
             onSendOrder({ type: 'Order67', fromUser: CURRENT_USER })
           }
@@ -86,8 +88,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
       },
     };
   }
-
   const workflowReport = await server.getWorkflowReport(workflowId);
+  if (workflowReport?.currentOrderStatus == "EXECUTING") {
+    return {
+      redirect: {
+        destination: '/orderReport',
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {
@@ -97,45 +106,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   };
 };
 
-const WorkflowPage: NextPage<Props> = (props) => {
+const WorkflowPage: NextPage<Props> = ({ workflowReport }) => {
   const router = useRouter();
-
-  /* Set up useInterval to poll getWorkflowReport */
-  const [workflowReport, setWorkflowReport] = useState<WorkflowReportData>(
-    props.workflowReport,
+  const [submittingOrder, setSubmittingOrder] = useState<Order | undefined>(
+    undefined,
   );
-
-  const fetchWorkflowReport = useCallback(async () => {
-    console.log('fetchWorkflowReport called');
-    const report = await client.getWorkflowReport().then((res) => {
-      if (!isErrorData(res)) {
-        return res;
-      }
-    });
-
-    if (report) {
-      setWorkflowReport(report);
-    }
-  }, []);
-
-  useInterval(
-    () => {
-      fetchWorkflowReport().catch(console.error);
-    },
-    REFRESH_INTERVAL_MS,
-    [REFRESH_INTERVAL_MS, fetchWorkflowReport],
-  );
-
-  /* Set up workflow management hooks */
 
   const startAgainHandler = async () => {
     await client.deleteWorkflow();
     await router.push('/');
   };
-
-  const [submittingOrder, setSubmittingOrder] = useState<Order | undefined>(
-    undefined,
-  );
 
   const sendOrderHandler = async (order: Order) => {
     setSubmittingOrder(order);

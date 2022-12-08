@@ -1,34 +1,11 @@
 import * as wf from '@temporalio/workflow';
-import type * as activities from './activities'; // purely for type safety
-
 import { sleep } from '@temporalio/workflow';
+import type * as activities from './activities'; // purely for type safety
+import { Order, OrderReport, WorkflowReport, WorkflowStatus } from './types';
 
 const { executeOrder } = wf.proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',
 });
-
-export type OrderType = 'Order66' | 'Order67';
-
-// Define signals and queries
-export interface Order {
-  type: OrderType;
-  fromUser: string;
-}
-export type OrderStatus = 'WAITING' | 'EXECUTING';
-export interface OrderReport {
-  type: OrderType;
-  status: OrderStatus;
-  troopersDanced?: number;
-  jediEliminated?: number;
-}
-export interface WorkflowReport {
-  workflowComplete: boolean;
-  currentOrderStatus: OrderStatus;
-  troopersDanced: number;
-  jediEliminated: number;
-  jediRemaining: number;
-}
-
 export const orderSignal = wf.defineSignal<[Order]>('order');
 export const orderReportQuery = wf.defineQuery<OrderReport | undefined>(
   'orderReportQuery',
@@ -38,56 +15,140 @@ export const workflowReportQuery = wf.defineQuery<WorkflowReport>(
 );
 
 export async function jediBusiness(): Promise<void> {
-  const totalJedi = 10;
-  let troopersDanced = 0;
-  let jediEliminated = 0;
-
-  let currentOrder: Order | undefined;
-  let currentOrderReport: OrderReport | undefined;
+  let state: State = {
+    totalJedi: 10,
+    troopersDanced: 0,
+    jediEliminated: 0,
+  };
 
   wf.setHandler(orderSignal, (order) => {
-    if (currentOrder) {
-      throw new Error('Cannot do that right now');
-    }
-    currentOrder = order;
-    currentOrderReport = {
-      type: order.type,
-      status: 'EXECUTING',
-    };
+    state = setOrder(state, order);
   });
-  wf.setHandler(orderReportQuery, () => currentOrderReport);
-  wf.setHandler(workflowReportQuery, () => {
-    console.log('Handling workflowReportQuery');
-    return {
-      workflowComplete: totalJedi - jediEliminated <= 0,
-      troopersDanced,
-      jediEliminated,
-      jediRemaining: Math.max(totalJedi - jediEliminated, 0),
-      currentOrderStatus: currentOrderReport?.status || 'WAITING',
-    };
-  });
+  wf.setHandler(orderReportQuery, () => state.currentOrderReport);
+  wf.setHandler(workflowReportQuery, () => getWorkflowReport(state));
 
-  while (jediEliminated > 0) {
-    await wf.condition(() => currentOrder !== undefined);
-    if (currentOrder == undefined || currentOrderReport == undefined) {
+  while (getJediRemaining(state) > 0) {
+    await wf.condition(() => hasOrder(state));
+    if (!state.currentOrder || !state.currentOrderReport) {
       throw new Error('Something went wrong');
     }
+    const order = state.currentOrder;
 
-    currentOrderReport.status = 'EXECUTING';
-    console.log(`Handling Order: ${currentOrder.type}!`);
+    state = setOrderExecuting(state);
+    console.log(`Handling Order: ${order.type}!`);
 
-    if (currentOrder.type == 'Order66') {
-      await executeOrder(currentOrder.type);
+    if (state.currentOrder?.type == 'Order66') {
+      await executeOrder(order.type);
       await sleep(5000);
-      currentOrderReport.jediEliminated = 3;
-      jediEliminated += 3;
+      state = addJediEliminated(state, 3);
     } else {
-      await executeOrder(currentOrder.type);
+      await executeOrder(order.type);
       await sleep(5000);
-      currentOrderReport.troopersDanced = 5;
-      troopersDanced += 5;
+      state = addTroopersDanced(state, 3);
     }
 
-    currentOrderReport.status = 'WAITING';
+    state = setOrderDone(state);
   }
+}
+
+interface State {
+  totalJedi: number;
+  troopersDanced: number;
+  jediEliminated: number;
+  currentOrder?: Order;
+  currentOrderReport?: OrderReport;
+}
+
+function addTroopersDanced(state: State, troopers: number): State {
+  if (!state.currentOrderReport) {
+    throw new Error('Cannot do that right now');
+  }
+  return {
+    ...state,
+    troopersDanced: state.troopersDanced + troopers,
+    currentOrderReport: {
+      ...state.currentOrderReport,
+      troopersDanced: troopers,
+    },
+  };
+}
+function addJediEliminated(state: State, jedi: number): State {
+  if (!state.currentOrderReport) {
+    throw new Error('Cannot do that right now');
+  }
+  const totalEliminations = state.jediEliminated + jedi;
+  return {
+    ...state,
+    jediEliminated: Math.min(state.totalJedi, totalEliminations),
+    currentOrderReport: {
+      ...state.currentOrderReport,
+      jediEliminated: jedi,
+    },
+  };
+}
+function getJediRemaining(state: State): number {
+  return state.totalJedi - state.jediEliminated;
+}
+
+function getWorkflowStatus(state: State): WorkflowStatus {
+  if (getJediRemaining(state) == 0) return 'DONE';
+  else if (state.currentOrderReport?.status == 'EXECUTING') return 'EXECUTING';
+  else return 'WAITING';
+}
+
+function getWorkflowReport(state: State): WorkflowReport {
+  console.log('Handling workflowReportQuery');
+
+  return {
+    workflowStatus: getWorkflowStatus(state),
+    troopersDanced: state.troopersDanced,
+    jediEliminated: state.jediEliminated,
+    jediRemaining: getJediRemaining(state),
+    currentOrderStatus: state.currentOrderReport?.status,
+  };
+}
+
+function hasOrder(state: State): boolean {
+  return state.currentOrder != undefined;
+}
+
+function setOrder(state: State, order: Order): State {
+  if (state.currentOrder) {
+    throw new Error('Cannot do that right now');
+  }
+  return {
+    ...state,
+    currentOrder: order,
+    currentOrderReport: {
+      type: order.type,
+      status: 'EXECUTING',
+    },
+  };
+}
+
+function setOrderExecuting(state: State): State {
+  if (!state.currentOrder || !state.currentOrderReport) {
+    throw new Error('Cannot do that right now');
+  }
+  return {
+    ...state,
+    currentOrderReport: {
+      ...state.currentOrderReport,
+      status: 'EXECUTING',
+    },
+  };
+}
+
+function setOrderDone(state: State): State {
+  if (!state.currentOrder || !state.currentOrderReport) {
+    throw new Error('Cannot do that right now');
+  }
+  return {
+    ...state,
+    currentOrder: undefined,
+    currentOrderReport: {
+      ...state.currentOrderReport,
+      status: 'DONE',
+    },
+  };
 }

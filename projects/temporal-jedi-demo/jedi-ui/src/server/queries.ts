@@ -29,15 +29,20 @@ export async function getOrderReport(
 export async function getWorkflowReport(
   workflowId: string,
 ): Promise<WorkflowReportData> {
+  console.log(
+    `[queries] getWorkflowReport called with workflowId='${workflowId}'`,
+  );
   const client = await createWorkflowClient();
+  console.log(`[queries] getWorkflowReport created WorkflowClient`);
 
   const workflow = client.getHandle(workflowId);
   const report = await workflow.query(workflowReportQuery);
+  console.log(`[queries] getWorkflowReport received query result`, report);
 
   return {
     workflowId: workflowId,
-    workflowComplete: report.workflowComplete,
-    currentOrderStatus: report.currentOrderStatus,
+    workflowStatus: report.workflowStatus,
+    currentOrderStatus: report.currentOrderStatus || null,
     troopersDanced: report.troopersDanced,
     jediEliminated: report.jediEliminated,
     jediRemaining: report.jediRemaining,

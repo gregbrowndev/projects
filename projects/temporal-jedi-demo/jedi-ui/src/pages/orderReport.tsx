@@ -13,7 +13,7 @@ import dancingGif6 from '../../public/static/gifs/meme-star-wars.gif';
 import dancingGif7 from '../../public/static/gifs/sassy-dance.gif';
 
 import Button from '../components/Button';
-import { Switch, Transition } from '@headlessui/react';
+import { Transition } from '@headlessui/react';
 import { isErrorData, OrderReportData } from '../server/types';
 import { getWorkflowId } from '../server/utils';
 import { useRouter } from 'next/router';
@@ -72,7 +72,7 @@ const OrderStatusPage: NextPage<Props> = (props) => {
     props.orderReport,
   );
   const fetchOrderReport = useCallback(async () => {
-    console.log('fetchOrderStatus called');
+    console.log('fetchOrderReport called');
     const response = await client.getOrderReport();
 
     if (isErrorData(response)) {
@@ -81,6 +81,7 @@ const OrderStatusPage: NextPage<Props> = (props) => {
       return;
     }
 
+    console.log('received orderReport', response);
     setOrderReport(response);
   }, []);
 
@@ -172,15 +173,19 @@ const OrderStatusPage: NextPage<Props> = (props) => {
               leave="transition-opacity duration-300"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
-              className="flex h-64 flex-col items-center"
+              className="flex h-64 w-full flex-col items-center"
             >
               <h2 className="mt-1 text-center text-2xl md:mt-8 md:text-4xl">
                 Order Complete!
               </h2>
-              <div className="flex grow items-center">
-                <h3 className="mt-1 text-center text-xl md:mt-3 md:text-3xl">
-                  Storm Troopers Danced: {orderReport.troopersDanced || 0}
-                </h3>
+              <div className="flex grow items-center flex-row justify-between w-full">
+                <span className="text-7xl ml-16">💃</span>
+                <div className="grow">
+                  <h3 className="mt-1 text-center text-xl md:mt-3 md:text-3xl">
+                    Storm Troopers Danced: {orderReport.troopersDanced || 0}
+                  </h3>
+                </div>
+                <span className="text-7xl mr-16">🕺</span>
               </div>
             </Transition>
 
@@ -189,6 +194,7 @@ const OrderStatusPage: NextPage<Props> = (props) => {
               <Button
                 type="button"
                 variant="primary"
+                size="large"
                 label={
                   orderReport.status == 'EXECUTING' ? 'Executing...' : 'Done'
                 }

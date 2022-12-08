@@ -2,7 +2,8 @@
 // Webpack may try to bundle Temporal and send it to the client-side application
 
 export type OrderType = 'Order66' | 'Order67';
-export type OrderStatus = 'WAITING' | 'EXECUTING';
+export type OrderStatus = 'EXECUTING' | 'DONE';
+export type WorkflowStatus = 'WAITING' | 'EXECUTING' | 'DONE';
 
 export type StartWorkflowData = {
   workflowId: string;
@@ -27,8 +28,8 @@ export type OrderReportData = {
 
 export type WorkflowReportData = {
   workflowId: string;
-  workflowComplete: boolean;
-  currentOrderStatus: OrderStatus;
+  workflowStatus: WorkflowStatus;
+  currentOrderStatus: OrderStatus | null;
   troopersDanced: number;
   jediEliminated: number;
   jediRemaining: number;

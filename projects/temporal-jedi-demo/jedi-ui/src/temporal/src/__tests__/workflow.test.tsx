@@ -3,17 +3,18 @@
  */
 
 import { TestWorkflowEnvironment } from '@temporalio/testing';
-import { DefaultLogger, Runtime, LogEntry, Worker } from '@temporalio/worker';
+import { DefaultLogger, LogEntry, Runtime, Worker } from '@temporalio/worker';
 import { Client } from '@temporalio/client';
 
 import type * as activities from '../activities'; // Uses types to ensure our mock signatures match
 import {
   jediBusiness,
-  orderSignal,
-  orderStatusQuery,
   orderReportQuery,
+  orderSignal,
+  workflowReportQuery,
 } from '../workflows';
 import { uuid4 } from '@temporalio/workflow';
+import { OrderReport, WorkflowReport } from '../types';
 
 // See full example at https://github.com/vkarpov15/temporal-ecommerce-ts/blob/95b7be70d0b2a8d95cea93ec719453c94fa68f2e/src/test/workflows.test.ts#L65-L80
 
@@ -27,7 +28,6 @@ describe('Workflow', () => {
   let worker: Worker;
   let runPromise: Promise<void>;
   let client: Client;
-
   let ordersReceived: string[];
   const mockActivities: Partial<typeof activities> = {
     executeOrder: async (id) => {
@@ -66,59 +66,117 @@ describe('Workflow', () => {
     ordersReceived = [];
   });
 
-  it('handles order 67 and drinks tea', async () => {
+  it('handles order 67 and troopers dance', async () => {
+    // GIVEN
     const handle = await client.workflow.start(jediBusiness, {
       workflowId: uuid4(),
       taskQueue: 'test',
     });
 
-    // Its initial state should be WAITING
-    let orderStatus = await handle.query(orderStatusQuery);
-    expect(orderStatus).toEqual('WAITING');
+    // It should have an initial workflowReport with WAITING state
+    let workflowReport = await handle.query(workflowReportQuery);
+    expect(workflowReport).toEqual({
+      workflowStatus: 'WAITING',
+      currentOrderStatus: undefined,
+      troopersDanced: 0,
+      jediEliminated: 0,
+      jediRemaining: 10,
+    } as WorkflowReport);
 
-    let teaDrunk = await handle.query(orderReportQuery);
-    expect(teaDrunk).toEqual(0);
-
+    // AND no orders have been received
     expect(ordersReceived).toStrictEqual([]);
 
+    // WHEN
     await handle.signal(orderSignal, {
       type: 'Order67',
       fromUser: 'Darth Sidious',
     });
 
-    orderStatus = await handle.query(orderStatusQuery);
-    expect(orderStatus).toEqual('EXECUTING');
+    // THEN
+    workflowReport = await handle.query(workflowReportQuery);
+    expect(workflowReport).toEqual({
+      workflowStatus: 'EXECUTING',
+      currentOrderStatus: 'EXECUTING',
+      troopersDanced: 0,
+      jediEliminated: 0,
+      jediRemaining: 10,
+    } as WorkflowReport);
 
-    teaDrunk = await handle.query(orderReportQuery);
-    expect(teaDrunk).toEqual(1);
+    let orderReport = await handle.query(orderReportQuery);
+    expect(orderReport).toEqual({
+      type: 'Order67',
+      status: 'EXECUTING',
+      troopersDanced: undefined,
+      jediEliminated: undefined,
+    } as OrderReport);
 
     expect(ordersReceived).toStrictEqual(['Order67']);
 
-    await handle.terminate(); // terminate dangling workflow
+    // WHEN
+    await env.sleep(10000);
+
+    // THEN
+    workflowReport = await handle.query(workflowReportQuery);
+    expect(workflowReport).toEqual({
+      workflowStatus: 'WAITING',
+      currentOrderStatus: 'DONE',
+      troopersDanced: 5,
+      jediEliminated: 0,
+      jediRemaining: 10,
+    } as WorkflowReport);
+
+    orderReport = await handle.query(orderReportQuery);
+    expect(orderReport).toEqual({
+      type: 'Order67',
+      status: 'DONE',
+      troopersDanced: 5,
+      jediEliminated: undefined,
+    } as OrderReport);
+
+    await handle.terminate(); // terminate workflow
   });
 
   it('completes when it receives order 66', async () => {
+    // GIVEN
     const handle = await client.workflow.start(jediBusiness, {
       workflowId: uuid4(),
       taskQueue: 'test',
     });
 
+    // WHEN
     await handle.signal(orderSignal, {
       type: 'Order66',
       fromUser: 'Darth Sidious',
     });
 
-    let orderStatus = await handle.query(orderStatusQuery);
-    expect(orderStatus).toEqual('EXECUTING');
-
-    let teaDrunk = await handle.query(orderReportQuery);
-    expect(teaDrunk).toEqual(0);
+    // THEN
+    let orderReport = await handle.query(orderReportQuery);
+    expect(orderReport).toEqual({
+      type: 'Order66',
+      status: 'EXECUTING',
+      troopersDanced: undefined,
+      jediEliminated: undefined,
+    } as OrderReport);
 
     // skip time 10s
     await env.sleep(10000);
 
-    orderStatus = await handle.query(orderStatusQuery);
-    expect(orderStatus).toEqual('DONE');
+    orderReport = await handle.query(orderReportQuery);
+    expect(orderReport).toEqual({
+      type: 'Order66',
+      status: 'DONE',
+      troopersDanced: undefined,
+      jediEliminated: 5,
+    } as OrderReport);
+
+    let workflowReport = await handle.query(workflowReportQuery);
+    expect(workflowReport).toEqual({
+      workflowStatus: 'DONE',
+      currentOrderStatus: 'DONE',
+      troopersDanced: 0,
+      jediEliminated: 5,
+      jediRemaining: 5,
+    } as WorkflowReport);
 
     expect(ordersReceived).toStrictEqual(['Order66']);
 
