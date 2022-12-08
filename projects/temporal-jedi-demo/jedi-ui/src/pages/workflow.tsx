@@ -18,11 +18,6 @@ const WorkflowPage: NextPage<ServerProps> = ({ workflowReport }) => {
     undefined,
   );
 
-  const startAgainHandler = async () => {
-    await client.deleteWorkflow();
-    await router.push('/');
-  };
-
   const sendOrderHandler = async (order: Order) => {
     setSubmittingOrder(order);
 
@@ -61,7 +56,6 @@ const WorkflowPage: NextPage<ServerProps> = ({ workflowReport }) => {
         {/* Inner content */}
         <WorkflowReportCard
           workflowReport={workflowReport}
-          onStartAgain={startAgainHandler}
           onSendOrder={sendOrderHandler}
           submittingOrder={submittingOrder}
           currentUser={CURRENT_USER}
@@ -94,6 +88,14 @@ export const getServerSideProps: GetServerSideProps<ServerProps> = async ({
     return {
       redirect: {
         destination: '/orderReport',
+        permanent: false,
+      },
+    };
+  }
+  if (workflowReport?.workflowStatus == 'DONE') {
+    return {
+      redirect: {
+        destination: '/finish',
         permanent: false,
       },
     };

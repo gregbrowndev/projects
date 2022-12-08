@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import { GetServerSideProps } from 'next';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Head from 'next/head';
 
 import * as client from '../client/http/client';
@@ -8,6 +8,8 @@ import { useRouter } from 'next/router';
 import { isErrorData } from '../server/types';
 import { StartCard } from '../client/components/app/StartCard';
 import { getWorkflowId } from '../server/cookies';
+import { START_GIFS } from '../client/gifs';
+import { randomInt } from '../client/utils';
 
 const HomePage: NextPage<ServerProps> = (props) => {
   const router = useRouter();
@@ -29,6 +31,14 @@ const HomePage: NextPage<ServerProps> = (props) => {
     // TODO - add fun starting GIF?
     // setTimeout(() => setStarting(false), 5000);
   };
+
+  const gifs = useMemo(() => START_GIFS, []);
+  const selectedGif = useMemo(() => {
+    // TODO - it would be better to cycle through them to avoid showing the same one. Need to store some state globally?
+    const index = randomInt(0, gifs.length - 1);
+    return gifs[index];
+  }, [gifs]);
+  // TODO - add button to refresh GIF
 
   return (
     <>
@@ -52,7 +62,11 @@ const HomePage: NextPage<ServerProps> = (props) => {
 
       <section className="mt-6 md:mt-16">
         {/* Inner content */}
-        <StartCard onStartHandler={startHandler} starting={starting} />
+        <StartCard
+          onStartHandler={startHandler}
+          starting={starting}
+          image={selectedGif}
+        />
       </section>
     </>
   );

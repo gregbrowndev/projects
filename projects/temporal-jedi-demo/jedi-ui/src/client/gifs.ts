@@ -1,7 +1,9 @@
+// Start
+import startGif1 from '../../public/static/gifs/start/palpatine-star-wars.gif';
+
 // Order 66
 import order66Gif1 from '../../public/static/gifs/order66/palpatine-smile.gif';
 import order66Gif2 from '../../public/static/gifs/order66/so-be-it-emperor-palpatine.gif';
-import order66Gif3 from '../../public/static/gifs/order66/palpatine-star-wars.gif';
 import order66Gif4 from '../../public/static/gifs/order66/ig11-storm-troopers.gif';
 import order66Gif5 from '../../public/static/gifs/order66/star-wars-41st.gif';
 
@@ -19,10 +21,11 @@ import order67Gif8 from '../../public/static/gifs/order67/this-is-the-way-dancin
 import finishGif1 from '../../public/static/gifs/finish/starwars.gif';
 import finishGif2 from '../../public/static/gifs/finish/star-wars-love.gif';
 
+export const START_GIFS = [startGif1];
+
 export const ORDER_66_GIFS = [
   order66Gif1,
   order66Gif2,
-  order66Gif3,
   order66Gif4,
   order66Gif5,
 ];
