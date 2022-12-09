@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { WorkflowReportCard } from '../client/components/app/WorkflowReportCard';
 import { getWorkflowId } from '../server/cookies';
 
+// TODO - show on results page. Add user icon
 const CURRENT_USER = 'Darth Sidious';
 
 const WorkflowPage: NextPage<ServerProps> = ({ workflowReport }) => {

@@ -8,7 +8,8 @@ import * as server from '../server/queries';
 import * as client from '../client/http/client';
 import { useRouter } from 'next/router';
 import { FINISH_GIFS } from '../client/gifs';
-import { randomInt } from '../client/utils';
+
+let gifCount = 0;
 
 const FinishPage: NextPage<ServerProps> = ({ workflowReport }) => {
   const router = useRouter();
@@ -20,10 +21,12 @@ const FinishPage: NextPage<ServerProps> = ({ workflowReport }) => {
     setStartingAgain(false);
   };
 
+  gifCount += 1;
+
   const gifs = useMemo(() => FINISH_GIFS, []);
   const selectedGif = useMemo(() => {
-    // TODO - it would be better to cycle through them to avoid showing the same one. Need to store some state globally?
-    const index = randomInt(0, gifs.length - 1);
+    // const index = randomInt(0, gifs.length - 1);
+    const index = gifCount % gifs.length;
     return gifs[index];
   }, [gifs]);
   // TODO - add button to refresh GIF

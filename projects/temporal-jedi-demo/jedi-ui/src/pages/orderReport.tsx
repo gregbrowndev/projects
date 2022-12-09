@@ -10,7 +10,6 @@ import * as client from '../client/http/client';
 import * as server from '../server/queries';
 import { OrderReportCard } from '../client/components/app/OrderReportCard';
 import { getWorkflowId } from '../server/cookies';
-import { randomInt } from '../client/utils';
 import { ORDER_66_GIFS, ORDER_67_GIFS } from '../client/gifs';
 
 const REFRESH_INTERVAL_MS = 2000;
@@ -51,10 +50,10 @@ const OrderReportPage: NextPage<ServerProps> = (props) => {
 
   const orderGifs = orderReport.type == 'Order66' ? order66Gifs : order67Gifs;
   const selectedGif = useMemo(() => {
-    // TODO - it would be better to cycle through them to avoid showing the same one. Need to store some state globally?
-    const index = randomInt(0, orderGifs.length - 1);
+    // const index = randomInt(0, orderGifs.length - 1);
+    const index = (orderReport.orderCountByType - 1) % orderGifs.length;
     return orderGifs[index];
-  }, [orderGifs]);
+  }, [orderGifs, orderReport.orderCountByType]);
 
   const onDoneHandler = async () => {
     await router.push('/workflow');

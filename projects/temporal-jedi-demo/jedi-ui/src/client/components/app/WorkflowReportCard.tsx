@@ -23,9 +23,9 @@ export const WorkflowReportCard: React.FC<WorkflowReportCardProps> = ({
         <StatsList
           items={
             <>
-              <li>Troopers Danced: {workflowReport.troopersDanced}</li>
               <li>Jedi Eliminated: {workflowReport.jediEliminated}</li>
               <li>Jedi Remaining: {workflowReport.jediRemaining}</li>
+              <li>Troopers Danced: {workflowReport.troopersDanced}</li>
             </>
           }
         />

@@ -21,6 +21,7 @@ export type SendOrderData = {
 export type OrderReportData = {
   workflowId: string;
   type: OrderType;
+  orderCountByType: number;
   status: OrderStatus;
   troopersDanced: number | null;
   totalTroopersDanced: number | null;

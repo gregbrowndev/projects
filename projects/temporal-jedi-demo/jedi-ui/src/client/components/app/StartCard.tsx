@@ -16,8 +16,15 @@ export const StartCard: React.FC<StartCardProps> = ({
 }) => {
   return (
     <Card
-      title="Lets Go"
-      body={<Image src={image} alt="" className="h-96 w-full object-contain" />}
+      title=""
+      body={
+        <Image
+          src={image}
+          alt=""
+          className="h-50 w-full object-contain md:h-96"
+          priority
+        />
+      }
       footer={
         <Button
           type="button"

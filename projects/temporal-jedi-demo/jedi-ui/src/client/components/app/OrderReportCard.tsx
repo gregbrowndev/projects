@@ -36,12 +36,13 @@ export const OrderReportCard: React.FC<OrderReportCardProps> = ({
             leave="transition-opacity duration-300"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
-            className="h-96"
+            className="h-50 md:h-96"
           >
             <Image
               src={image}
               alt="Dancing storm trooper"
               className="h-full w-full object-contain"
+              priority
             />
           </Transition>
 

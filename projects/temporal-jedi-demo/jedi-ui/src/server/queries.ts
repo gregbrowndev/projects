@@ -20,6 +20,7 @@ export async function getOrderReport(
   return {
     workflowId: workflowId,
     type: report.type,
+    orderCountByType: report.orderCountByType,
     status: report.status,
     troopersDanced: report.troopersDanced || null,
     totalTroopersDanced: report.totalTroopersDanced || null,

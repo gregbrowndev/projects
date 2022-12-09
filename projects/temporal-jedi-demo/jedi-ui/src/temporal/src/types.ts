@@ -11,6 +11,7 @@ export type WorkflowStatus = 'WAITING' | 'EXECUTING' | 'DONE';
 export interface OrderReport {
   type: OrderType;
   status: OrderStatus;
+  orderCountByType: number;
   troopersDanced?: number;
   totalTroopersDanced?: number;
   jediEliminated?: number;

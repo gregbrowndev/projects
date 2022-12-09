@@ -20,6 +20,8 @@ export async function jediBusiness(): Promise<void> {
     totalJedi: 10,
     troopersDanced: 0,
     jediEliminated: 0,
+    order66Count: 0,
+    order67Count: 0,
   };
 
   wf.setHandler(orderSignal, (order) => {
@@ -55,6 +57,8 @@ interface State {
   jediEliminated: number;
   currentOrder?: Order;
   currentOrderReport?: OrderReport;
+  order66Count: number;
+  order67Count: number;
 }
 
 function addTroopersDanced(state: State, troopers: number): State {
@@ -127,12 +131,20 @@ function setOrder(state: State, order: Order): State {
   if (state.currentOrder) {
     throw new Error('Cannot do that right now');
   }
+  const orderCountByType =
+    order.type == 'Order66' ? ++state.order66Count : ++state.order67Count;
+
   return {
     ...state,
     currentOrder: order,
+    order66Count:
+      order.type == 'Order66' ? orderCountByType : state.order66Count,
+    order67Count:
+      order.type == 'Order67' ? orderCountByType : state.order67Count,
     currentOrderReport: {
       type: order.type,
       status: 'EXECUTING',
+      orderCountByType,
     },
   };
 }

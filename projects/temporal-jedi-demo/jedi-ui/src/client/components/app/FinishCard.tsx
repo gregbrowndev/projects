@@ -22,7 +22,12 @@ export const FinishCard: React.FC<FinishCardProps> = ({
       title="Workflow Complete"
       body={
         <>
-          <Image src={image} alt="" className="h-96 w-full object-contain" />
+          <Image
+            src={image}
+            alt=""
+            className="h-50 mb-4 w-full object-contain md:mb-8 md:h-96"
+            priority
+          />
           <StatsList
             items={
               <>

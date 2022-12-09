@@ -7,14 +7,14 @@ export interface CardProps {
 }
 export const Card: React.FC<CardProps> = ({ title, body, footer }) => {
   return (
-    <div className="bg-white px-4 py-3 shadow-lg sm:rounded-md md:px-8 md:py-6">
+    <div className="bg-white px-4 py-4 shadow-lg sm:rounded-md md:px-8 md:py-8">
       {/* header*/}
-      <div className="mb-8">
+      <div className="mb-4 md:mb-8">
         <h2 className="text-center text-xl md:text-4xl">{title}</h2>
       </div>
 
       {/* body */}
-      <div className="mb-8">{body}</div>
+      <div className="mb-4 md:mb-8">{body}</div>
 
       {/* footer */}
       <div className="flex flex-row justify-center gap-4">{footer}</div>
