@@ -1,0 +1,5 @@
+# Ideally this would live in pyproject.toml but flake8 doesn't support that.
+# https://github.com/PyCQA/flake8/issues/234#issuecomment-812800722
+[flake8]
+max-line-length = 88
+extend-ignore = E203
