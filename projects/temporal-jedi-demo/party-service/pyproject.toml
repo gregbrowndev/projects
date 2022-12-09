@@ -20,6 +20,7 @@ freezegun = "^1.2.2"
 pytest-asyncio = "^0.20.2"
 safety = "^2.3.3"
 bandit = "^1.7.4"
+ipython = {version = "^8.7.0"}
 
 [tool.mypy]
 ignore_missing_imports = true
