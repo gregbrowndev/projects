@@ -135,7 +135,7 @@ target/
 .ipynb_checkpoints
 
 # pyenv
-.python-version
+#.ipython-version
 
 # celery beat schedule file
 celerybeat-schedule
@@ -430,7 +430,7 @@ tags
 ### VirtualEnv template
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
-[Bb]in
+#[Bb]in
 [Ii]nclude
 [Ll]ib
 [Ll]ib64

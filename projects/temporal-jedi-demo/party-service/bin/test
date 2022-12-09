@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+# Run pytest with log_cli disabled so that logs are swallowed.
+# Note that the -o flag here overrides the pytest settings in pyproject.toml where
+# log_cli is enabled.
+#
+# If you want verbose output including real-time logs from the tests use:
+#
+# $ poetry run pytest tests/
+#
+# instead of calling ./bin/test
+
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]:-$0}"; )" &> /dev/null && pwd 2> /dev/null; )";
+ROOT_DIR=$(dirname $SCRIPT_DIR)
+
+pytest -o log_cli=false $ROOT_DIR/tests $@

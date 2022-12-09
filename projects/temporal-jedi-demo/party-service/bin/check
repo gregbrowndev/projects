@@ -1,0 +1,66 @@
+#!/bin/bash
+set -euo pipefail
+
+CMDS=(
+    "black --check party_service tests"
+    "isort --check-only party_service tests"
+    "flake8 party_service tests"
+    "mypy party_service tests"
+#    "bin/openapi-docs verify"
+#    "safety check --full-report"
+#    "bandit -c pyproject.toml -r tarrif-management tests tools"
+)
+
+# Constants
+C_RED="\033[91m"
+C_GREEN="\033[92m"
+C_RESET="\033[0m"
+C_UNDERLINE="\033[4m"
+
+# Outputs
+pids=()
+stdouts=()
+timers=()
+codes=()
+
+cd "$(dirname "$0")"/../
+export TIMEFORMAT="%R"
+
+# Run each check in parallel
+for cmd in "${CMDS[@]}"; do
+    stdout="$(mktemp)"
+    timer="$(mktemp)"
+    { { time $cmd >>"$stdout" 2>&1 ; } >>"$timer" 2>&1 ; } &
+    pids+=($!)
+    stdouts+=("$stdout")
+    timers+=("$timer")
+done
+
+# Output results
+for i in ${!CMDS[*]}; do
+    if wait "${pids[$i]}"; then
+        codes+=(0)
+    else
+        codes+=(1)
+    fi
+
+    if [ "${codes[$i]}" -eq "0" ]; then
+        echo -en "${C_GREEN}"
+        echo -en "${CMDS[$i]}"
+        echo -en "$C_RESET"
+        echo -e " ($(cat "${timers[$i]}")s)"
+    else
+        echo -en "${C_RED}${C_UNDERLINE}"
+        echo -en "${CMDS[$i]}"
+        echo -e "$C_RESET"
+        echo -e "$(cat "${stdouts[$i]}")"
+    fi
+    echo ""
+done
+
+# Exit with error if any check failed
+for code in ${codes[@]}; do
+    if [ "$code" -gt "0" ]; then
+        exit 1
+    fi
+done
