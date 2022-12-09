@@ -28,7 +28,7 @@ const WorkflowPage: NextPage<ServerProps> = ({ workflowReport }) => {
       console.error(response);
     }
 
-    setSubmittingOrder(undefined);
+    // setSubmittingOrder(undefined);
     await router.push('/orderReport');
   };
 

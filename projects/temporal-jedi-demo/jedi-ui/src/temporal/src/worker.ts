@@ -1,7 +1,7 @@
 import { NativeConnection, Worker } from '@temporalio/worker';
 import * as activities from './activities';
 
-export const TASK_QUEUE = 'tutorial';
+export const TASK_QUEUE = 'jedi-demo';
 export const TEMPORAL_URL = 'localhost:7233';
 
 async function run() {

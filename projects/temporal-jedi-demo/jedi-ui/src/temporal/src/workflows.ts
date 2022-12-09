@@ -1,9 +1,10 @@
 import * as wf from '@temporalio/workflow';
-import { sleep } from '@temporalio/workflow';
 import type * as activities from './activities'; // purely for type safety
 import { Order, OrderReport, WorkflowReport, WorkflowStatus } from './types';
 
-const { executeOrder } = wf.proxyActivities<typeof activities>({
+const { executeOrder66, executeOrder67 } = wf.proxyActivities<
+  typeof activities
+>({
   startToCloseTimeout: '1 minute',
 });
 export const orderSignal = wf.defineSignal<[Order]>('order');
@@ -33,18 +34,15 @@ export async function jediBusiness(): Promise<void> {
       throw new Error('Something went wrong');
     }
     const order = state.currentOrder;
-
-    state = setOrderExecuting(state);
     console.log(`Handling Order: ${order.type}!`);
+    state = setOrderExecuting(state);
 
-    if (state.currentOrder?.type == 'Order66') {
-      await executeOrder(order.type);
-      await sleep(5000);
-      state = addJediEliminated(state, 4);
+    if (order.type == 'Order66') {
+      const jediEliminated = await executeOrder66(order.type);
+      state = addJediEliminated(state, jediEliminated);
     } else {
-      await executeOrder(order.type);
-      await sleep(5000);
-      state = addTroopersDanced(state, 3);
+      const troopersDanced = await executeOrder67(order.type);
+      state = addTroopersDanced(state, troopersDanced);
     }
 
     state = setOrderDone(state);
@@ -72,17 +70,19 @@ function addTroopersDanced(state: State, troopers: number): State {
     },
   };
 }
-function addJediEliminated(state: State, jedi: number): State {
+function addJediEliminated(state: State, jediEliminated: number): State {
   if (!state.currentOrderReport) {
     throw new Error('Cannot do that right now');
   }
-  const totalEliminations = state.jediEliminated + jedi;
+  const jediRemaining = getJediRemaining(state);
+  jediEliminated = Math.min(jediEliminated, jediRemaining);
+  const totalEliminations = state.jediEliminated + jediEliminated;
   return {
     ...state,
-    jediEliminated: Math.min(state.totalJedi, totalEliminations),
+    jediEliminated: totalEliminations,
     currentOrderReport: {
       ...state.currentOrderReport,
-      jediEliminated: jedi,
+      jediEliminated: jediEliminated,
     },
   };
 }
