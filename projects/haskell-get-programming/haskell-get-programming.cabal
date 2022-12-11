@@ -35,6 +35,7 @@ library
     , containers
     , random
     , split
+    , text
   default-language: Haskell2010
 
 executable haskell-get-programming-exe
@@ -50,6 +51,7 @@ executable haskell-get-programming-exe
     , haskell-get-programming
     , random
     , split
+    , text
   default-language: Haskell2010
 
 test-suite haskell-get-programming-test
@@ -66,4 +68,5 @@ test-suite haskell-get-programming-test
     , haskell-get-programming
     , random
     , split
+    , text
   default-language: Haskell2010
