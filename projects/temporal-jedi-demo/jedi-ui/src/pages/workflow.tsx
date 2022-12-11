@@ -10,7 +10,6 @@ import { useRouter } from 'next/router';
 import { WorkflowReportCard } from '../client/components/app/WorkflowReportCard';
 import { getWorkflowId } from '../server/cookies';
 
-// TODO - show on results page. Add user icon
 const CURRENT_USER = 'Darth Sidious';
 
 const WorkflowPage: NextPage<ServerProps> = ({ workflowReport }) => {
@@ -54,7 +53,6 @@ const WorkflowPage: NextPage<ServerProps> = ({ workflowReport }) => {
       </section>
 
       <section className="mt-6 md:mt-16">
-        {/* Inner content */}
         <WorkflowReportCard
           workflowReport={workflowReport}
           onSendOrder={sendOrderHandler}
@@ -84,6 +82,7 @@ export const getServerSideProps: GetServerSideProps<ServerProps> = async ({
       },
     };
   }
+
   const workflowReport = await server.getWorkflowReport(workflowId);
   if (workflowReport?.currentOrderStatus == 'EXECUTING') {
     return {

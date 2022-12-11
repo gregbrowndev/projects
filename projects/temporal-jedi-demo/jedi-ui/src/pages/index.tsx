@@ -61,7 +61,6 @@ const HomePage: NextPage<ServerProps> = (props) => {
       </section>
 
       <section className="mt-6 md:mt-16">
-        {/* Inner content */}
         <StartCard
           onStartHandler={startHandler}
           starting={starting}

@@ -47,7 +47,6 @@ const FinishPage: NextPage<ServerProps> = ({ workflowReport }) => {
       </section>
 
       <section className="mt-6 md:mt-16">
-        {/* Inner content */}
         <FinishCard
           workflowReport={workflowReport}
           onStartAgain={startAgainHandler}

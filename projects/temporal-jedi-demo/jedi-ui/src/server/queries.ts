@@ -37,11 +37,9 @@ export async function getWorkflowReport(
     `[queries] getWorkflowReport called with workflowId='${workflowId}'`,
   );
   const client = await createWorkflowClient();
-  console.log(`[queries] getWorkflowReport created WorkflowClient`);
 
   const workflow = client.getHandle(workflowId);
   const report = await workflow.query(workflowReportQuery);
-  console.log(`[queries] getWorkflowReport received query result`, report);
 
   return {
     workflowId: workflowId,
