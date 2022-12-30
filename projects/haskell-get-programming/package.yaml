@@ -25,6 +25,9 @@ dependencies:
 - random
 - split
 - text
+- bytestring
+- filepath
+- text-conversions
 
 library:
   source-dirs: src
