@@ -1,9 +1,9 @@
-import System.Environment(getArgs)
-import qualified Data.ByteString as B
-import qualified Data.Text as T
-import Data.Text.Conversions(fromText)
-import qualified Data.Text.IO as TIO
-import qualified Data.Text.Encoding as E
+import qualified Data.ByteString       as B
+import qualified Data.Text             as T
+import           Data.Text.Conversions (fromText)
+import qualified Data.Text.Encoding    as E
+import qualified Data.Text.IO          as TIO
+import           System.Environment    (getArgs)
 
 main :: IO ()
 main = do

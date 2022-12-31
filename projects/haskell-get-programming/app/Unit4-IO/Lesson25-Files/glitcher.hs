@@ -1,10 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
-import System.Environment(getArgs)
-import System.FilePath(splitFileName)
-import System.Random(randomRIO)
-import Control.Monad(foldM)
-import qualified Data.ByteString as B
+import           Control.Monad         (foldM)
+import qualified Data.ByteString       as B
 import qualified Data.ByteString.Char8 as BC
+import           System.Environment    (getArgs)
+import           System.FilePath       (splitFileName)
+import           System.Random         (randomRIO)
 
 {-
 Here’s the basic structure of the program:
