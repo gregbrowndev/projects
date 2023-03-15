@@ -111,14 +111,14 @@ Note: the function above is easier to understand by expanding out the partial ap
 Now we can see why the signature of maybeInc is Maybe (Integer -> Integer).
 So we now have this function in a context, but there is no way for us to apply it.
 
-The solution is to use <*> for partial application in a context. We now need
-to generalise Functor's fmap to work with multiple arguments. In lesson 5, we
-learned that partial application means that calling an function with fewer args
-than it requires results in a function waiting for the remaining args. Then in
-section 10.2.2, we saw that all functions are functions of one argument. Functions
-with multiple args are just a chain of single-argument functions. The key to solving
-this problem is being able to perform partial application in a context such as Maybe
-or IO!
+The solution is to use <*> (pronounced "app") for partial application in a context.
+We now need to generalise Functor's fmap to work with multiple arguments. In
+lesson 5, we learned that partial application means that calling an function with
+fewer args than it requires results in a function waiting for the remaining args.
+Then in section 10.2.2, we saw that all functions are functions of one argument.
+Functions with multiple args are just a chain of single-argument functions. The
+key to solving this problem is being able to perform partial application in a
+context such as Maybe or IO!
 
     ghci> maybeInc <*> Just 5
     Just 6
