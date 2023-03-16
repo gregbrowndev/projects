@@ -82,10 +82,10 @@ in the same way
 -}
 
 data RobotPart = RobotPart {
-    name :: String,
+    name        :: String,
     description :: String,
-    cost :: Double,
-    count :: Int
+    cost        :: Double,
+    count       :: Int
 } deriving Show
 
 leftArm :: RobotPart
@@ -204,7 +204,7 @@ getCost partsDB partId = cost <$> part
     where part = Map.lookup partId partsDB
 
 printCost :: Maybe Double -> IO ()
-printCost Nothing = putStrLn "item not found"
+printCost Nothing     = putStrLn "item not found"
 printCost (Just cost) = print cost
 
 main :: IO ()

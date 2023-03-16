@@ -157,9 +157,9 @@ primesToN n = filter isNotComposite twoThroughN
 -}
 
 data User = User {
-    name :: String,
+    name    :: String,
     gamerId :: Int,
-    score :: Int
+    score   :: Int
 } deriving Show
 
 testNames :: [String]

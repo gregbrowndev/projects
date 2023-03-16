@@ -58,7 +58,7 @@ haversine coords1 coords2 = earthRadius * c
 -}
 
 printDistance :: Maybe Double -> IO ()
-printDistance Nothing = putStrLn "Error, invalid city entered"
+printDistance Nothing         = putStrLn "Error, invalid city entered"
 printDistance (Just distance) = putStrLn (show distance ++ " miles")
 
 {-
@@ -70,8 +70,8 @@ However, this is almost exactly the signature of haversine. A naive solution
 would be to wrap haversine to work with Maybe:
 -}
 haversineMaybe :: Maybe LatLong -> Maybe LatLong -> Maybe Double
-haversineMaybe Nothing _ = Nothing
-haversineMaybe _ Nothing = Nothing
+haversineMaybe Nothing _               = Nothing
+haversineMaybe _ Nothing               = Nothing
 haversineMaybe (Just val1) (Just val2) = Just (haversine val1 val2)
 
 {-
@@ -245,9 +245,9 @@ data but all the information you need are in contexts suh as Maybe and IO. E.g.
 suppose we have user data for a video game:
 -}
 data User = User {
-    name :: String,
+    name    :: String,
     gamerId :: Int,
-    score :: Int
+    score   :: Int
 } deriving Show
 
 -- lets say we receive these values from the server or DB which might be missing:
@@ -327,10 +327,10 @@ Handle the case of the user entering an ID that’s not in the parts database.
 -}
 
 data RobotPart = RobotPart {
-    pName :: String,
+    pName       :: String,
     description :: String,
-    cost :: Double,
-    count :: Int
+    cost        :: Double,
+    count       :: Int
 } deriving Show
 
 leftArm :: RobotPart
@@ -371,7 +371,7 @@ cheapestPart part1 part2 = if price1 <= price2
           price2 = cost part2
 
 printCost :: Maybe Double -> IO ()
-printCost Nothing = putStrLn "missing item"
+printCost Nothing     = putStrLn "missing item"
 printCost (Just cost) = print cost
 
 mainRoboQuery :: IO ()
