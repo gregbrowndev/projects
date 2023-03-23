@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.0.
+-- This file has been generated from package.yaml by hpack version 0.35.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -32,7 +32,13 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
+    , filepath
+    , random
+    , split
+    , text
+    , text-conversions
   default-language: Haskell2010
 
 executable haskell-get-programming-exe
@@ -44,8 +50,14 @@ executable haskell-get-programming-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
+    , filepath
     , haskell-get-programming
+    , random
+    , split
+    , text
+    , text-conversions
   default-language: Haskell2010
 
 test-suite haskell-get-programming-test
@@ -58,6 +70,12 @@ test-suite haskell-get-programming-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
+    , filepath
     , haskell-get-programming
+    , random
+    , split
+    , text
+    , text-conversions
   default-language: Haskell2010
