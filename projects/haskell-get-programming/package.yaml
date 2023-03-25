@@ -32,15 +32,13 @@ library:
   source-dirs: src
 
 executables:
-  haskell-get-programming-exe:
+  lesson-34-exe:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         app/Unit6-Projects/Lesson34-Modules
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    dependencies:
-    - haskell-get-programming
 
 tests:
   haskell-get-programming-test:

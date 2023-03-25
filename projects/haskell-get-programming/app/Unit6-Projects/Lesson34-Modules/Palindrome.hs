@@ -2,21 +2,23 @@ module Palindrome (
       isPalindrome
     ) where
 
+{-# LANGUAGE OverloadedStrings #-}
+import qualified Data.Text as T
 import Data.Char (toLower, isSpace, isPunctuation)
 
-stripWhiteSpace :: String -> String
-stripWhiteSpace text = filter (not . isSpace) text
+stripWhiteSpace :: T.Text -> T.Text
+stripWhiteSpace text = T.filter (not . isSpace) text
 
-stripPunctuation :: String -> String
-stripPunctuation text = filter (not . isPunctuation) text
+stripPunctuation :: T.Text -> T.Text
+stripPunctuation text = T.filter (not . isPunctuation) text
 
-toLowerCase :: String -> String
-toLowerCase text = map toLower text
+toLowerCase :: T.Text -> T.Text
+toLowerCase text = T.map toLower text
 
-preprocess :: String -> String
+preprocess :: T.Text -> T.Text
 preprocess = stripWhiteSpace . stripPunctuation . toLowerCase
 
-isPalindrome :: String -> Bool
-isPalindrome text = cleanText == reverse cleanText
+isPalindrome :: T.Text -> Bool
+isPalindrome text = cleanText == T.reverse cleanText
   where
     cleanText = preprocess text
