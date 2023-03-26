@@ -2,7 +2,7 @@
 
 module Main where
 
-import qualified Data.Text as T
+import qualified Data.Text    as T
 import qualified Data.Text.IO as TIO
 import qualified Palindrome
 
@@ -34,7 +34,7 @@ an empty list:
 -}
 head :: Monoid a => [a] -> a
 head (x:xs) = x
-head [] = mempty
+head []     = mempty
 
 example :: [[Int]]
 example = []
