@@ -27,6 +27,9 @@ library
   exposed-modules:
       Core
       Ports
+      Adapters.ConfigAdapter
+      Adapters.DatasetAdapter
+      Adapters.NoaaAdapter
   other-modules:
       Paths_http_lesson
   hs-source-dirs:

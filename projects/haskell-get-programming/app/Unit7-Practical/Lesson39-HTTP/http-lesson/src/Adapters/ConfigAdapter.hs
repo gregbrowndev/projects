@@ -1,11 +1,13 @@
-module ConfigAdapter (
+module Adapters.ConfigAdapter (
     getConfig
 ) where
 
 import qualified Configuration.Dotenv as D
-import           System.Environment
+import qualified Data.Text            as T
+import qualified System.Environment   as E
 
 import qualified Ports                as P
+
 
 getConfig :: FilePath -> IO P.Config
 getConfig envPath = do
@@ -13,5 +15,5 @@ getConfig envPath = do
     D.loadFile D.defaultConfig {
          D.configPath = [envPath]
       }
-    noaaToken <- getEnv "NOAA_TOKEN"
+    noaaToken <- T.pack <$> E.getEnv "NOAA_TOKEN"
     return P.Config { P.noaaToken = noaaToken }

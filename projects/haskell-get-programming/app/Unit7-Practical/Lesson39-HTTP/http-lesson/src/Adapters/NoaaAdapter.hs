@@ -1,4 +1,4 @@
-module NoaaAdapter (
+module Adapters.NoaaAdapter (
         makeAdapter
     ) where
 
@@ -40,7 +40,7 @@ getDatasets token = do
     let status = getResponseStatusCode response
     if status == 200
     then return $ Right (getResponseBody response)
-    else return $ Left (P.ApplicationError 500 "Couldn't download datasets from NOAA")
+    else return $ Left (P.NoaaDownloadError)
 
 
 makeAdapter :: T.Text -> P.NoaaAdapter

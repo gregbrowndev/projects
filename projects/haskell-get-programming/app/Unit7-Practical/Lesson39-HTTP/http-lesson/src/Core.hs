@@ -1,6 +1,4 @@
-module Core
-    ( downloadDatasets
-    ) where
+module Core ( make ) where
 
 import qualified Ports as P
 
@@ -8,14 +6,19 @@ import qualified Ports as P
 downloadDatasets :: P.AppCtx -> IO (Either P.ApplicationError ())
 downloadDatasets ctx = do
     datasets <- getDatasets
-    print "saving datasets to file"
 --    _ <- B.writeFile "data.json" datasets
-    result <- saveDatasets datasets
-    case result of
---        Left (P.NoaaAdapterError e) -> return $ Left $ P.NoaaAdapterApplicationError e
---        Left (P.DatasetAdapterError e) -> return $ Left $ P.DatasetAdapterApplicationError e
-        Left e         -> return $ Left e
-        Right datasets -> return $ Right datasets
+    saved <- case datasets of
+        Left err -> return $ Left err
+        Right ds -> saveDatasets ds
+    case saved of
+        Left err -> return $ Left err
+        Right _  -> return $ Right ()
   where
     getDatasets = P.getDatasets $ P.noaaAdapter ctx
     saveDatasets = P.saveDatasets $ P.datasetAdapter ctx
+
+
+make :: P.AppCtx -> P.CoreApp
+make ctx = P.CoreApp {
+    P.downloadDatasets = downloadDatasets ctx
+}

@@ -6,15 +6,17 @@ module Ports (
     NoaaAdapter(..),
 --    NoaaAdapterError(..),
     ApplicationError(..),
-    AppCtx(..)
+    AppCtx(..),
+    CoreApp(..)
 ) where
 
 import qualified Data.ByteString.Char8 as BC
+import qualified Data.Text             as T
 
 type Datasets = BC.ByteString
 
 
-data Config = Config { noaaToken :: String }
+data Config = Config { noaaToken :: T.Text }
     deriving (Show, Eq)
 
 
@@ -40,7 +42,7 @@ data DatasetAdapter = DatasetAdapter {
 --                      | DatasetAdapterApplicationError DatasetAdapterError
 --                   -- | DomainError
 
-data ApplicationError = ApplicationError Int String
+data ApplicationError = NoaaDownloadError | DatasetSaveError deriving (Show)
 
 -- TODO - make ApplicationError a type class that the
 --  adapter errors can become a instance of. Use the type class
@@ -51,4 +53,8 @@ data ApplicationError = ApplicationError Int String
 data AppCtx = AppCtx {
     noaaAdapter    :: NoaaAdapter,
     datasetAdapter :: DatasetAdapter
+}
+
+data CoreApp = CoreApp {
+    downloadDatasets :: IO (Either ApplicationError ())
 }
