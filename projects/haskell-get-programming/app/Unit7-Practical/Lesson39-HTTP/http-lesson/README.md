@@ -1,5 +1,31 @@
 # Lesson 39: Making HTTP Requests in Haskell
 
+## Quick Start
+
+Build the project:
+
+```shell
+stack build
+```
+
+Run the program:
+
+```shell
+stack exec http-lesson-exe
+```
+
+E.g. output:
+
+```text
+Loading dotenv file: .env
+Config {noaaToken = "zmVBqMPJoolObsgnLPYwkxOSYYscGxcN"}
+"saving datasets to file"
+Datasets were downloaded successfully
+```
+
+
+## Notes:
+
 After this lesson, I'll be able to:
 
     - Fetch web pages by using Haskell
