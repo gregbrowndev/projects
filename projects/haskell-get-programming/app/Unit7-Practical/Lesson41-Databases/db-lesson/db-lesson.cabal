@@ -1,0 +1,106 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           db-lesson
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/db-lesson#readme>
+homepage:       https://github.com/gregbrowndev/db-lesson#readme
+bug-reports:    https://github.com/gregbrowndev/db-lesson/issues
+author:         Gregory Brown
+maintainer:     gregbrowndev@gmail.com
+copyright:      2023 Gregory Brown
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/gregbrowndev/db-lesson
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_db_lesson
+  hs-source-dirs:
+      src
+  default-extensions:
+      OverloadedStrings
+      DeriveGeneric
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      QuickCheck
+    , aeson
+    , base >=4.7 && <5
+    , bytestring
+    , directory
+    , dotenv
+    , http-conduit
+    , quickcheck-instances
+    , sqlite-simple
+    , temporary
+    , text
+    , text-conversions
+    , time
+  default-language: Haskell2010
+
+executable db-lesson-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_db_lesson
+  hs-source-dirs:
+      app
+  default-extensions:
+      OverloadedStrings
+      DeriveGeneric
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , aeson
+    , base >=4.7 && <5
+    , bytestring
+    , db-lesson
+    , directory
+    , dotenv
+    , http-conduit
+    , quickcheck-instances
+    , sqlite-simple
+    , temporary
+    , text
+    , text-conversions
+    , time
+  default-language: Haskell2010
+
+test-suite db-lesson-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_db_lesson
+  hs-source-dirs:
+      test
+  default-extensions:
+      OverloadedStrings
+      DeriveGeneric
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , aeson
+    , base >=4.7 && <5
+    , bytestring
+    , db-lesson
+    , directory
+    , dotenv
+    , http-conduit
+    , quickcheck-instances
+    , sqlite-simple
+    , temporary
+    , text
+    , text-conversions
+    , time
+  default-language: Haskell2010
