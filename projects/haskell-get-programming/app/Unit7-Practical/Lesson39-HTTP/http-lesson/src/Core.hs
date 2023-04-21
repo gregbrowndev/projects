@@ -6,7 +6,6 @@ import qualified Ports as P
 downloadDatasets :: P.AppCtx -> IO (Either P.ApplicationError ())
 downloadDatasets ctx = do
     datasets <- getDatasets
---    _ <- B.writeFile "data.json" datasets
     saved <- case datasets of
         Left err -> return $ Left err
         Right ds -> saveDatasets ds
@@ -18,6 +17,7 @@ downloadDatasets ctx = do
     saveDatasets = P.saveDatasets $ P.datasetAdapter ctx
 
 
+-- | TODO - replace with Tagless Final pattern
 make :: P.AppCtx -> P.CoreApp
 make ctx = P.CoreApp {
     P.downloadDatasets = downloadDatasets ctx

@@ -2,7 +2,6 @@ module Adapters.DatasetAdapter (makeAdapter)
   where
 
 import           Control.Exception
-
 import qualified Data.ByteString.Char8 as BC
 
 import qualified Ports                 as P
@@ -16,5 +15,4 @@ makeAdapter = P.DatasetAdapter {
                 Left _  -> return $ Left P.DatasetSaveError
                 Right _ -> return $ Right ()
         )
-
 }
