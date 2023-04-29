@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.foundations
+package com.rockthejvm.foundations
 
 import cats._
 import cats.implicits._
@@ -8,7 +8,10 @@ import io.circe.syntax.*
 import org.http4s.HttpRoutes
 import org.http4s.circe.*
 import org.http4s.dsl.Http4sDsl
-import org.http4s.dsl.impl.{QueryParamDecoderMatcher, OptionalValidatingQueryParamDecoderMatcher}
+import org.http4s.dsl.impl.{
+  QueryParamDecoderMatcher,
+  OptionalValidatingQueryParamDecoderMatcher
+}
 import org.http4s.ember.server.EmberServerBuilder
 import java.util.UUID
 import org.typelevel.ci.CIString
@@ -38,7 +41,9 @@ object Http4s extends IOApp.Simple {
       "Martin Odersky"
     )
 
-    private val courses: Map[UUID, Course] = Map(catsEffectCourse.id -> catsEffectCourse)
+    private val courses: Map[UUID, Course] = Map(
+      catsEffectCourse.id -> catsEffectCourse
+    )
 
     // API
     def findCourseById(courseId: UUID): Option[Course] =
@@ -52,8 +57,10 @@ object Http4s extends IOApp.Simple {
   // GET localhost:8080/courses?instructor=Martin%20Odersky&year=2022
   // GET localhost:8080/courses/9d10bd7e-a26d-4781-abe7-7db02a6d843f/students
 
-  object InstructorQueryParamMatcher extends QueryParamDecoderMatcher[String]("instructor")
-  object YearQueryParamMatcher       extends OptionalValidatingQueryParamDecoderMatcher[Int]("year")
+  object InstructorQueryParamMatcher
+      extends QueryParamDecoderMatcher[String]("instructor")
+  object YearQueryParamMatcher
+      extends OptionalValidatingQueryParamDecoderMatcher[Int]("year")
 
   def courseRoutes[F[_]: Monad]: HttpRoutes[F] = {
     val dsl = Http4sDsl[F]
@@ -76,7 +83,10 @@ object Http4s extends IOApp.Simple {
       case GET -> Root / "courses" / UUIDVar(courseId) / "students" =>
         CourseRepository.findCourseById(courseId).map(_.students) match {
           case Some(students) =>
-            Ok(students.asJson, Header.Raw(CIString("My-custom-header"), "rockthejvm"))
+            Ok(
+              students.asJson,
+              Header.Raw(CIString("My-custom-header"), "rockthejvm")
+            )
           case None => NotFound(s"No course with $courseId was found")
         }
     }
@@ -91,7 +101,8 @@ object Http4s extends IOApp.Simple {
   }
 
   // compose multiple routes together
-  def allRoutes[F[_]: Monad]: HttpRoutes[F] = courseRoutes[F] <+> healthEndpoint[F]
+  def allRoutes[F[_]: Monad]: HttpRoutes[F] =
+    courseRoutes[F] <+> healthEndpoint[F]
 
   // alternatively, we can use Router to compose the routes with a path prefix
   def routerWithPathPrefixes = Router(
@@ -151,5 +162,5 @@ object Http4s extends IOApp.Simple {
 
     All good
 
-  */
+   */
 }

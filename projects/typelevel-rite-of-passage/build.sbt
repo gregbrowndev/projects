@@ -3,7 +3,7 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 lazy val rockthejvm    = "com.rockthejvm"
 lazy val scala3Version = "3.2.1"
 
-lazy val circeVersion  = "0.14.0"
+lazy val circeVersion               = "0.14.0"
 lazy val catsEffectVersion          = "3.3.14"
 lazy val http4sVersion              = "0.23.15"
 lazy val doobieVersion              = "1.0.0-RC1"
@@ -16,6 +16,7 @@ lazy val testContainerVersion       = "1.17.3"
 lazy val logbackVersion             = "1.4.0"
 lazy val slf4jVersion               = "2.0.0"
 lazy val javaMailVersion            = "1.6.2"
+lazy val optimiseImportsVersion     = "0.5.0"
 
 lazy val server = (project in file("."))
   .settings(
@@ -32,17 +33,18 @@ lazy val server = (project in file("."))
       "org.tpolecat"          %% "doobie-core"         % doobieVersion,
       "org.tpolecat"          %% "doobie-hikari"       % doobieVersion,
       "org.tpolecat"          %% "doobie-postgres"     % doobieVersion,
-      "org.tpolecat"          %% "doobie-scalatest"    % doobieVersion    % Test,
+      "org.tpolecat"          %% "doobie-scalatest"    % doobieVersion   % Test,
       "com.github.pureconfig" %% "pureconfig-core"     % pureConfigVersion,
       "org.typelevel"         %% "log4cats-slf4j"      % log4catsVersion,
       "org.slf4j"              % "slf4j-simple"        % slf4jVersion,
       "io.github.jmcardon"    %% "tsec-http4s"         % tsecVersion,
       "com.sun.mail"           % "javax.mail"          % javaMailVersion,
-      "org.typelevel"         %% "log4cats-noop"       % log4catsVersion  % Test,
-      "org.scalatest"         %% "scalatest"           % scalaTestVersion % Test,
-      "org.typelevel"     %% "cats-effect-testing-scalatest" % scalaTestCatsEffectVersion % Test,
-      "org.testcontainers" % "testcontainers"                % testContainerVersion       % Test,
-      "org.testcontainers" % "postgresql"                    % testContainerVersion       % Test,
-      "ch.qos.logback"     % "logback-classic"               % logbackVersion             % Test
-    ),
+      "org.typelevel"         %% "log4cats-noop"       % log4catsVersion % Test,
+      "org.scalatest"        %% "scalatest"        % scalaTestVersion % Test,
+      // "com.github.liancheng" %% "organize-imports" % optimiseImportsVersion,
+      "org.typelevel" %% "cats-effect-testing-scalatest" % scalaTestCatsEffectVersion % Test,
+      "org.testcontainers" % "testcontainers"  % testContainerVersion % Test,
+      "org.testcontainers" % "postgresql"      % testContainerVersion % Test,
+      "ch.qos.logback"     % "logback-classic" % logbackVersion       % Test
+    )
   )

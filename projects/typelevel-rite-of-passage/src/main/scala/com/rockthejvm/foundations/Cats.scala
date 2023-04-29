@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.foundations
+package com.rockthejvm.foundations
 
 object Cats {
 
@@ -56,11 +56,17 @@ object Cats {
 
   // the combination of map from Functor and flatMap gives us for-comprehensions
   import cats.syntax.flatMap.*
-  def crossProduct[F[_]: FlatMap, A, B](containerA: F[A], containerB: F[B]): F[(A, B)] =
+  def crossProduct[F[_]: FlatMap, A, B](
+      containerA: F[A],
+      containerB: F[B]
+  ): F[(A, B)] =
     containerA.flatMap(a => containerB.map(b => (a, b)))
 
   // e.g. we can write the same function as
-  def crossProduct_v2[F[_]: FlatMap, A, B](containerA: F[A], containerB: F[B]): F[(A, B)] =
+  def crossProduct_v2[F[_]: FlatMap, A, B](
+      containerA: F[A],
+      containerB: F[B]
+  ): F[(A, B)] =
     for {
       a <- containerA
       b <- containerB
@@ -77,7 +83,10 @@ object Cats {
   import cats.Monad
   val monadList = Monad[List]
   // we typically see Monad being used instead of FlatMap on its own
-  def crossProduct_v3[F[_]: Monad, A, B](containerA: F[A], containerB: F[B]): F[(A, B)] =
+  def crossProduct_v3[F[_]: Monad, A, B](
+      containerA: F[A],
+      containerB: F[B]
+  ): F[(A, B)] =
     for {
       a <- containerA
       b <- containerB
@@ -91,14 +100,16 @@ object Cats {
   type ErrorOr[A] = Either[String, A]
   val applicativeEither          = ApplicativeError[ErrorOr, String]
   val desiredValue: ErrorOr[Int] = applicativeEither.pure(42)
-  val failedValue: ErrorOr[Int]  = applicativeEither.raiseError("Something went wrong")
+  val failedValue: ErrorOr[Int] =
+    applicativeEither.raiseError("Something went wrong")
   import cats.syntax.applicativeError.*
   val failedValue_v2: ErrorOr[Int] = "Something went wrong".raiseError
 
   // monad-error
   trait MyMonadError[F[_], E] extends ApplicativeError[F, E] with Monad[F]
   import cats.MonadError
-  val monadErrorEither: MonadError[ErrorOr, String] = MonadError[ErrorOr, String]
+  val monadErrorEither: MonadError[ErrorOr, String] =
+    MonadError[ErrorOr, String]
   // with MonadError we can use flatmap and for-comprehensions with the error value
 
   def main(args: Array[String]): Unit = {}

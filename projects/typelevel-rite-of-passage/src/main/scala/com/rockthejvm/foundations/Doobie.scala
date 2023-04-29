@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.foundations
+package com.rockthejvm.foundations
 
 import cats.Functor
 import cats.effect.{IOApp, IO, MonadCancelThrow}
@@ -37,7 +37,8 @@ object Doobie extends IOApp.Simple {
   }
 
   def saveStudent(student: Student): IO[Int] = {
-    val query  = sql"insert into student (id, name) values (${student.id}, ${student.name})"
+    val query =
+      sql"insert into student (id, name) values (${student.id}, ${student.name})"
     val action = query.update.run
     action.transact(xa)
   }
@@ -61,23 +62,30 @@ object Doobie extends IOApp.Simple {
   }
 
   object Students {
-    def make[F[_]: Functor: MonadCancelThrow](xa: Transactor[F]): Students[F] = new Students[F] {
-      def nextIdentity: F[Int] =
-        sql"select nextval(pg_get_serial_sequence('student','id'))".query[Int].unique.transact(xa)
+    def make[F[_]: Functor: MonadCancelThrow](xa: Transactor[F]): Students[F] =
+      new Students[F] {
+        def nextIdentity: F[Int] =
+          sql"select nextval(pg_get_serial_sequence('student','id'))"
+            .query[Int]
+            .unique
+            .transact(xa)
 
-      def findById(id: Int): F[Option[Student]] =
-        sql"select id, name from student where id=$id".query[Student].option.transact(xa)
+        def findById(id: Int): F[Option[Student]] =
+          sql"select id, name from student where id=$id"
+            .query[Student]
+            .option
+            .transact(xa)
 
-      def findAll: F[List[Student]] =
-        sql"select id, name from student".query[Student].to[List].transact(xa)
+        def findAll: F[List[Student]] =
+          sql"select id, name from student".query[Student].to[List].transact(xa)
 
-      def save(student: Student): F[Unit] =
-        import cats.syntax.functor.*
-        sql"insert into student (id, name) values (${student.id}, ${student.name})".update
-          .withUniqueGeneratedKeys[Int]("id")
-          .transact(xa)
-          .map(_ -> ())
-    }
+        def save(student: Student): F[Unit] =
+          import cats.syntax.functor.*
+          sql"insert into student (id, name) values (${student.id}, ${student.name})".update
+            .withUniqueGeneratedKeys[Int]("id")
+            .transact(xa)
+            .map(_ -> ())
+      }
   }
 
   val postgresResource = for {

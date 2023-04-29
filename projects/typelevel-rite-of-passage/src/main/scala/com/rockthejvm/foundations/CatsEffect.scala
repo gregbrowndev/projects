@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.foundations
+package com.rockthejvm.foundations
 
 import scala.io.StdIn
 import scala.util.{Random}
@@ -65,7 +65,8 @@ object CatsEffect extends IOApp.Simple {
 //  }
 
   // raise/"catch" errors
-  val aFailure: IO[Int] = IO.raiseError(new RuntimeException("Something went wrong"))
+  val aFailure: IO[Int] =
+    IO.raiseError(new RuntimeException("Something went wrong"))
   val dealWithIt = aFailure.handleErrorWith { case _: RuntimeException =>
     IO(println("I'm still here, no worries"))
   }
@@ -97,9 +98,11 @@ object CatsEffect extends IOApp.Simple {
 
   // uncancellation
   val ignoredCancellation = for {
-    fib <- IO.uncancelable(_ => delayedPrint.onCancel(IO(println("I'm cancelled!")))).start
-    _   <- IO.sleep(500.millis) *> IO(println("cancelling fiber")) *> fib.cancel
-    _   <- fib.join
+    fib <- IO
+      .uncancelable(_ => delayedPrint.onCancel(IO(println("I'm cancelled!"))))
+      .start
+    _ <- IO.sleep(500.millis) *> IO(println("cancelling fiber")) *> fib.cancel
+    _ <- fib.join
   } yield ()
 
   // resources
@@ -110,11 +113,16 @@ object CatsEffect extends IOApp.Simple {
       )
     )
   )(source => IO(println("closing")) *> IO(source.close))
-  val readingEffect = readingResource.use(source => IO(source.getLines().foreach(println)))
+  val readingEffect =
+    readingResource.use(source => IO(source.getLines().foreach(println)))
 
   // composing resources
   val copiedFileResource = Resource.make(
-    IO(new PrintWriter(new FileWriter(new File("src/main/resources/dumpedFile.scala"))))
+    IO(
+      new PrintWriter(
+        new FileWriter(new File("src/main/resources/dumpedFile.scala"))
+      )
+    )
   )(writer => IO(println("closing duplicated file")) *> IO(writer.close()))
 
   val compositeResource = for {
@@ -134,7 +142,9 @@ object CatsEffect extends IOApp.Simple {
     // uncancelable relies on a data structure called Poll, but we'll define it more verbosely
     // as the trait below:
     trait CancellationFlagResetter {
-      def apply[A](fa: F[A]): F[A] // returns the effect with the cancellation flag reset
+      def apply[A](
+          fa: F[A]
+      ): F[A] // returns the effect with the cancellation flag reset
     }
     def canceled: F[Unit]
     def uncancelable[A](poll: CancellationFlagResetter => F[A]): F[A]
@@ -142,7 +152,8 @@ object CatsEffect extends IOApp.Simple {
 
   // monadCancel for IO
   val monadCancelIO: MonadCancel[IO, Throwable] = MonadCancel[IO]
-  val uncancellableIO = monadCancelIO.uncancelable(_ => IO(42)) // same as IO.uncancelable
+  val uncancellableIO =
+    monadCancelIO.uncancelable(_ => IO(42)) // same as IO.uncancelable
 
   // Spawn - ability to create fibers
   trait MyGenSpawn[F[_], E] extends MonadCancel[F, E] {
@@ -152,7 +163,8 @@ object CatsEffect extends IOApp.Simple {
 
   trait MySpawn[F[_]] extends GenSpawn[F, Throwable]
   val spawnIO = Spawn[IO]
-  val fiber   = spawnIO.start(delayedPrint) // creates a fiber, same as delayedPrint.start
+  val fiber =
+    spawnIO.start(delayedPrint) // creates a fiber, same as delayedPrint.start
 
   // Concurrent - concurrency primatives (atomic references + promises)
   trait MyConcurrent[F[_]] extends Spawn[F] {
@@ -160,7 +172,7 @@ object CatsEffect extends IOApp.Simple {
     def deferred[A]: F[Deferred[F, A]] // for the promise primative
   }
   // with ref and deferred we can express any concurrency primative such as Cyclic Barrier,
-  // Count Down Latch, and Semaphore 
+  // Count Down Latch, and Semaphore
 
   // Temporal - ability to suspend computations for a given time
   trait MyTemporal[F[_]] extends Concurrent[F] {
