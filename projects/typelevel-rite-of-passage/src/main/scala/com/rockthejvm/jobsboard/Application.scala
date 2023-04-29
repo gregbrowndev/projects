@@ -9,7 +9,7 @@ import pureconfig.error.ConfigReaderException
 
 import com.rockthejvm.jobsboard.config.EmberConfig
 import com.rockthejvm.jobsboard.config.syntax.*
-import com.rockthejvm.jobsboard.http.routes.HealthRoutes
+import com.rockthejvm.jobsboard.http.HttpApi
 
 /*
  1 - add a plain health endpoint to our app
@@ -38,7 +38,7 @@ object Application extends IOApp.Simple {
   /*
   Note: the loadF function comes from an extension method we defined in
   jobsboard.config.syntax
-   */
+   */  
   override def run: IO[Unit] =
     for {
       config <- ConfigSource.default.loadF[IO, EmberConfig]
@@ -46,7 +46,7 @@ object Application extends IOApp.Simple {
         .default[IO]
         .withHost(config.host)
         .withPort(config.port)
-        .withHttpApp(HealthRoutes[IO].routes.orNotFound)
+        .withHttpApp(HttpApi[IO].endpoints.orNotFound)
         .build
         .use(_ => IO.println("Server ready!") *> IO.never)
     } yield IO.unit
