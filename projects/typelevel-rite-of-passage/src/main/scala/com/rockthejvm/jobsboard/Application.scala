@@ -4,18 +4,14 @@ import cats._
 import cats.implicits._
 import cats.effect.{IOApp, IO}
 import org.http4s.ember.server.EmberServerBuilder
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import pureconfig.ConfigSource
 import pureconfig.error.ConfigReaderException
 
 import com.rockthejvm.jobsboard.config.EmberConfig
 import com.rockthejvm.jobsboard.config.syntax.*
 import com.rockthejvm.jobsboard.http.HttpApi
-
-/*
- 1 - add a plain health endpoint to our app
- 2 - add minimal configuration
- 3 - basic http server layout
- */
 
 object Application extends IOApp.Simple {
   /*
@@ -36,9 +32,12 @@ object Application extends IOApp.Simple {
    */
 
   /*
-  Note: the loadF function comes from an extension method we defined in
-  jobsboard.config.syntax
-   */  
+  Note: the ConfigSource.default.loadF function comes from an extension method
+  we defined in jobsboard.config.syntax
+   */
+
+  given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
+
   override def run: IO[Unit] =
     for {
       config <- ConfigSource.default.loadF[IO, EmberConfig]
@@ -46,7 +45,7 @@ object Application extends IOApp.Simple {
         .default[IO]
         .withHost(config.host)
         .withPort(config.port)
-        .withHttpApp(HttpApi[IO].endpoints.orNotFound)
+        .withHttpApp(HttpApi[IO].routes.orNotFound)
         .build
         .use(_ => IO.println("Server ready!") *> IO.never)
     } yield IO.unit

@@ -22,7 +22,8 @@ object job {
   case class Position(
       title: String,
       description: String,
-      seniority: Option[String]
+      seniority: Option[String],
+      remote: Boolean
   )
 
   case class Salary(
@@ -33,7 +34,6 @@ object job {
 
   case class Location(
       office: String,
-      remote: Boolean,
       country: Option[String]
   )
 
@@ -48,8 +48,8 @@ object job {
     val empty: JobInfo =
       JobInfo(
         "",
-        Position("", "", None),
-        Location("", false, None),
+        Position("", "", None, false),
+        Location("", None),
         None,
         JobInfoMeta("", None, None, None)
       )

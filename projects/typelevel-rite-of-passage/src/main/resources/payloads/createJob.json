@@ -1,0 +1,21 @@
+{
+  "company": "Rock the JVM",
+  "position": {
+    "title": "Senior Engineer",
+    "description": "10x developer",
+    "seniority": "Senior",
+    "remote": false
+  },
+  "location": {
+    "office": "London",
+    "country": "UK"
+  },
+  "salary": {
+    "salaryLo": 60000,
+    "salaryHi": 80000,
+    "currency": "GBP"
+  },
+  "jobInfoMeta": {
+    "externalUrl": "www.rockthejvm.com/jobs/1234"
+  }
+}

@@ -3,19 +3,20 @@ package com.rockthejvm.jobsboard.http
 import cats.implicits.*
 import cats.effect.Concurrent
 import org.http4s.HttpRoutes
+import org.http4s.server.Router
+import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.http.routes.*
-import org.http4s.server.Router
 
-class HttpApi[F[_]: Concurrent] private {
+class HttpApi[F[_]: Concurrent: Logger] private {
   private val healthRoutes = HealthRoutes[F].routes
   private val jobRoutes    = JobRoutes[F].routes
 
-  val endpoints = Router(
+  val routes = Router(
     "/api" -> (healthRoutes <+> jobRoutes)
   )
 }
 
 object HttpApi {
-  def apply[F[_]: Concurrent] = new HttpApi[F]
+  def apply[F[_]: Concurrent: Logger] = new HttpApi[F]
 }

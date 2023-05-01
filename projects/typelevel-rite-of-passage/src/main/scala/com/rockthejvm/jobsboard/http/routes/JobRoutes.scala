@@ -3,6 +3,7 @@ package com.rockthejvm.jobsboard.http.routes
 import java.util.UUID
 import scala.collection.mutable
 
+import cats.MonadThrow
 import cats.implicits.*
 import cats.effect.Concurrent
 import io.circe.generic.auto.*
@@ -10,13 +11,14 @@ import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.*
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
+import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.domain.job.Job
 import com.rockthejvm.jobsboard.http.responses.FailureResponse
 import com.rockthejvm.jobsboard.domain.job.JobInfo
-import cats.MonadThrow
+import com.rockthejvm.jobsboard.logging.syntax.*
 
-class JobRoutes[F[_]: Concurrent] extends Http4sDsl[F] {
+class JobRoutes[F[_]: Concurrent: Logger] extends Http4sDsl[F] {
 
   // In-memory dummy database
   private val database = mutable.Map[UUID, Job]()
@@ -30,10 +32,13 @@ class JobRoutes[F[_]: Concurrent] extends Http4sDsl[F] {
   // GET /jobs/uuid
   private val findJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root / UUIDVar(id) =>
-      Ok(s"TODO find job for $id")
+      database.get(id) match {
+        case Some(job) => Ok(job)
+        case None      => NotFound(FailureResponse(s"Job $id not found"))
+      }
   }
 
-  // POST /jobs { jobInfo }
+  // POST /jobs/create { jobInfo }
   private def createJob(jobInfo: JobInfo): F[Job] =
     Job(
       id = UUID.randomUUID(),
@@ -43,11 +48,14 @@ class JobRoutes[F[_]: Concurrent] extends Http4sDsl[F] {
       active = true
     ).pure[F]
 
+  // We can test this route with:
+  // http POST 'localhost:8080/api/jobs/create' < ./src/main/resources/payloads/createJob.json
   private val createJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ POST -> Root / "create" =>
       for {
-        jobInfo <- req.as[JobInfo]
+        jobInfo <- req.as[JobInfo].logError(e => s"Parsing payload failed: $e")
         job     <- createJob(jobInfo)
+        _       <- database.put(job.id, job).pure[F]
         resp    <- Created(job.id)
       } yield resp
   }
@@ -58,9 +66,11 @@ class JobRoutes[F[_]: Concurrent] extends Http4sDsl[F] {
       database.get(id) match {
         case Some(job) =>
           for {
-            jobInfo <- req.as[JobInfo]
-            _       <- database.put(id, job.copy(jobInfo = jobInfo)).pure[F]
-            resp    <- Ok()
+            jobInfo <- req
+              .as[JobInfo]
+              .logError(e => s"Parsing payload failed: $e")
+            _    <- database.put(id, job.copy(jobInfo = jobInfo)).pure[F]
+            resp <- Ok()
           } yield resp
         case None => NotFound(FailureResponse(s"Job $id not found"))
       }
@@ -91,5 +101,5 @@ class JobRoutes[F[_]: Concurrent] extends Http4sDsl[F] {
 }
 
 object JobRoutes {
-  def apply[F[_]: Concurrent] = new JobRoutes[F]
+  def apply[F[_]: Concurrent: Logger] = new JobRoutes[F]
 }
