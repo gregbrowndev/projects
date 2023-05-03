@@ -40,12 +40,8 @@ object JobsPlayground extends IOApp.Simple {
     postgresResource.use { xa =>
       for {
         jobsRepo <- LiveJobRepository[IO](xa)
-        id       <- jobsRepo.nextIdentity()
-        job = Job(
-          id = id,
-          date = LocalDateTime.now(),
+        job <- jobsRepo.make(
           ownerEmail = "gregbrowndev@gmail.com",
-          active = false,
           jobInfo = JobInfo(
             company = "Rock the JVM",
             position = Position(
@@ -80,9 +76,9 @@ object JobsPlayground extends IOApp.Simple {
         updatedJob = job.copy(active = true)
         _            <- jobsRepo.update(updatedJob)
         _            <- IO(println("Updated job...")) *> IO(StdIn.readLine)
-        myJob        <- jobsRepo.find(id = id)
+        myJob        <- jobsRepo.find(id = job.id)
         _            <- IO(println(s"Your job: $myJob")) *> IO(StdIn.readLine)
-        _            <- jobsRepo.delete(id = id)
+        _            <- jobsRepo.delete(id = job.id)
         _            <- IO(println("Deleted job...")) *> IO(StdIn.readLine)
         allJobsFinal <- jobsRepo.all()
         _ <- IO(println(s"All jobs: $allJobsFinal")) *> IO(StdIn.readLine)

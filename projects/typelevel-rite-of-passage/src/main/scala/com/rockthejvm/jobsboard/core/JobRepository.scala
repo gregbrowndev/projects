@@ -4,7 +4,7 @@ import java.util.UUID
 
 import cats.effect.MonadCancelThrow
 
-import com.rockthejvm.jobsboard.domain.job.Job
+import com.rockthejvm.jobsboard.domain.job.{Job, JobInfo}
 
 trait JobRepository[F[_]: MonadCancelThrow] {
   // "algebra", i.e. CRUD
@@ -14,4 +14,10 @@ trait JobRepository[F[_]: MonadCancelThrow] {
   def find(id: UUID): F[Option[Job]]
   def update(job: Job): F[Unit]
   def delete(id: UUID): F[Unit]
+
+  // TODO - refactor create/update to save function (collection-oriented API)
+
+  // TODO - Ideally, the factory funciton should live somewhere else (otherwise
+  // ypu have to implement it multiple times)
+  def make(ownerEmail: String, jobInfo: JobInfo): F[Job]
 }
