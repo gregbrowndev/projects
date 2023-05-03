@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.logging
+package com.rockthejvm.jobsboard.adapters.in.logging
 
 import cats.MonadError
 import cats.implicits.*

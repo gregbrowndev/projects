@@ -1,14 +1,15 @@
 package com.rockthejvm.jobsboard.domain
 
 import java.util.UUID
+import java.time.LocalDateTime
 
 object job {
   case class Job(
       id: UUID,
-      date: Long,
+      date: LocalDateTime,
       ownerEmail: String,
-      jobInfo: JobInfo,
-      active: Boolean = false
+      active: Boolean = false,
+      jobInfo: JobInfo
   )
 
   case class JobInfo(
@@ -16,7 +17,7 @@ object job {
       position: Position,
       location: Location,
       salary: Option[Salary],
-      jobInfoMeta: JobInfoMeta
+      meta: JobInfoMeta
   )
 
   case class Position(
@@ -26,15 +27,15 @@ object job {
       remote: Boolean
   )
 
+  case class Location(
+      office: String,
+      country: Option[String]
+  )
+
   case class Salary(
       salaryLo: Option[Int],
       salaryHi: Int,
       currency: String
-  )
-
-  case class Location(
-      office: String,
-      country: Option[String]
   )
 
   case class JobInfoMeta(

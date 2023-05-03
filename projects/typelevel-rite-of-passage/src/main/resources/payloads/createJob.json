@@ -15,7 +15,7 @@
     "salaryHi": 80000,
     "currency": "GBP"
   },
-  "jobInfoMeta": {
+  "meta": {
     "externalUrl": "www.rockthejvm.com/jobs/1234"
   }
 }

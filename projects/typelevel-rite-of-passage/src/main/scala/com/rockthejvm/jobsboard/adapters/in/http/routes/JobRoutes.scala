@@ -1,6 +1,7 @@
-package com.rockthejvm.jobsboard.http.routes
+package com.rockthejvm.jobsboard.adapters.in.http.routes
 
 import java.util.UUID
+import java.time.LocalDateTime
 import scala.collection.mutable
 
 import cats.MonadThrow
@@ -14,9 +15,9 @@ import org.http4s.server.Router
 import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.domain.job.Job
-import com.rockthejvm.jobsboard.http.responses.FailureResponse
 import com.rockthejvm.jobsboard.domain.job.JobInfo
-import com.rockthejvm.jobsboard.logging.syntax.*
+import com.rockthejvm.jobsboard.adapters.in.http.responses.FailureResponse
+import com.rockthejvm.jobsboard.adapters.in.logging.syntax.*
 
 class JobRoutes[F[_]: Concurrent: Logger] extends Http4sDsl[F] {
 
@@ -42,7 +43,7 @@ class JobRoutes[F[_]: Concurrent: Logger] extends Http4sDsl[F] {
   private def createJob(jobInfo: JobInfo): F[Job] =
     Job(
       id = UUID.randomUUID(),
-      date = System.currentTimeMillis(),
+      date = LocalDateTime.now(),
       ownerEmail = "TODO@rockthejvm.com",
       jobInfo = jobInfo,
       active = true

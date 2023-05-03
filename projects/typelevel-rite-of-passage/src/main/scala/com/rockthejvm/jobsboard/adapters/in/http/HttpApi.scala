@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.http
+package com.rockthejvm.jobsboard.adapters.in.http
 
 import cats.implicits.*
 import cats.effect.Concurrent
@@ -6,7 +6,7 @@ import org.http4s.HttpRoutes
 import org.http4s.server.Router
 import org.typelevel.log4cats.Logger
 
-import com.rockthejvm.jobsboard.http.routes.*
+import com.rockthejvm.jobsboard.adapters.in.http.routes.*
 
 class HttpApi[F[_]: Concurrent: Logger] private {
   private val healthRoutes = HealthRoutes[F].routes

@@ -1,4 +1,4 @@
-package com.rockthejvm.foundations.playground
+package com.rockthejvm.playground
 
 object Playground {
   def main(args: Array[String]): Unit = {

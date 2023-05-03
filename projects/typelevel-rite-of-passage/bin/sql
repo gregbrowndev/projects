@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+docker exec -it typelevel-rite-of-passage-db-1 psql \
+  --username docker \
+  --dbname jobsboard

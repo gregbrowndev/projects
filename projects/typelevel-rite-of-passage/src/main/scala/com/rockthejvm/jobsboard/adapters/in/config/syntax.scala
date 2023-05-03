@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.config
+package com.rockthejvm.jobsboard.adapters.in.config
 
 import pureconfig.ConfigSource
 import cats.MonadError

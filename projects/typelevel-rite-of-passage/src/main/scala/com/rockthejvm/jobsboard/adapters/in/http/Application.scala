@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard
+package com.rockthejvm.jobsboard.adapters.in.http
 
 import cats._
 import cats.implicits._
@@ -9,32 +9,11 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import pureconfig.ConfigSource
 import pureconfig.error.ConfigReaderException
 
-import com.rockthejvm.jobsboard.config.EmberConfig
-import com.rockthejvm.jobsboard.config.syntax.*
-import com.rockthejvm.jobsboard.http.HttpApi
+import com.rockthejvm.jobsboard.adapters.in.config.EmberConfig
+import com.rockthejvm.jobsboard.adapters.in.config.syntax.*
+import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
 
 object Application extends IOApp.Simple {
-  /*
-  We can compile the application and watch for changes:
-
-    $ sbt
-    sbt> ~compile
-
-  We can then run the server in another sbt console (multiple consoles not
-  exactly recommended):
-
-    $ sbt
-    sbt> runMain com.rockthejvm.jobsboard.Application
-
-  or just:
-
-    $ sbt "runMain com.rockthejvm.jobsboard.Application"
-   */
-
-  /*
-  Note: the ConfigSource.default.loadF function comes from an extension method
-  we defined in jobsboard.config.syntax
-   */
 
   given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 

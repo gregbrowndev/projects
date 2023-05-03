@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.http.routes
+package com.rockthejvm.jobsboard.adapters.in.http.routes
 
 import cats.effect.Concurrent
 import org.http4s.HttpRoutes
