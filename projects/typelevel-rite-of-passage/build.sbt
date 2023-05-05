@@ -40,11 +40,14 @@ lazy val server = (project in file("."))
       "io.github.jmcardon"    %% "tsec-http4s"         % tsecVersion,
       "com.sun.mail"           % "javax.mail"          % javaMailVersion,
       "org.typelevel"         %% "log4cats-noop"       % log4catsVersion % Test,
-      "org.scalatest"        %% "scalatest"        % scalaTestVersion % Test,
+      "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
       // "com.github.liancheng" %% "organize-imports" % optimiseImportsVersion,
       "org.typelevel" %% "cats-effect-testing-scalatest" % scalaTestCatsEffectVersion % Test,
       "org.testcontainers" % "testcontainers"  % testContainerVersion % Test,
       "org.testcontainers" % "postgresql"      % testContainerVersion % Test,
       "ch.qos.logback"     % "logback-classic" % logbackVersion       % Test
+    ),
+    Compile / mainClass := Some(
+      "com.rockthejvm.jobsboard.adapters.in.http.Application"
     )
   )

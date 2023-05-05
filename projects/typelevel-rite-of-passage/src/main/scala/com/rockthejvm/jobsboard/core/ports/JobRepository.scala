@@ -1,10 +1,10 @@
-package com.rockthejvm.jobsboard.core
+package com.rockthejvm.jobsboard.core.ports
 
 import java.util.UUID
 
 import cats.effect.MonadCancelThrow
 
-import com.rockthejvm.jobsboard.domain.job.{Job, JobInfo}
+import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo}
 
 trait JobRepository[F[_]: MonadCancelThrow] {
   // "algebra", i.e. CRUD
@@ -18,6 +18,6 @@ trait JobRepository[F[_]: MonadCancelThrow] {
   // TODO - refactor create/update to save function (collection-oriented API)
 
   // TODO - Ideally, the factory funciton should live somewhere else (otherwise
-  // ypu have to implement it multiple times)
+  // ypu have to implement it multiple times for each adapter)
   def make(ownerEmail: String, jobInfo: JobInfo): F[Job]
 }

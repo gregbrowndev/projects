@@ -10,7 +10,7 @@ import cats.effect.kernel.Resource
 import doobie.util.ExecutionContexts
 import doobie.hikari.HikariTransactor
 
-import com.rockthejvm.jobsboard.domain.job.{
+import com.rockthejvm.jobsboard.core.domain.job.{
   JobInfo,
   Position,
   Location,
@@ -22,7 +22,7 @@ import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
 
 object JobsPlayground extends IOApp.Simple {
 
-  val postgresResource: Resource[IO, HikariTransactor[IO]] = for {
+  def makePostgresResource(): Resource[IO, HikariTransactor[IO]] = for {
     ce <- ExecutionContexts.fixedThreadPool[IO](32)
     xa <- HikariTransactor.newHikariTransactor[IO](
       "org.postgresql.Driver",                      // JDBC connector
@@ -37,10 +37,14 @@ object JobsPlayground extends IOApp.Simple {
   Run with: sbt "runMain com.rockthejvm.playground.JobsPlayground"
    */
   override def run: IO[Unit] =
-    postgresResource.use { xa =>
+    val jobRepoResource = for {
+      xa      <- makePostgresResource()
+      jobRepo <- LiveJobRepository[IO](xa)
+    } yield jobRepo
+
+    jobRepoResource.use { jobRepo =>
       for {
-        jobsRepo <- LiveJobRepository[IO](xa)
-        job <- jobsRepo.make(
+        job <- jobRepo.make(
           ownerEmail = "gregbrowndev@gmail.com",
           jobInfo = JobInfo(
             company = "Rock the JVM",
@@ -69,18 +73,18 @@ object JobsPlayground extends IOApp.Simple {
             )
           )
         )
-        _       <- jobsRepo.create(job)
+        _       <- jobRepo.create(job)
         _       <- IO(println("Created job...")) *> IO(StdIn.readLine)
-        allJobs <- jobsRepo.all()
+        allJobs <- jobRepo.all()
         _       <- IO(println(s"All jobs: $allJobs")) *> IO(StdIn.readLine)
         updatedJob = job.copy(active = true)
-        _            <- jobsRepo.update(updatedJob)
+        _            <- jobRepo.update(updatedJob)
         _            <- IO(println("Updated job...")) *> IO(StdIn.readLine)
-        myJob        <- jobsRepo.find(id = job.id)
+        myJob        <- jobRepo.find(id = job.id)
         _            <- IO(println(s"Your job: $myJob")) *> IO(StdIn.readLine)
-        _            <- jobsRepo.delete(id = job.id)
+        _            <- jobRepo.delete(id = job.id)
         _            <- IO(println("Deleted job...")) *> IO(StdIn.readLine)
-        allJobsFinal <- jobsRepo.all()
+        allJobsFinal <- jobRepo.all()
         _ <- IO(println(s"All jobs: $allJobsFinal")) *> IO(StdIn.readLine)
 
       } yield ()
