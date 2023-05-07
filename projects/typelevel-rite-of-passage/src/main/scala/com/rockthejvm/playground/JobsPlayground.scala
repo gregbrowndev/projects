@@ -32,9 +32,7 @@ object JobsPlayground extends IOApp.Simple {
     )
   } yield xa
 
-  /*
-  Run with: sbt "runMain com.rockthejvm.playground.JobsPlayground"
-   */
+  // Run with: sbt "runMain com.rockthejvm.playground.JobsPlayground"
   override def run: IO[Unit] =
     val jobRepoResource = for {
       xa      <- makePostgresResource()

@@ -23,14 +23,13 @@ import cats.effect.{IO, IOApp}
 import cats.{Defer, MonadError}
 
 object CatsEffect extends IOApp.Simple {
-  /*
-    Cats Effect allows us to describe computations as values
+  /* Cats Effect allows us to describe computations as values
+   *
+   * Typeclasses:
+   * - IO */
 
-    Typeclasses:
-    - IO
-   * */
-
-  // IO - data structure describing arbitrary computations (including side effects)
+  /* IO - data structure describing arbitrary computations (including side
+   * effects) */
   val firstIO: IO[Int]   = IO.pure(42)
   val delayedIO: IO[Int] = IO {
     // complex code
@@ -50,13 +49,12 @@ object CatsEffect extends IOApp.Simple {
   val printedMeaningOfLife  = firstIO.flatMap(mol => IO(println(mol)))
 
   // for-comps
-  def smallProgram(): IO[Unit] = {
+  def smallProgram(): IO[Unit] =
     for {
       line1 <- IO(StdIn.readLine())
       line2 <- IO(StdIn.readLine())
       _     <- IO(println(line1 + line2))
     } yield ()
-  }
 
   // Old-style Scala main function.
 //  def main(args: Array[String]): Unit = {
@@ -91,7 +89,8 @@ object CatsEffect extends IOApp.Simple {
     fib <- delayedPrint.onCancel(IO(println("I'm cancelled!"))).start
     _   <- IO.sleep(500.millis) *> IO(println("cancelling fiber")) *> fib.cancel
     _   <- fib.join
-    // we should always clean up fibers, even though they are very lightweight they can contain
+    /* we should always clean up fibers, even though they are very lightweight
+     * they can contain */
     // db connections, etc.
   } yield ()
 
@@ -136,9 +135,11 @@ object CatsEffect extends IOApp.Simple {
   // abstract kinds of computations
 
   // MonadCancel
-  // With MonadCancel we can mark parts of a computation as cancellable and uncancellable
+  /* With MonadCancel we can mark parts of a computation as cancellable and
+   * uncancellable */
   trait MyMonadCancel[F[_], E] extends MonadError[F, E] {
-    // uncancelable relies on a data structure called Poll, but we'll define it more verbosely
+    /* uncancelable relies on a data structure called Poll, but we'll define it
+     * more verbosely */
     // as the trait below:
     trait CancellationFlagResetter {
       def apply[A](
@@ -170,7 +171,8 @@ object CatsEffect extends IOApp.Simple {
     def ref[A](a: A): F[Ref[F, A]]
     def deferred[A]: F[Deferred[F, A]] // for the promise primative
   }
-  // with ref and deferred we can express any concurrency primative such as Cyclic Barrier,
+  /* with ref and deferred we can express any concurrency primative such as
+   * Cyclic Barrier, */
   // Count Down Latch, and Semaphore
 
   // Temporal - ability to suspend computations for a given time
@@ -184,12 +186,14 @@ object CatsEffect extends IOApp.Simple {
     def blocking[A](expression: => A): F[A] // runs on a dedicated thread pool
   }
 
-  // Async - ability to suspend asynchronous computations (i.e. on other thread pools) into an
+  /* Async - ability to suspend asynchronous computations (i.e. on other thread
+   * pools) into an */
   // effect managed by CE
   trait MyAsync[F[_]] extends Sync[F] with Temporal[F] {
     def executionContext: F[ExecutionContext]
     def async[A](cb: (Either[Throwable, A] => Unit) => F[Option[F[Unit]]]): F[A]
-    // async has the most complex signature you'll likely see, but every type is important
+    /* async has the most complex signature you'll likely see, but every type is
+     * important */
   }
 
   // In cats-effect we extend IOApp.Simple and override the run method

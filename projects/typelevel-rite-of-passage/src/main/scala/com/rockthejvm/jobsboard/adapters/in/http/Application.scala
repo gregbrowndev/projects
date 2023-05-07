@@ -1,8 +1,8 @@
 package com.rockthejvm.jobsboard.adapters.in.http
 
-import cats._
+import cats.*
 import cats.effect.{IO, IOApp}
-import cats.implicits._
+import cats.implicits.*
 import org.http4s.ember.server.EmberServerBuilder
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
@@ -19,10 +19,8 @@ import com.rockthejvm.jobsboard.adapters.in.config.{
 import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
 
 object Application extends IOApp.Simple {
-  /*
-  Run application with `sbt run`. Note, this works because the build.sbt file
-  contains Compile / runMain := "path/to/entrypoint"
-   */
+  /* Run application with `sbt run`. Note, this works because the build.sbt file
+   * contains Compile / runMain := "path/to/entrypoint" */
 
   given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 

@@ -2,14 +2,12 @@ package com.rockthejvm.foundations
 
 object Cats {
 
-  /*
-   type classes
-    - Applicative
-    - Functor
-    - FlatMap
-    - Monad
-    - ApplicativeError/MonadError
-   */
+  /* type classes
+   * - Applicative
+   * - Functor
+   * - FlatMap
+   * - Monad
+   * - ApplicativeError/MonadError */
 
   trait MyFunctor[F[_]] {
     def map[A, B](initialValue: F[A])(f: A => B): F[B]
@@ -110,7 +108,8 @@ object Cats {
   import cats.MonadError
   val monadErrorEither: MonadError[ErrorOr, String] =
     MonadError[ErrorOr, String]
-  // with MonadError we can use flatmap and for-comprehensions with the error value
+  /* with MonadError we can use flatmap and for-comprehensions with the error
+   * value */
 
   def main(args: Array[String]): Unit = {}
 }

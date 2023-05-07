@@ -10,17 +10,18 @@ import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
 
 object Doobie extends IOApp.Simple {
-  /*
-  - Run the docker compose file to start PostgreSQL
-  - Connect to the database:
-    docker exec -it typelevel-rite-of-passage-db-1 psql -U docker
-  - Run the commands:
 
-    psql> create database typeleveldemo;
-    psql> \c typeleveldemo
-    psql> create table student(id serial not null, name character varying not null, primary key(id));
-    psql> insert into student (id, name) values (1, 'daniel'), (2, 'greg');
-   */
+  /** - Run the docker compose file to start PostgreSQL
+    * - Connect to the database: docker exec -it typelevel-rite-of-passage-db-1 psql -U docker
+    * - Run the commands:
+    *
+    * ```
+    * psql> create database typeleveldemo;
+    * psql> \c typeleveldemo
+    * psql> create table student(id serial not null, name character varying not null, primary key(id));
+    * psql> insert into student (id, name) values (1, 'daniel'), (2, 'greg');
+    * ```
+    */
 
   case class Student(id: Int, name: String)
 
@@ -55,7 +56,8 @@ object Doobie extends IOApp.Simple {
   }
 
   // how to organise code?
-  trait Students[F[_]] { // "repository" using "tagless final" - we can choose effect F later
+  trait Students[F[_]] {
+    // "repository" using "tagless final" - we can choose effect F later
     def nextIdentity: F[Int]
     def findById(id: Int): F[Option[Student]]
     def findAll: F[List[Student]]
@@ -111,12 +113,11 @@ object Doobie extends IOApp.Simple {
       } yield ()
     }
 
-  override def run: IO[Unit] = {
+  override def run: IO[Unit] =
     // val newStudent = Student(3, "Bill")
     // saveStudent(newStudent).map(println)
 
     // findStudentsByInitial("g").map(println)
 
     smallProgram("Greg") *> smallProgram("John") *> smallProgram("Daniel")
-  }
 }

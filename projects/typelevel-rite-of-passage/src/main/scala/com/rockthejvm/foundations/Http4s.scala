@@ -2,9 +2,9 @@ package com.rockthejvm.foundations
 
 import java.util.UUID
 
-import cats._
+import cats.*
 import cats.effect.{IO, IOApp}
-import cats.implicits._
+import cats.implicits.*
 import io.circe.generic.auto.*
 import io.circe.syntax.*
 import org.http4s.circe.*
@@ -117,50 +117,54 @@ object Http4s extends IOApp.Simple {
     .build
     .use(_ => IO.println("Server ready!") *> IO.never)
 
-  /*
-  Give it a go:
-
-    $ http GET 'localhost:8080/api/courses?instructor=Martin%20Odersky&year=2022'
-    HTTP/1.1 200 OK
-    Connection: keep-alive
-    Content-Length: 167
-    Content-Type: application/json
-    Date: Wed, 26 Apr 2023 06:36:25 GMT
-
-    [
-        {
-            "id": "9d10bd7e-a26d-4781-abe7-7db02a6d843f",
-            "instructorName": "Martin Odersky",
-            "students": [
-                "Daniel",
-                "Greg"
-            ],
-            "title": "Rock the JVM Ultimate Scala course",
-            "year": 2022
-        }
-    ]
-
-    $ http GET 'localhost:8080/api/courses/9d10bd7e-a26d-4781-abe7-7db02a6d843f/students'
-    HTTP/1.1 200 OK
-    Connection: keep-alive
-    Content-Length: 17
-    Content-Type: application/json
-    Date: Wed, 26 Apr 2023 06:36:17 GMT
-    My-custom-header: rockthejvm
-
-    [
-        "Daniel",
-        "Greg"
-    ]
-
-    $ http GET 'localhost:8080/private/health'
-    HTTP/1.1 200 OK
-    Connection: keep-alive
-    Content-Length: 8
-    Content-Type: text/plain; charset=UTF-8
-    Date: Wed, 26 Apr 2023 06:35:49 GMT
-
-    All good
-
-   */
+  /**  Give it a go:
+    *
+    *  ```
+    *  $ http GET 'localhost:8080/api/courses?instructor=Martin%20Odersky&year=2022'
+    *  HTTP/1.1 200 OK
+    *  Connection: keep-alive
+    *  Content-Length: 167
+    *  Content-Type: application/json
+    *  Date: Wed, 26 Apr 2023 06:36:25 GMT
+    *
+    *  [
+    *      {
+    *          "id": "9d10bd7e-a26d-4781-abe7-7db02a6d843f",
+    *          "instructorName": "Martin Odersky",
+    *          "students": [
+    *              "Daniel",
+    *              "Greg"
+    *          ],
+    *          "title": "Rock the JVM Ultimate Scala course",
+    *          "year": 2022
+    *      }
+    *  ]
+    *  ```
+    *
+    *  ```
+    *  $ http GET 'localhost:8080/api/courses/9d10bd7e-a26d-4781-abe7-7db02a6d843f/students'
+    *  HTTP/1.1 200 OK
+    *  Connection: keep-alive
+    *  Content-Length: 17
+    *  Content-Type: application/json
+    *  Date: Wed, 26 Apr 2023 06:36:17 GMT
+    *  My-custom-header: rockthejvm
+    *
+    *  [
+    *      "Daniel",
+    *      "Greg"
+    *  ]
+    *  ```
+    *
+    *  ```
+    *  $ http GET 'localhost:8080/private/health'
+    *  HTTP/1.1 200 OK
+    *  Connection: keep-alive
+    *  Content-Length: 8
+    *  Content-Type: text/plain; charset=UTF-8
+    *  Date: Wed, 26 Apr 2023 06:35:49 GMT
+    *  ```
+    *
+    *  All good
+    */
 }

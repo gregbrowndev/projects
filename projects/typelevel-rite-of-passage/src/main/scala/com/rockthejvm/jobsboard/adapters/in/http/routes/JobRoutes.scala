@@ -20,7 +20,8 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
 
   // TODO - make this a GET and add filters to the URL. This is better as the
   // filters can be bookmarked and we can fix the other URL routes
-  // POST /jobs?offset=x&limit=y { filters } // TODO add query params and filters
+  /* POST /jobs?offset=x&limit=y { filters } // TODO add query params and
+   * filters */
   private val allJobsRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case POST -> Root =>
       for {
@@ -31,7 +32,8 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
 
   // POST /jobs/create { jobInfo }
   // We can test this route with:
-  // http POST 'localhost:8080/api/jobs/create' < ./src/main/resources/payloads/createJob.json
+  /* http POST 'localhost:8080/api/jobs/create' <
+   * ./src/main/resources/payloads/createJob.json */
   private val createJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ POST -> Root / "create" =>
       for {
