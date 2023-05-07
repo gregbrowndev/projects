@@ -17,7 +17,7 @@ object EmberConfig {
     ConfigReader[String].emap { // emap = either-map
       hostString =>
         Host.fromString(hostString) match {
-          case None => // error, return a Left
+          case None       => // error, return a Left
             Left(
               CannotConvert(
                 hostString,

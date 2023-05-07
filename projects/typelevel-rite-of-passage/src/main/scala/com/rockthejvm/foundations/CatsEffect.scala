@@ -6,7 +6,19 @@ import scala.concurrent.duration.*
 import scala.io.StdIn
 import scala.util.Random
 
-import cats.effect.kernel.{Async, Concurrent, Deferred, Fiber, GenSpawn, MonadCancel, Ref, Resource, Spawn, Sync, Temporal}
+import cats.effect.kernel.{
+  Async,
+  Concurrent,
+  Deferred,
+  Fiber,
+  GenSpawn,
+  MonadCancel,
+  Ref,
+  Resource,
+  Spawn,
+  Sync,
+  Temporal
+}
 import cats.effect.{IO, IOApp}
 import cats.{Defer, MonadError}
 
@@ -19,7 +31,7 @@ object CatsEffect extends IOApp.Simple {
    * */
 
   // IO - data structure describing arbitrary computations (including side effects)
-  val firstIO: IO[Int] = IO.pure(42)
+  val firstIO: IO[Int]   = IO.pure(42)
   val delayedIO: IO[Int] = IO {
     // complex code
     println("I'll tell you the meaning of life")
@@ -54,14 +66,14 @@ object CatsEffect extends IOApp.Simple {
   // raise/"catch" errors
   val aFailure: IO[Int] =
     IO.raiseError(new RuntimeException("Something went wrong"))
-  val dealWithIt = aFailure.handleErrorWith { case _: RuntimeException =>
+  val dealWithIt        = aFailure.handleErrorWith { case _: RuntimeException =>
     IO(println("I'm still here, no worries"))
   }
 
   // fibers = "lightweight threads"
   val delayedPrint = IO.sleep(1.second) *> IO(println(Random.nextInt(100)))
   // note: *> operator is flatMap/andThen
-  val manyPrints = for {
+  val manyPrints   = for {
     _ <- delayedPrint
     _ <- delayedPrint
   } yield ()
@@ -85,11 +97,11 @@ object CatsEffect extends IOApp.Simple {
 
   // uncancellation
   val ignoredCancellation = for {
-    fib <- IO
-      .uncancelable(_ => delayedPrint.onCancel(IO(println("I'm cancelled!"))))
-      .start
-    _ <- IO.sleep(500.millis) *> IO(println("cancelling fiber")) *> fib.cancel
-    _ <- fib.join
+    fib <-
+      IO.uncancelable(_ => delayedPrint.onCancel(IO(println("I'm cancelled!"))))
+        .start
+    _   <- IO.sleep(500.millis) *> IO(println("cancelling fiber")) *> fib.cancel
+    _   <- fib.join
   } yield ()
 
   // resources
@@ -100,7 +112,7 @@ object CatsEffect extends IOApp.Simple {
       )
     )
   )(source => IO(println("closing")) *> IO(source.close))
-  val readingEffect =
+  val readingEffect   =
     readingResource.use(source => IO(source.getLines().foreach(println)))
 
   // composing resources
@@ -139,7 +151,7 @@ object CatsEffect extends IOApp.Simple {
 
   // monadCancel for IO
   val monadCancelIO: MonadCancel[IO, Throwable] = MonadCancel[IO]
-  val uncancellableIO =
+  val uncancellableIO                           =
     monadCancelIO.uncancelable(_ => IO(42)) // same as IO.uncancelable
 
   // Spawn - ability to create fibers
@@ -150,7 +162,7 @@ object CatsEffect extends IOApp.Simple {
 
   trait MySpawn[F[_]] extends GenSpawn[F, Throwable]
   val spawnIO = Spawn[IO]
-  val fiber =
+  val fiber   =
     spawnIO.start(delayedPrint) // creates a fiber, same as delayedPrint.start
 
   // Concurrent - concurrency primatives (atomic references + promises)

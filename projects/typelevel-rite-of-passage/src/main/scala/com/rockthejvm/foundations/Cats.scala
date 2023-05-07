@@ -98,9 +98,9 @@ object Cats {
   }
   import cats.ApplicativeError
   type ErrorOr[A] = Either[String, A]
-  val applicativeEither          = ApplicativeError[ErrorOr, String]
-  val desiredValue: ErrorOr[Int] = applicativeEither.pure(42)
-  val failedValue: ErrorOr[Int] =
+  val applicativeEither            = ApplicativeError[ErrorOr, String]
+  val desiredValue: ErrorOr[Int]   = applicativeEither.pure(42)
+  val failedValue: ErrorOr[Int]    =
     applicativeEither.raiseError("Something went wrong")
   import cats.syntax.applicativeError.*
   val failedValue_v2: ErrorOr[Int] = "Something went wrong".raiseError

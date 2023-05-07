@@ -10,7 +10,14 @@ import doobie.hikari.HikariTransactor
 import doobie.util.ExecutionContexts
 
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
-import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo, JobInfoMeta, Location, Position, Salary}
+import com.rockthejvm.jobsboard.core.domain.job.{
+  Job,
+  JobInfo,
+  JobInfoMeta,
+  Location,
+  Position,
+  Salary
+}
 
 object JobsPlayground extends IOApp.Simple {
 
@@ -36,7 +43,7 @@ object JobsPlayground extends IOApp.Simple {
 
     jobRepoResource.use { jobRepo =>
       for {
-        job <- jobRepo.make(
+        job          <- jobRepo.make(
           ownerEmail = "gregbrowndev@gmail.com",
           jobInfo = JobInfo(
             company = "Rock the JVM",
@@ -65,11 +72,11 @@ object JobsPlayground extends IOApp.Simple {
             )
           )
         )
-        _       <- jobRepo.create(job)
-        _       <- IO(println("Created job...")) *> IO(StdIn.readLine)
-        allJobs <- jobRepo.all()
-        _       <- IO(println(s"All jobs: $allJobs")) *> IO(StdIn.readLine)
-        updatedJob = job.copy(active = true)
+        _            <- jobRepo.create(job)
+        _            <- IO(println("Created job...")) *> IO(StdIn.readLine)
+        allJobs      <- jobRepo.all()
+        _            <- IO(println(s"All jobs: $allJobs")) *> IO(StdIn.readLine)
+        updatedJob    = job.copy(active = true)
         _            <- jobRepo.update(updatedJob)
         _            <- IO(println("Updated job...")) *> IO(StdIn.readLine)
         myJob        <- jobRepo.find(id = job.id)
@@ -77,7 +84,7 @@ object JobsPlayground extends IOApp.Simple {
         _            <- jobRepo.delete(id = job.id)
         _            <- IO(println("Deleted job...")) *> IO(StdIn.readLine)
         allJobsFinal <- jobRepo.all()
-        _ <- IO(println(s"All jobs: $allJobsFinal")) *> IO(StdIn.readLine)
+        _            <- IO(println(s"All jobs: $allJobsFinal")) *> IO(StdIn.readLine)
 
       } yield ()
     }

@@ -36,12 +36,12 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
     case req @ POST -> Root / "create" =>
       for {
         jobInfo <- req.as[JobInfo].logError(e => s"Parsing payload failed: $e")
-        job <- jobRepo.make(
+        job     <- jobRepo.make(
           ownerEmail = "TODO@rockthejvm.com",
           jobInfo = jobInfo
         )
-        _    <- jobRepo.create(job)
-        resp <- Created(job.id)
+        _       <- jobRepo.create(job)
+        resp    <- Created(job.id)
       } yield resp
   }
 
@@ -59,17 +59,17 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
     case req @ PUT -> Root / UUIDVar(id) =>
       for {
         result <- jobRepo.find(id)
-        resp <- result match {
+        resp   <- result match {
           case Some(job) =>
             for {
-              jobInfo <- req
+              jobInfo   <- req
                 .as[JobInfo]
                 .logError(e => s"Parsing payload failed: $e")
               updatedJob = job.copy(jobInfo = jobInfo)
-              _    <- jobRepo.update(updatedJob)
-              resp <- Ok()
+              _         <- jobRepo.update(updatedJob)
+              resp      <- Ok()
             } yield resp
-          case None => NotFound(FailureResponse(s"Job $id not found"))
+          case None      => NotFound(FailureResponse(s"Job $id not found"))
         }
       } yield resp
   }
@@ -83,7 +83,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
             _    <- jobRepo.delete(id)
             resp <- Ok()
           } yield resp
-        case None => NotFound(FailureResponse(s"Job $id not found"))
+        case None      => NotFound(FailureResponse(s"Job $id not found"))
       }
   }
 

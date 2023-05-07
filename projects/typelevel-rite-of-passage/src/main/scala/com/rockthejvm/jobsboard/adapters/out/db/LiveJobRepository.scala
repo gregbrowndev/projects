@@ -12,7 +12,14 @@ import doobie.postgres.implicits.*
 import doobie.util.Read
 import doobie.util.transactor.Transactor
 
-import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo, JobInfoMeta, Location, Position, Salary}
+import com.rockthejvm.jobsboard.core.domain.job.{
+  Job,
+  JobInfo,
+  JobInfoMeta,
+  Location,
+  Position,
+  Salary
+}
 import com.rockthejvm.jobsboard.core.ports.JobRepository
 
 class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
@@ -23,7 +30,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
 
   override def make(ownerEmail: String, jobInfo: JobInfo): F[Job] =
     for {
-      id <- nextIdentity()
+      id  <- nextIdentity()
       date = LocalDateTime.now()
     } yield Job(
       id = id,

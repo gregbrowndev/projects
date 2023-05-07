@@ -9,7 +9,10 @@ import io.circe.generic.auto.*
 import io.circe.syntax.*
 import org.http4s.circe.*
 import org.http4s.dsl.Http4sDsl
-import org.http4s.dsl.impl.{OptionalValidatingQueryParamDecoderMatcher, QueryParamDecoderMatcher}
+import org.http4s.dsl.impl.{
+  OptionalValidatingQueryParamDecoderMatcher,
+  QueryParamDecoderMatcher
+}
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Router
 import org.http4s.{Header, HttpRoutes}
@@ -75,7 +78,7 @@ object Http4s extends IOApp.Simple {
               _ => BadRequest("Parameter 'year' is invalid"),
               year => Ok(courses.filter(_.year == year).asJson)
             )
-          case None => Ok(courses.asJson)
+          case None    => Ok(courses.asJson)
         }
       case GET -> Root / "courses" / UUIDVar(courseId) / "students" =>
         CourseRepository.findCourseById(courseId).map(_.students) match {
@@ -84,7 +87,7 @@ object Http4s extends IOApp.Simple {
               students.asJson,
               Header.Raw(CIString("My-custom-header"), "rockthejvm")
             )
-          case None => NotFound(s"No course with $courseId was found")
+          case None           => NotFound(s"No course with $courseId was found")
         }
     }
   }

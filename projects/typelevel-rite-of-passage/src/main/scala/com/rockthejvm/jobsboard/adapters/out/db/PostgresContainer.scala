@@ -11,11 +11,9 @@ import com.rockthejvm.jobsboard.adapters.in.config.PostgresConfig
 import com.rockthejvm.jobsboard.core.DBContainer
 import com.rockthejvm.jobsboard.core.ports.JobRepository
 
-
 final class PostgresContainer[F[_]: Async] private (
     val jobRepo: JobRepository[F]
 ) extends DBContainer[F]
-
 
 object PostgresContainer {
   def makePostgresResource[F[_]: Async](
@@ -31,9 +29,11 @@ object PostgresContainer {
     )
   } yield xa
 
-  def apply[F[_]: Async](config: PostgresConfig): Resource[F, PostgresContainer[F]] =
+  def apply[F[_]: Async](
+      config: PostgresConfig
+  ): Resource[F, PostgresContainer[F]] =
     for {
-      xa <- makePostgresResource[F](config)
+      xa      <- makePostgresResource[F](config)
       jobRepo <- LiveJobRepository[F](xa)
     } yield new PostgresContainer(jobRepo)
 }

@@ -38,7 +38,7 @@ object Doobie extends IOApp.Simple {
   }
 
   def saveStudent(student: Student): IO[Int] = {
-    val query =
+    val query  =
       sql"insert into student (id, name) values (${student.id}, ${student.name})"
     val action = query.update.run
     action.transact(xa)
@@ -104,10 +104,10 @@ object Doobie extends IOApp.Simple {
     postgresResource.use { xa =>
       val studentRepo = Students.make[IO](xa)
       for {
-        id <- studentRepo.nextIdentity
+        id     <- studentRepo.nextIdentity
         student = Student(id, studentName)
-        _ <- studentRepo.save(student)
-        _ <- IO.println(s"The first student of Rock the JVM is ${student.name}")
+        _      <- studentRepo.save(student)
+        _      <- IO.println(s"The first student of Rock the JVM is ${student.name}")
       } yield ()
     }
 

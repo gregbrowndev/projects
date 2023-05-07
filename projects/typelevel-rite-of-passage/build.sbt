@@ -22,32 +22,32 @@ lazy val optimiseImportsVersion     = "0.6.0"
 
 lazy val server = (project in file("."))
   .settings(
-    name              := "typelevel-project",
-    scalaVersion      := scala3Version,
-    semanticdbEnabled := true, // for OptimseImports
-    organization      := rockthejvm,
+    name                := "typelevel-project",
+    scalaVersion        := scala3Version,
+    semanticdbEnabled   := true, // for OptimseImports
+    organization        := rockthejvm,
     libraryDependencies ++= Seq(
-      "org.typelevel"         %% "cats-effect"         % catsEffectVersion,
-      "org.http4s"            %% "http4s-dsl"          % http4sVersion,
-      "org.http4s"            %% "http4s-ember-server" % http4sVersion,
-      "org.http4s"            %% "http4s-circe"        % http4sVersion,
-      "io.circe"              %% "circe-generic"       % circeVersion,
-      "io.circe"              %% "circe-fs2"           % circeVersion,
-      "org.tpolecat"          %% "doobie-core"         % doobieVersion,
-      "org.tpolecat"          %% "doobie-hikari"       % doobieVersion,
-      "org.tpolecat"          %% "doobie-postgres"     % doobieVersion,
-      "org.tpolecat"          %% "doobie-scalatest"    % doobieVersion   % Test,
-      "com.github.pureconfig" %% "pureconfig-core"     % pureConfigVersion,
-      "org.typelevel"         %% "log4cats-slf4j"      % log4catsVersion,
-      "org.slf4j"              % "slf4j-simple"        % slf4jVersion,
-      "io.github.jmcardon"    %% "tsec-http4s"         % tsecVersion,
-      "com.sun.mail"           % "javax.mail"          % javaMailVersion,
-      "org.typelevel"         %% "log4cats-noop"       % log4catsVersion % Test,
-      "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
-      "org.typelevel" %% "cats-effect-testing-scalatest" % scalaTestCatsEffectVersion % Test,
-      "org.testcontainers" % "testcontainers"  % testContainerVersion % Test,
-      "org.testcontainers" % "postgresql"      % testContainerVersion % Test,
-      "ch.qos.logback"     % "logback-classic" % logbackVersion       % Test
+      "org.typelevel"         %% "cats-effect"                   % catsEffectVersion,
+      "org.http4s"            %% "http4s-dsl"                    % http4sVersion,
+      "org.http4s"            %% "http4s-ember-server"           % http4sVersion,
+      "org.http4s"            %% "http4s-circe"                  % http4sVersion,
+      "io.circe"              %% "circe-generic"                 % circeVersion,
+      "io.circe"              %% "circe-fs2"                     % circeVersion,
+      "org.tpolecat"          %% "doobie-core"                   % doobieVersion,
+      "org.tpolecat"          %% "doobie-hikari"                 % doobieVersion,
+      "org.tpolecat"          %% "doobie-postgres"               % doobieVersion,
+      "org.tpolecat"          %% "doobie-scalatest"              % doobieVersion              % Test,
+      "com.github.pureconfig" %% "pureconfig-core"               % pureConfigVersion,
+      "org.typelevel"         %% "log4cats-slf4j"                % log4catsVersion,
+      "org.slf4j"              % "slf4j-simple"                  % slf4jVersion,
+      "io.github.jmcardon"    %% "tsec-http4s"                   % tsecVersion,
+      "com.sun.mail"           % "javax.mail"                    % javaMailVersion,
+      "org.typelevel"         %% "log4cats-noop"                 % log4catsVersion            % Test,
+      "org.scalatest"         %% "scalatest"                     % scalaTestVersion           % Test,
+      "org.typelevel"         %% "cats-effect-testing-scalatest" % scalaTestCatsEffectVersion % Test,
+      "org.testcontainers"     % "testcontainers"                % testContainerVersion       % Test,
+      "org.testcontainers"     % "postgresql"                    % testContainerVersion       % Test,
+      "ch.qos.logback"         % "logback-classic"               % logbackVersion             % Test
     ),
     Compile / mainClass := Some(
       "com.rockthejvm.jobsboard.adapters.in.http.Application"
@@ -59,5 +59,5 @@ ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"
 // Aliases
 addCommandAlias("com", "all compile test:compile")
 addCommandAlias("rel", "reload")
-addCommandAlias("fix", "all compile:scalafix test:scalafix")
+addCommandAlias("fix", "all scalafixAll")
 addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
