@@ -1,12 +1,11 @@
 package com.rockthejvm.jobsboard.adapters.in.config
 
-import pureconfig.ConfigSource
-import cats.MonadError
-import cats.MonadThrow
-import cats.implicits.*
-import pureconfig.ConfigReader
-import pureconfig.error.ConfigReaderException
 import scala.reflect.ClassTag
+
+import cats.implicits.*
+import cats.{MonadError, MonadThrow}
+import pureconfig.error.ConfigReaderException
+import pureconfig.{ConfigReader, ConfigSource}
 
 object syntax {
   /*

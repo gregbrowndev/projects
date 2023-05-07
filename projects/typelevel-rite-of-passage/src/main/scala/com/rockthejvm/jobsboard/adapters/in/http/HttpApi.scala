@@ -1,8 +1,8 @@
 package com.rockthejvm.jobsboard.adapters.in.http
 
-import cats.implicits.*
 import cats.effect.Concurrent
 import cats.effect.kernel.Resource
+import cats.implicits.*
 import org.http4s.HttpRoutes
 import org.http4s.server.Router
 import org.typelevel.log4cats.Logger

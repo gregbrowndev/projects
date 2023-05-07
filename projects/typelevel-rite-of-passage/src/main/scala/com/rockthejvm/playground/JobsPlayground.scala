@@ -3,22 +3,14 @@ package com.rockthejvm.playground
 import java.time.LocalDateTime
 import scala.io.StdIn
 
-import cats.implicits.*
-import cats.effect.IOApp
-import cats.effect.IO
 import cats.effect.kernel.Resource
-import doobie.util.ExecutionContexts
+import cats.effect.{IO, IOApp}
+import cats.implicits.*
 import doobie.hikari.HikariTransactor
+import doobie.util.ExecutionContexts
 
-import com.rockthejvm.jobsboard.core.domain.job.{
-  JobInfo,
-  Position,
-  Location,
-  Salary,
-  JobInfoMeta,
-  Job
-}
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
+import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo, JobInfoMeta, Location, Position, Salary}
 
 object JobsPlayground extends IOApp.Simple {
 

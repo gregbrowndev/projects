@@ -1,25 +1,18 @@
 package com.rockthejvm.jobsboard.adapters.out.db
 
-import java.util.UUID
 import java.time.LocalDateTime
+import java.util.UUID
 
-import cats.implicits.*
 import cats.effect.MonadCancelThrow
 import cats.effect.kernel.Resource
+import cats.implicits.*
 import doobie.implicits.*
-import doobie.util.Read
-import doobie.util.transactor.Transactor
 import doobie.postgres.*
 import doobie.postgres.implicits.*
+import doobie.util.Read
+import doobie.util.transactor.Transactor
 
-import com.rockthejvm.jobsboard.core.domain.job.{
-  Job,
-  JobInfo,
-  Position,
-  Location,
-  Salary,
-  JobInfoMeta
-}
+import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo, JobInfoMeta, Location, Position, Salary}
 import com.rockthejvm.jobsboard.core.ports.JobRepository
 
 class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])

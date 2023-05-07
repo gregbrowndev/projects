@@ -1,27 +1,14 @@
 package com.rockthejvm.foundations
 
-import scala.io.StdIn
-import scala.util.{Random}
-import scala.concurrent.duration.*
-
-import cats.effect.{IO, IOApp}
-import cats.effect.kernel.Resource
-import java.io.{PrintWriter, FileWriter, File}
-import cats.MonadError
-import cats.effect.kernel.{
-  MonadCancel,
-  Fiber,
-  Spawn,
-  GenSpawn,
-  Ref,
-  Deferred,
-  Concurrent,
-  Sync,
-  Async,
-  Temporal
-}
-import cats.Defer
+import java.io.{File, FileWriter, PrintWriter}
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.*
+import scala.io.StdIn
+import scala.util.Random
+
+import cats.effect.kernel.{Async, Concurrent, Deferred, Fiber, GenSpawn, MonadCancel, Ref, Resource, Spawn, Sync, Temporal}
+import cats.effect.{IO, IOApp}
+import cats.{Defer, MonadError}
 
 object CatsEffect extends IOApp.Simple {
   /*

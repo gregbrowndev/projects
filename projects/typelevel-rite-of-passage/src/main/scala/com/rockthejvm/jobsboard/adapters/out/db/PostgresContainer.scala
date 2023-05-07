@@ -1,15 +1,15 @@
 package com.rockthejvm.jobsboard.adapters.out.db
 
-import cats.implicits.*
 import cats.effect.IO
 import cats.effect.implicits.*
 import cats.effect.kernel.{Async, Resource}
+import cats.implicits.*
 import doobie.hikari.HikariTransactor
 import doobie.util.ExecutionContexts
 
 import com.rockthejvm.jobsboard.adapters.in.config.PostgresConfig
+import com.rockthejvm.jobsboard.core.DBContainer
 import com.rockthejvm.jobsboard.core.ports.JobRepository
-import com.rockthejvm.jobsboard.core.{DBContainer}
 
 
 final class PostgresContainer[F[_]: Async] private (

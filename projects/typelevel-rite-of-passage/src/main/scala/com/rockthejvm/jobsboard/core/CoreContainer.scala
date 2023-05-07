@@ -2,7 +2,7 @@ package com.rockthejvm.jobsboard.core
 
 import cats.effect.kernel.{Async, Resource}
 
-import com.rockthejvm.jobsboard.core.ports.{JobRepository}
+import com.rockthejvm.jobsboard.core.ports.JobRepository
 
 
 trait DBContainer[F[_]: Async] {

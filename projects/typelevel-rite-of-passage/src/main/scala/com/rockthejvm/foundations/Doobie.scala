@@ -1,12 +1,13 @@
 package com.rockthejvm.foundations
 
-import cats.Functor
-import cats.effect.{IOApp, IO, MonadCancelThrow}
-import doobie.util.transactor.Transactor
-import doobie.implicits.*
 import scala.concurrent.ExecutionContext
-import doobie.util.ExecutionContexts
+
+import cats.Functor
+import cats.effect.{IO, IOApp, MonadCancelThrow}
 import doobie.hikari.HikariTransactor
+import doobie.implicits.*
+import doobie.util.ExecutionContexts
+import doobie.util.transactor.Transactor
 
 object Doobie extends IOApp.Simple {
   /*

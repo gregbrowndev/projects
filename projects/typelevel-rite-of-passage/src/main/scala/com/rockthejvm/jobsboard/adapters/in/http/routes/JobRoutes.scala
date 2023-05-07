@@ -1,8 +1,8 @@
 package com.rockthejvm.jobsboard.adapters.in.http.routes
 
 import cats.MonadThrow
-import cats.implicits.*
 import cats.effect.Concurrent
+import cats.implicits.*
 import io.circe.generic.auto.*
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.*
@@ -10,10 +10,10 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 import org.typelevel.log4cats.Logger
 
-import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo}
-import com.rockthejvm.jobsboard.core.ports.{JobRepository}
 import com.rockthejvm.jobsboard.adapters.in.http.responses.FailureResponse
 import com.rockthejvm.jobsboard.adapters.in.logging.syntax.*
+import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo}
+import com.rockthejvm.jobsboard.core.ports.JobRepository
 
 class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
     extends Http4sDsl[F] {

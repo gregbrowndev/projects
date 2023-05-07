@@ -1,7 +1,7 @@
 package com.rockthejvm.jobsboard.core.domain
 
-import java.util.UUID
 import java.time.LocalDateTime
+import java.util.UUID
 
 object job {
   case class Job(

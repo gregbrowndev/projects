@@ -1,3 +1,5 @@
+// import scalafix.sbt.ScalafixPlugin.autoImport.scalafixDependencies
+
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
 lazy val rockthejvm    = "com.rockthejvm"
@@ -16,13 +18,14 @@ lazy val testContainerVersion       = "1.17.3"
 lazy val logbackVersion             = "1.4.0"
 lazy val slf4jVersion               = "2.0.0"
 lazy val javaMailVersion            = "1.6.2"
-lazy val optimiseImportsVersion     = "0.5.0"
+lazy val optimiseImportsVersion     = "0.6.0"
 
 lazy val server = (project in file("."))
   .settings(
-    name         := "typelevel-project",
-    scalaVersion := scala3Version,
-    organization := rockthejvm,
+    name              := "typelevel-project",
+    scalaVersion      := scala3Version,
+    semanticdbEnabled := true, // for OptimseImports
+    organization      := rockthejvm,
     libraryDependencies ++= Seq(
       "org.typelevel"         %% "cats-effect"         % catsEffectVersion,
       "org.http4s"            %% "http4s-dsl"          % http4sVersion,
@@ -41,7 +44,6 @@ lazy val server = (project in file("."))
       "com.sun.mail"           % "javax.mail"          % javaMailVersion,
       "org.typelevel"         %% "log4cats-noop"       % log4catsVersion % Test,
       "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
-      // "com.github.liancheng" %% "organize-imports" % optimiseImportsVersion,
       "org.typelevel" %% "cats-effect-testing-scalatest" % scalaTestCatsEffectVersion % Test,
       "org.testcontainers" % "testcontainers"  % testContainerVersion % Test,
       "org.testcontainers" % "postgresql"      % testContainerVersion % Test,
@@ -51,3 +53,11 @@ lazy val server = (project in file("."))
       "com.rockthejvm.jobsboard.adapters.in.http.Application"
     )
   )
+
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % optimiseImportsVersion
+
+// Aliases
+addCommandAlias("com", "all compile test:compile")
+addCommandAlias("rel", "reload")
+addCommandAlias("fix", "all compile:scalafix test:scalafix")
+addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")

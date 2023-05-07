@@ -1,16 +1,16 @@
 package com.rockthejvm.jobsboard
 
-import cats.implicits.*
-import cats.effect.{IO}
+import cats.effect.IO
 import cats.effect.kernel.{Async, Resource}
+import cats.implicits.*
 import doobie.util.transactor.Transactor
 import pureconfig.ConfigSource
 
-import com.rockthejvm.jobsboard.core.{DBContainer}
 import com.rockthejvm.jobsboard.adapters.in.config.AppConfig
 import com.rockthejvm.jobsboard.adapters.in.config.syntax.*
-import com.rockthejvm.jobsboard.core.ports.{JobRepository}
-import com.rockthejvm.jobsboard.adapters.out.db.{PostgresContainer}
+import com.rockthejvm.jobsboard.adapters.out.db.PostgresContainer
+import com.rockthejvm.jobsboard.core.DBContainer
+import com.rockthejvm.jobsboard.core.ports.JobRepository
 
 final class AppContainer[F[_]: Async] private (
     val config: AppConfig,
