@@ -18,12 +18,9 @@ import com.rockthejvm.jobsboard.core.ports.JobRepository
 class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
     extends Http4sDsl[F] {
 
-  // TODO - make this a GET and add filters to the URL. This is better as the
-  // filters can be bookmarked and we can fix the other URL routes
-  /* POST /jobs?offset=x&limit=y { filters } // TODO add query params and
-   * filters */
+  // POST /jobs?offset=x&limit=y { filters }
   private val allJobsRoute: HttpRoutes[F] = HttpRoutes.of[F] {
-    case POST -> Root =>
+    case GET -> Root =>
       for {
         jobsList <- jobRepo.all()
         resp     <- Ok(jobsList)
@@ -32,10 +29,10 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
 
   // POST /jobs/create { jobInfo }
   // We can test this route with:
-  /* http POST 'localhost:8080/api/jobs/create' <
+  /* http POST 'localhost:8080/api/jobs' <
    * ./src/main/resources/payloads/createJob.json */
   private val createJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
-    case req @ POST -> Root / "create" =>
+    case req @ POST -> Root =>
       for {
         jobInfo <- req.as[JobInfo].logError(e => s"Parsing payload failed: $e")
         job     <- jobRepo.make(
