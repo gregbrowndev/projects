@@ -27,7 +27,7 @@ object Application extends IOApp.Simple {
   override def run: IO[Unit] =
     val serverResource = for {
       appContainer <- AppContainer[IO]
-      httpApi      <- HttpApi[IO](appContainer)
+      httpApi      <- HttpApi[IO](appContainer.core.app)
       server       <- EmberServerBuilder
         .default[IO]
         .withHost(appContainer.config.emberConfig.host)

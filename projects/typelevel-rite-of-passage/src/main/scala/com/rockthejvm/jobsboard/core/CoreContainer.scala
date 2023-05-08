@@ -2,14 +2,25 @@ package com.rockthejvm.jobsboard.core
 
 import cats.effect.kernel.{Async, Resource}
 
-import com.rockthejvm.jobsboard.core.ports.JobRepository
+import com.rockthejvm.jobsboard.core.application.LiveCoreApplication
+import com.rockthejvm.jobsboard.core.ports.in.CoreApplication
+import com.rockthejvm.jobsboard.core.ports.out.JobRepository
 
-trait DBContainer[F[_]: Async] {
+trait AdapterContainer[F[_]: Async] {
   val jobRepo: JobRepository[F]
 }
 
+final class CoreContainer[F[_]: Async] private (
+    val app: CoreApplication[F]
+)
+
 object CoreContainer {
   // This is where command/event handlers (application services) and perhaps
-  // domain services can be instantiated and stored in a CoreContainer case
-  // class
+  // domain services can be instantiated and stored in a CoreContainer class
+  def apply[F[_]: Async](
+      adapters: AdapterContainer[F]
+  ): Resource[F, CoreContainer[F]] =
+    for {
+      app <- LiveCoreApplication(jobRepo = adapters.jobRepo)
+    } yield new CoreContainer(app)
 }

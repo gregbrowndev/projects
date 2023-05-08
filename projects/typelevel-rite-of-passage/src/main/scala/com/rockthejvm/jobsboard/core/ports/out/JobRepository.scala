@@ -1,19 +1,18 @@
-package com.rockthejvm.jobsboard.core.ports
+package com.rockthejvm.jobsboard.core.ports.out
 
-import java.util.UUID
-
+import cats.data.EitherT
 import cats.effect.MonadCancelThrow
 
-import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo}
+import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
 
 trait JobRepository[F[_]: MonadCancelThrow] {
   // "algebra", i.e. CRUD
-  def nextIdentity(): F[UUID]
-  def create(job: Job): F[Unit]
+  def nextIdentity(): F[JobId]
+  def create(job: Job): EitherT[F, String, Unit]
   def all(): F[List[Job]]
-  def find(id: UUID): F[Option[Job]]
-  def update(job: Job): F[Unit]
-  def delete(id: UUID): F[Unit]
+  def find(id: JobId): EitherT[F, String, Job]
+  def update(job: Job): EitherT[F, String, Unit]
+  def delete(id: JobId): EitherT[F, String, Unit]
 
   // TODO - refactor create/update to save function (collection-oriented API)
 

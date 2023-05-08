@@ -3,6 +3,8 @@ package com.rockthejvm.playground
 import java.time.LocalDateTime
 import scala.io.StdIn
 
+import cats.Applicative.*
+import cats.data.EitherT
 import cats.effect.kernel.Resource
 import cats.effect.{IO, IOApp}
 import cats.implicits.*
@@ -40,50 +42,56 @@ object JobsPlayground extends IOApp.Simple {
     } yield jobRepo
 
     jobRepoResource.use { jobRepo =>
-      for {
-        job          <- jobRepo.make(
-          ownerEmail = "gregbrowndev@gmail.com",
-          jobInfo = JobInfo(
-            company = "Rock the JVM",
-            position = Position(
-              title = "Senior Engineer",
-              description = "10x developer",
-              remote = false,
-              seniority = Some("Senior")
-            ),
-            location = Location(
-              office = "London",
-              country = Some("UK")
-            ),
-            salary = Some(
-              Salary(
-                salaryLo = None,
-                salaryHi = 80000,
-                currency = "GBP"
-              )
-            ),
-            meta = JobInfoMeta(
-              externalUrl = "www.rockthejvm.com/jobs/1234",
-              image = None,
-              tags = None,
-              other = None
+      val jobIO = jobRepo.make(
+        ownerEmail = "gregbrowndev@gmail.com",
+        jobInfo = JobInfo(
+          company = "Rock the JVM",
+          position = Position(
+            title = "Senior Engineer",
+            description = "10x developer",
+            remote = false,
+            seniority = Some("Senior")
+          ),
+          location = Location(
+            office = "London",
+            country = Some("UK")
+          ),
+          salary = Some(
+            Salary(
+              salaryLo = None,
+              salaryHi = 80000,
+              currency = "GBP"
             )
+          ),
+          meta = JobInfoMeta(
+            externalUrl = "www.rockthejvm.com/jobs/1234",
+            image = None,
+            tags = None,
+            other = None
           )
         )
-        _            <- jobRepo.create(job)
+      )
+      for {
+        job          <- jobIO
+        _            <- jobRepo.create(job).getOrRaise(new RuntimeException("ERROR!"))
         _            <- IO(println("Created job...")) *> IO(StdIn.readLine)
         allJobs      <- jobRepo.all()
         _            <- IO(println(s"All jobs: $allJobs")) *> IO(StdIn.readLine)
         updatedJob    = job.copy(active = true)
-        _            <- jobRepo.update(updatedJob)
+        _            <- jobRepo
+          .update(updatedJob)
+          .getOrRaise(new RuntimeException("ERROR!"))
         _            <- IO(println("Updated job...")) *> IO(StdIn.readLine)
-        myJob        <- jobRepo.find(id = job.id)
+        myJob        <- jobRepo
+          .find(id = job.id)
+          .getOrRaise(new RuntimeException("ERROR!"))
         _            <- IO(println(s"Your job: $myJob")) *> IO(StdIn.readLine)
-        _            <- jobRepo.delete(id = job.id)
+        _            <- jobRepo
+          .delete(id = job.id)
+          .getOrRaise(new RuntimeException("ERROR!"))
         _            <- IO(println("Deleted job...")) *> IO(StdIn.readLine)
         allJobsFinal <- jobRepo.all()
         _            <- IO(println(s"All jobs: $allJobsFinal")) *> IO(StdIn.readLine)
-
       } yield ()
     }
 }

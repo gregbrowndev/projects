@@ -13,16 +13,16 @@ import org.typelevel.log4cats.Logger
 import com.rockthejvm.jobsboard.adapters.in.http.responses.FailureResponse
 import com.rockthejvm.jobsboard.adapters.in.logging.syntax.*
 import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo}
-import com.rockthejvm.jobsboard.core.ports.JobRepository
+import com.rockthejvm.jobsboard.core.ports.in.CoreApplication
 
-class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
+class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
     extends Http4sDsl[F] {
 
   // POST /jobs?offset=x&limit=y { filters }
   private val allJobsRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root =>
       for {
-        jobsList <- jobRepo.all()
+        jobsList <- app.allJobs()
         resp     <- Ok(jobsList)
       } yield resp
   }
@@ -35,21 +35,17 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
     case req @ POST -> Root =>
       for {
         jobInfo <- req.as[JobInfo].logError(e => s"Parsing payload failed: $e")
-        job     <- jobRepo.make(
-          ownerEmail = "TODO@rockthejvm.com",
-          jobInfo = jobInfo
-        )
-        _       <- jobRepo.create(job)
-        resp    <- Created(job.id)
+        jobId   <- app.createJob(jobInfo)
+        resp    <- Created(jobId)
       } yield resp
   }
 
   // GET /jobs/uuid
   private val findJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root / UUIDVar(id) =>
-      jobRepo.find(id).flatMap {
-        case Some(job) => Ok(job)
-        case None      => NotFound(FailureResponse(s"Job $id not found"))
+      app.findJob(id).flatMap {
+        case Right(job) => Ok(job)
+        case Left(err)  => NotFound(FailureResponse(err))
       }
   }
 
@@ -57,18 +53,13 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
   private val updateJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ PUT -> Root / UUIDVar(id) =>
       for {
-        result <- jobRepo.find(id)
-        resp   <- result match {
-          case Some(job) =>
-            for {
-              jobInfo   <- req
-                .as[JobInfo]
-                .logError(e => s"Parsing payload failed: $e")
-              updatedJob = job.copy(jobInfo = jobInfo)
-              _         <- jobRepo.update(updatedJob)
-              resp      <- Ok()
-            } yield resp
-          case None      => NotFound(FailureResponse(s"Job $id not found"))
+        jobInfo <- req
+          .as[JobInfo]
+          .logError(e => s"Parsing payload failed: $e")
+        result  <- app.updateJob(id, jobInfo)
+        resp    <- result match {
+          case Right(_) => Ok()
+          case Left(e)  => NotFound(FailureResponse(e))
         }
       } yield resp
   }
@@ -76,14 +67,13 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
   // DELETE /jobs/uuid
   private val deleteJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ DELETE -> Root / UUIDVar(id) =>
-      jobRepo.find(id).flatMap {
-        case Some(job) =>
-          for {
-            _    <- jobRepo.delete(id)
-            resp <- Ok()
-          } yield resp
-        case None      => NotFound(FailureResponse(s"Job $id not found"))
-      }
+      for {
+        result <- app.deleteJob(id)
+        resp   <- result match {
+          case Right(_) => Ok()
+          case Left(e)  => NotFound(FailureResponse(e))
+        }
+      } yield resp
   }
 
   val routes = Router(
@@ -98,6 +88,6 @@ class JobRoutes[F[_]: Concurrent: Logger] private (jobRepo: JobRepository[F])
 }
 
 object JobRoutes {
-  def apply[F[_]: Concurrent: Logger](jobRepo: JobRepository[F]) =
-    new JobRoutes[F](jobRepo)
+  def apply[F[_]: Concurrent: Logger](app: CoreApplication[F]) =
+    new JobRoutes[F](app)
 }

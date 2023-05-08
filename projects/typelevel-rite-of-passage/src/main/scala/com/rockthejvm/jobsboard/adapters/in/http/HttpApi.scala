@@ -9,12 +9,13 @@ import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.AppContainer
 import com.rockthejvm.jobsboard.adapters.in.http.routes.*
+import com.rockthejvm.jobsboard.core.ports.in.CoreApplication
 
 class HttpApi[F[_]: Concurrent: Logger] private (
-    appContainer: AppContainer[F]
+    val app: CoreApplication[F]
 ) {
   private val healthRoutes = HealthRoutes[F].routes
-  private val jobRoutes    = JobRoutes[F](appContainer.dbContainer.jobRepo).routes
+  private val jobRoutes    = JobRoutes[F](app).routes
 
   val routes = Router(
     "/api" -> (healthRoutes <+> jobRoutes)
@@ -23,6 +24,6 @@ class HttpApi[F[_]: Concurrent: Logger] private (
 
 object HttpApi {
   def apply[F[_]: Concurrent: Logger](
-      appContainer: AppContainer[F]
-  ): Resource[F, HttpApi[F]] = Resource.pure(new HttpApi[F](appContainer))
+      app: CoreApplication[F]
+  ): Resource[F, HttpApi[F]] = Resource.pure(new HttpApi[F](app))
 }

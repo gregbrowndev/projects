@@ -4,8 +4,10 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 object job {
+  type JobId = UUID
+
   case class Job(
-      id: UUID,
+      id: JobId,
       date: LocalDateTime,
       ownerEmail: String,
       active: Boolean = false,

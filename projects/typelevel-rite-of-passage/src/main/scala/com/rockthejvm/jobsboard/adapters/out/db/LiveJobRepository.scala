@@ -3,6 +3,8 @@ package com.rockthejvm.jobsboard.adapters.out.db
 import java.time.LocalDateTime
 import java.util.UUID
 
+import cats.Applicative.*
+import cats.data.EitherT
 import cats.effect.MonadCancelThrow
 import cats.effect.kernel.Resource
 import cats.implicits.*
@@ -14,18 +16,19 @@ import doobie.util.transactor.Transactor
 
 import com.rockthejvm.jobsboard.core.domain.job.{
   Job,
+  JobId,
   JobInfo,
   JobInfoMeta,
   Location,
   Position,
   Salary
 }
-import com.rockthejvm.jobsboard.core.ports.JobRepository
+import com.rockthejvm.jobsboard.core.ports.out.JobRepository
 
 class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
     extends JobRepository[F] {
 
-  override def nextIdentity(): F[UUID] =
+  override def nextIdentity(): F[JobId] =
     UUID.randomUUID().pure[F]
 
   override def make(ownerEmail: String, jobInfo: JobInfo): F[Job] =
@@ -40,8 +43,8 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
       jobInfo = jobInfo
     )
 
-  override def create(job: Job): F[Unit] =
-    sql"""
+  override def create(job: Job): EitherT[F, String, Unit] =
+    val result: F[Unit] = sql"""
       INSERT INTO job (
         id,
         date,
@@ -85,6 +88,12 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
       .transact(xa)
       .map(_ -> ())
 
+    /* No failure possible so pack into RightT (exceptions can occur but let
+     * them fail fast, e.g. connection times out) Use EitherT failure for
+     * domain/app specific errors like a unique contraint errorr or concurrency
+     * conflict (recoverable) so they can be handled in the business logic */
+    EitherT.liftF(result)
+
   override def all(): F[List[Job]] =
     sql"""
       SELECT
@@ -112,8 +121,8 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
       .to[List]
       .transact(xa)
 
-  override def find(id: UUID): F[Option[Job]] =
-    sql"""
+  override def find(id: JobId): EitherT[F, String, Job] =
+    val result = sql"""
       SELECT
         id,
         date,
@@ -140,8 +149,10 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
       .option
       .transact(xa)
 
-  override def update(job: Job): F[Unit] =
-    sql"""
+    EitherT.fromOptionF(result, s"Job $id not found")
+
+  override def update(job: Job): EitherT[F, String, Unit] =
+    val result: F[Unit] = sql"""
       UPDATE job SET
         date = ${job.date},
         ownerEmail = ${job.ownerEmail},
@@ -161,17 +172,21 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
         tags = ${job.jobInfo.meta.tags},
         other =  ${job.jobInfo.meta.other}
       WHERE id = ${job.id}
-    """.update.run
+      """.update.run
       .transact(xa)
       .map(_ -> ())
 
-  override def delete(id: UUID): F[Unit] =
-    sql"""
+    EitherT.liftF(result)
+
+  override def delete(id: JobId): EitherT[F, String, Unit] =
+    val result: F[Unit] = sql"""
       DELETE FROM job
       WHERE id = $id
-    """.update.run
+      """.update.run
       .transact(xa)
       .map(_ -> ())
+
+    EitherT.liftF(result)
 }
 
 object LiveJobRepository {
