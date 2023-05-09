@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.core.ports.in
+package com.rockthejvm.jobsboard.core.application.ports.in
 
 import cats.effect.kernel.Async
 

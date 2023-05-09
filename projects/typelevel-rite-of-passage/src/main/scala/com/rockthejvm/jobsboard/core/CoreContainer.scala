@@ -3,8 +3,8 @@ package com.rockthejvm.jobsboard.core
 import cats.effect.kernel.{Async, Resource}
 
 import com.rockthejvm.jobsboard.core.application.LiveCoreApplication
-import com.rockthejvm.jobsboard.core.ports.in.CoreApplication
-import com.rockthejvm.jobsboard.core.ports.out.JobRepository
+import com.rockthejvm.jobsboard.core.application.ports.in.CoreApplication
+import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
 
 trait AdapterContainer[F[_]: Async] {
   val jobRepo: JobRepository[F]

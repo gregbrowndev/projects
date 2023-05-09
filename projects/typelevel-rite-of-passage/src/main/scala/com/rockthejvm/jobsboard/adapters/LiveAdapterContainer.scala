@@ -11,7 +11,7 @@ import doobie.util.transactor.Transactor
 import com.rockthejvm.jobsboard.adapters.in.config.{AppConfig, PostgresConfig}
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
 import com.rockthejvm.jobsboard.core.AdapterContainer
-import com.rockthejvm.jobsboard.core.ports.out.JobRepository
+import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
 
 final class LiveGatewayContainer[F[_]: Async] private (
     val transactor: Transactor[F]

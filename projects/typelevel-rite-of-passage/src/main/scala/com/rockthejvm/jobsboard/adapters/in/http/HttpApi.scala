@@ -9,7 +9,7 @@ import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.AppContainer
 import com.rockthejvm.jobsboard.adapters.in.http.routes.*
-import com.rockthejvm.jobsboard.core.ports.in.CoreApplication
+import com.rockthejvm.jobsboard.core.application.ports.in.CoreApplication
 
 class HttpApi[F[_]: Concurrent: Logger] private (
     val app: CoreApplication[F]

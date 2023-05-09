@@ -12,8 +12,8 @@ import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.adapters.in.http.responses.FailureResponse
 import com.rockthejvm.jobsboard.adapters.in.logging.syntax.*
+import com.rockthejvm.jobsboard.core.application.ports.in.CoreApplication
 import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo}
-import com.rockthejvm.jobsboard.core.ports.in.CoreApplication
 
 class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
     extends Http4sDsl[F] {

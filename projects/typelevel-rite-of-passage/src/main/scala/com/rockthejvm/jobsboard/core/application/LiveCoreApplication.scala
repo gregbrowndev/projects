@@ -9,9 +9,10 @@ import cats.syntax.all.*
 import cats.{Applicative, Monad}
 
 import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
-import com.rockthejvm.jobsboard.core.ports.in.CoreApplication
-import com.rockthejvm.jobsboard.core.ports.out.JobRepository
 import com.rockthejvm.jobsboard.syntax.*
+
+import ports.in.CoreApplication
+import ports.out.JobRepository
 
 class LiveCoreApplication[F[_]: Async] private (
     val jobRepo: JobRepository[F]

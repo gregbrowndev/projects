@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.core.ports.out
+package com.rockthejvm.jobsboard.core.application.ports.out
 
 import cats.data.EitherT
 import cats.effect.MonadCancelThrow

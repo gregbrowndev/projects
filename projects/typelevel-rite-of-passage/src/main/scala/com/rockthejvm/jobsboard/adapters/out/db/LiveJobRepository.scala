@@ -14,6 +14,7 @@ import doobie.postgres.implicits.*
 import doobie.util.Read
 import doobie.util.transactor.Transactor
 
+import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
 import com.rockthejvm.jobsboard.core.domain.job.{
   Job,
   JobId,
@@ -23,7 +24,6 @@ import com.rockthejvm.jobsboard.core.domain.job.{
   Position,
   Salary
 }
-import com.rockthejvm.jobsboard.core.ports.out.JobRepository
 
 class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
     extends JobRepository[F] {
