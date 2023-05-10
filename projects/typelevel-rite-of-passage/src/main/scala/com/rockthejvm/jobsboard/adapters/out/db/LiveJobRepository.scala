@@ -29,7 +29,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
     extends JobRepository[F] {
 
   override def nextIdentity(): F[JobId] =
-    UUID.randomUUID().pure[F]
+    JobId(UUID.randomUUID()).pure[F]
 
   override def make(ownerEmail: String, jobInfo: JobInfo): F[Job] =
     for {
@@ -143,7 +143,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
         tags,
         other
       FROM job
-      WHERE id = $id
+      WHERE id = ${id.value}
     """
       .query[Job]
       .option
@@ -181,7 +181,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
   override def delete(id: JobId): EitherT[F, String, Unit] =
     val result: F[Unit] = sql"""
       DELETE FROM job
-      WHERE id = $id
+      WHERE id = ${id.value}
       """.update.run
       .transact(xa)
       .map(_ -> ())
@@ -192,16 +192,16 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
 object LiveJobRepository {
   given jobRead: Read[Job] = Read[
     (
-        UUID,          // id
-        LocalDateTime, // date
-        String,        // ownerEmail
-        Boolean,       // active
+        JobId,
+        LocalDateTime,
+        String,  // ownerEmail
+        Boolean, // active
         JobInfo
     )
   ]
     .map {
       case (
-            id: UUID,
+            id: JobId,
             date: LocalDateTime,
             ownerEmail: String,
             active: Boolean,
@@ -215,6 +215,8 @@ object LiveJobRepository {
           jobInfo = jobInfo
         )
     }
+
+  given jobIdRead: Read[JobId] = Read[UUID].map { id => JobId(id) }
 
   given jobInfoRead: Read[JobInfo] = Read[
     (

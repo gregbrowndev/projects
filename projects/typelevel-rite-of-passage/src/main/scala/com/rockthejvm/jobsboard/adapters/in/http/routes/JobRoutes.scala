@@ -13,7 +13,7 @@ import org.typelevel.log4cats.Logger
 import com.rockthejvm.jobsboard.adapters.in.http.responses.FailureResponse
 import com.rockthejvm.jobsboard.adapters.in.logging.syntax.*
 import com.rockthejvm.jobsboard.core.application.ports.in.CoreApplication
-import com.rockthejvm.jobsboard.core.domain.job.{Job, JobInfo}
+import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
 
 class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
     extends Http4sDsl[F] {
@@ -43,7 +43,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
   // GET /jobs/uuid
   private val findJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root / UUIDVar(id) =>
-      app.findJob(id).flatMap {
+      app.findJob(JobId(id)).flatMap {
         case Right(job) => Ok(job)
         case Left(err)  => NotFound(FailureResponse(err))
       }
@@ -56,7 +56,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
         jobInfo <- req
           .as[JobInfo]
           .logError(e => s"Parsing payload failed: $e")
-        result  <- app.updateJob(id, jobInfo)
+        result  <- app.updateJob(JobId(id), jobInfo)
         resp    <- result match {
           case Right(_) => Ok()
           case Left(e)  => NotFound(FailureResponse(e))
@@ -68,7 +68,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
   private val deleteJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ DELETE -> Root / UUIDVar(id) =>
       for {
-        result <- app.deleteJob(id)
+        result <- app.deleteJob(JobId(id))
         resp   <- result match {
           case Right(_) => Ok()
           case Left(e)  => NotFound(FailureResponse(e))

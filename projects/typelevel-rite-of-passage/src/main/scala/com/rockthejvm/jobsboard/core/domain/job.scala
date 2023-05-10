@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 object job {
-  type JobId = UUID
+  case class JobId(value: java.util.UUID)
 
   case class Job(
       id: JobId,
