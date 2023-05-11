@@ -56,12 +56,10 @@ object JobsPlayground extends IOApp.Simple {
             office = "London",
             country = Some("UK")
           ),
-          salary = Some(
-            Salary(
-              salaryLo = None,
-              salaryHi = 80000,
-              currency = "GBP"
-            )
+          salary = Salary(
+            salaryLo = None,
+            salaryHi = Some(80000),
+            currency = "GBP"
           ),
           meta = JobInfoMeta(
             externalUrl = "www.rockthejvm.com/jobs/1234",

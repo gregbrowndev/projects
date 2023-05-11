@@ -1,7 +1,7 @@
 package com.rockthejvm.jobsboard.adapters.in.http
 
 import cats.*
-import cats.effect.{IO, IOApp}
+import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits.*
 import org.http4s.ember.server.EmberServerBuilder
 import org.typelevel.log4cats.Logger
@@ -18,13 +18,13 @@ import com.rockthejvm.jobsboard.adapters.in.config.{
 }
 import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
 
-object Application extends IOApp.Simple {
+object Application extends IOApp {
   /* Run application with `sbt run`. Note, this works because the build.sbt file
    * contains Compile / runMain := "path/to/entrypoint" */
 
   given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
-  override def run: IO[Unit] =
+  override def run(args: List[String]): IO[ExitCode] =
     val serverResource = for {
       appContainer <- AppContainer[IO]
       httpApi      <- HttpApi[IO](appContainer.core.app)
@@ -36,5 +36,7 @@ object Application extends IOApp.Simple {
         .build
     } yield server
 
-    serverResource.use(_ => IO.println("Server ready!") *> IO.never)
+    serverResource
+      .use(_ => IO.println("Server ready!") *> IO.never)
+      .as(ExitCode.Success)
 }

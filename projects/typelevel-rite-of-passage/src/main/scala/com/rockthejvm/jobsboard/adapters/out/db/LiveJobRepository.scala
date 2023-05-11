@@ -31,18 +31,6 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
   override def nextIdentity(): F[JobId] =
     JobId(UUID.randomUUID()).pure[F]
 
-  override def make(ownerEmail: String, jobInfo: JobInfo): F[Job] =
-    for {
-      id  <- nextIdentity()
-      date = LocalDateTime.now()
-    } yield Job(
-      id = id,
-      date = date,
-      ownerEmail = ownerEmail,
-      active = false,
-      jobInfo = jobInfo
-    )
-
   override def create(job: Job): EitherT[F, String, Unit] =
     val result: F[Unit] = sql"""
       INSERT INTO job (
@@ -76,9 +64,9 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
         ${job.jobInfo.position.remote},
         ${job.jobInfo.location.office},
         ${job.jobInfo.location.country},
-        ${job.jobInfo.salary.flatMap(s => s.salaryLo)},
-        ${job.jobInfo.salary.flatMap(s => s.salaryHi.pure)},
-        ${job.jobInfo.salary.flatMap(s => s.currency.pure)},
+        ${job.jobInfo.salary.salaryLo},
+        ${job.jobInfo.salary.salaryHi},
+        ${job.jobInfo.salary.currency},
         ${job.jobInfo.meta.externalUrl},
         ${job.jobInfo.meta.image},
         ${job.jobInfo.meta.tags},
@@ -164,9 +152,9 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
         remote = ${job.jobInfo.position.remote},
         office = ${job.jobInfo.location.office},
         country = ${job.jobInfo.location.country},
-        salaryLo = ${job.jobInfo.salary.flatMap(s => s.salaryLo)},
-        salaryHi = ${job.jobInfo.salary.flatMap(s => s.salaryHi.pure)},
-        currency = ${job.jobInfo.salary.flatMap(s => s.currency.pure)},
+        salaryLo = ${job.jobInfo.salary.salaryLo},
+        salaryHi = ${job.jobInfo.salary.salaryHi},
+        currency = ${job.jobInfo.salary.currency},
         externalUrl = ${job.jobInfo.meta.externalUrl},
         image =  ${job.jobInfo.meta.image},
         tags = ${job.jobInfo.meta.tags},
@@ -223,7 +211,7 @@ object LiveJobRepository {
         String, // company
         Position,
         Location,
-        Option[Salary],
+        Salary,
         JobInfoMeta
     )
   ]
@@ -232,7 +220,7 @@ object LiveJobRepository {
             company: String,
             position: Position,
             location: Location,
-            salary: Option[Salary] @unchecked,
+            salary: Salary,
             meta: JobInfoMeta
           ) =>
         JobInfo(
@@ -287,14 +275,14 @@ object LiveJobRepository {
   given salaryRead: Read[Salary] = Read[
     (
         Option[Int], // salaryLo
-        Int,         // salaryHi
+        Option[Int], // salaryHi
         String,      // currency
     )
   ]
     .map {
       case (
             salaryLo: Option[Int] @unchecked,
-            salaryHi: Int,
+            salaryHi: Option[Int] @unchecked,
             currency: String
           ) =>
         Salary(salaryLo, salaryHi, currency)

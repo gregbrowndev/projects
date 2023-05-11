@@ -1,7 +1,10 @@
 package com.rockthejvm.jobsboard.core.application.ports.out
 
+import java.time.LocalDateTime
+
 import cats.data.EitherT
 import cats.effect.MonadCancelThrow
+import cats.implicits.*
 
 import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
 
@@ -16,7 +19,16 @@ trait JobRepository[F[_]: MonadCancelThrow] {
 
   // TODO - refactor create/update to save function (collection-oriented API)
 
-  // TODO - Ideally, the factory funciton should live somewhere else (otherwise
-  // ypu have to implement it multiple times for each adapter)
-  def make(ownerEmail: String, jobInfo: JobInfo): F[Job]
+  // TODO - Ideally, the factory function should live somewhere else
+  def make(ownerEmail: String, jobInfo: JobInfo): F[Job] =
+    for {
+      id  <- nextIdentity()
+      date = LocalDateTime.now() // TODO - refactor into time adapter
+    } yield Job(
+      id = id,
+      date = date,
+      ownerEmail = ownerEmail,
+      active = false,
+      jobInfo = jobInfo
+    )
 }

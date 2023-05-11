@@ -5,6 +5,10 @@ import java.util.UUID
 
 object job {
   case class JobId(value: java.util.UUID)
+  object JobId {
+    // TODO - add error handling
+    def fromString(value: String): JobId = JobId(UUID.fromString(value))
+  }
 
   case class Job(
       id: JobId,
@@ -18,7 +22,7 @@ object job {
       company: String,
       position: Position,
       location: Location,
-      salary: Option[Salary],
+      salary: Salary,
       meta: JobInfoMeta
   )
 
@@ -36,7 +40,7 @@ object job {
 
   case class Salary(
       salaryLo: Option[Int],
-      salaryHi: Int,
+      salaryHi: Option[Int],
       currency: String
   )
 
@@ -49,11 +53,12 @@ object job {
 
   object JobInfo {
     val empty: JobInfo =
+      // TODO - this should result in domain errors
       JobInfo(
         "",
         Position("", "", None, false),
         Location("", None),
-        None,
+        Salary(None, None, ""),
         JobInfoMeta("", None, None, None)
       )
   }

@@ -1,13 +1,18 @@
 package com.rockthejvm.jobsboard.core.application.ports.in
 
-import cats.effect.kernel.Async
+import java.util.UUID
 
-import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
+import cats.effect.kernel.Sync
 
-trait CoreApplication[F[_]: Async] {
-  def allJobs(): F[List[Job]]
-  def createJob(jobInfo: JobInfo): F[Either[String, JobId]]
-  def findJob(id: JobId): F[Either[String, Job]]
-  def updateJob(id: JobId, jobInfo: JobInfo): F[Either[String, Unit]]
-  def deleteJob(id: JobId): F[Either[String, Unit]]
+import com.rockthejvm.jobsboard.core.application.ports.in.{Command, ViewModel}
+
+trait CoreApplication[F[_]: Sync] {
+  // commands
+  def createJob(cmd: Command.CreateJob): F[Either[String, UUID]]
+  def updateJobInfo(cmd: Command.UpdateJobInfo): F[Either[String, Unit]]
+  def deleteJob(cmd: Command.DeleteJob): F[Either[String, Unit]]
+
+  // queries
+  def findJob(id: UUID): F[Either[String, ViewModel.Job]]
+  def allJobs(): F[List[ViewModel.Job]]
 }
