@@ -12,6 +12,7 @@ import doobie.hikari.HikariTransactor
 import doobie.util.ExecutionContexts
 
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
+import com.rockthejvm.jobsboard.adapters.out.time.LiveTimeAdapter
 import com.rockthejvm.jobsboard.core.domain.job.{
   Job,
   JobInfo,
@@ -37,8 +38,9 @@ object JobsPlayground extends IOApp.Simple {
   // Run with: sbt "runMain com.rockthejvm.playground.JobsPlayground"
   override def run: IO[Unit] =
     val jobRepoResource = for {
-      xa      <- makePostgresResource()
-      jobRepo <- LiveJobRepository[IO](xa)
+      xa          <- makePostgresResource()
+      timeAdapter <- LiveTimeAdapter[IO]
+      jobRepo     <- LiveJobRepository[IO](xa, timeAdapter)
     } yield jobRepo
 
     jobRepoResource.use { jobRepo =>

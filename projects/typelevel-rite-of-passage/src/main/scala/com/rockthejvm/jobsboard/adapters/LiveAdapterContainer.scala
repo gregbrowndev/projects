@@ -10,8 +10,12 @@ import doobie.util.transactor.Transactor
 
 import com.rockthejvm.jobsboard.adapters.in.config.{AppConfig, PostgresConfig}
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
+import com.rockthejvm.jobsboard.adapters.out.time.LiveTimeAdapter
 import com.rockthejvm.jobsboard.core.AdapterContainer
-import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
+import com.rockthejvm.jobsboard.core.application.ports.out.{
+  JobRepository,
+  TimeAdapter
+}
 
 final class LiveGatewayContainer[F[_]: Async] private (
     val transactor: Transactor[F]
@@ -41,7 +45,8 @@ object LiveGatewayContainer {
 }
 
 final class LiveAdapterContainer[F[_]: Async] private (
-    val jobRepo: JobRepository[F]
+    val jobRepo: JobRepository[F],
+    val timeAdapter: TimeAdapter[F]
 ) extends AdapterContainer[F]
 
 object LiveAdapterContainer {
@@ -50,6 +55,7 @@ object LiveAdapterContainer {
       gatewayContainer: LiveGatewayContainer[F]
   ): Resource[F, LiveAdapterContainer[F]] =
     for {
-      jobRepo <- LiveJobRepository[F](gatewayContainer.transactor)
-    } yield new LiveAdapterContainer(jobRepo)
+      timeAdapter <- LiveTimeAdapter[F]
+      jobRepo     <- LiveJobRepository[F](gatewayContainer.transactor, timeAdapter)
+    } yield new LiveAdapterContainer(jobRepo, timeAdapter)
 }

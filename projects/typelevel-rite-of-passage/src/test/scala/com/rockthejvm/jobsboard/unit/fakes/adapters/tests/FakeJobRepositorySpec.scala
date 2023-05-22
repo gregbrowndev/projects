@@ -1,10 +1,15 @@
 package com.rockthejvm.jobsboard.unit.fakes.adapters.tests
 
+import java.time.LocalDateTime
+import scala.concurrent.*
+
 import cats.data.EitherT
 import cats.effect.*
 import cats.effect.implicits.*
 import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.implicits.*
+import org.scalatest.Timer
+import org.scalatest.compatible.Assertion
 import org.scalatest.freespec.AsyncFreeSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -16,14 +21,32 @@ import com.rockthejvm.jobsboard.core.application.ports.in.{
   ViewModel
 }
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
+import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
 import com.rockthejvm.jobsboard.core.domain.job as Domain
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.fakes.adapters.FakeJobRepository
+import com.rockthejvm.jobsboard.unit.fakes.adapters.{
+  FakeJobRepository,
+  FakeTimeAdapter
+}
 
-class JobRoutesSpec extends AsyncFreeSpec with AsyncIOSpec with Matchers {
+class FakeJobRepositorySpec
+    extends AsyncFreeSpec
+    with AsyncIOSpec
+    with Matchers {
 
-  val jobRepoResource: Resource[IO, FakeJobRepository[IO]] =
-    FakeJobRepository[IO]
+//  implicit lazy val ec: TestContext      = TestContext.apply()
+//  implicit lazy val cs: ContextShift[IO] = IO.contextShift(ec)
+//  implicit lazy val ioTimer: Timer[IO]   = ec.timer[IO]
+
+  def withJobRepo(
+      testCode: FakeJobRepository[IO] => IO[Assertion]
+  ): IO[Assertion] =
+    val jobRepoResource = for
+      timeAdapter <- FakeTimeAdapter[IO]
+      jobRepo     <- FakeJobRepository[IO](timeAdapter)
+    yield jobRepo
+
+    jobRepoResource.use(jobRepo => testCode(jobRepo))
 
   val jobInfo = Domain.JobInfo(
     company = "Awesome Company",
@@ -51,38 +74,57 @@ class JobRoutesSpec extends AsyncFreeSpec with AsyncIOSpec with Matchers {
   )
 
   "FakeJobRepository" - {
-    "should make job with monotonically increasing JobId" in {
-      jobRepoResource.use { jobRepo =>
+    "should make job with monotonically increasing JobId" in withJobRepo {
+      jobRepo =>
         for {
-          job <- jobRepo.make(
+          job        <- jobRepo.make(
             ownerEmail = "greg@rockthejvm.com",
             jobInfo = jobInfo
           )
-        } yield job.id shouldBe Domain.JobId.fromString(
-          "00000000-0000-0000-0000-000000000001"
-        )
-      }
+          anotherJob <- jobRepo.make(
+            ownerEmail = "greg@rockthejvm.com",
+            jobInfo = jobInfo
+          )
+        } yield {
+          job.id shouldBe Domain.JobId.fromString(
+            "00000000-0000-0000-0000-000000000001"
+          )
+          anotherJob.id shouldBe Domain.JobId.fromString(
+            "00000000-0000-0000-0000-000000000002"
+          )
+        }
+
     }
 
-    "should save job" in {
-      jobRepoResource.use { jobRepo =>
-        val jobIO  = jobRepo.make(
-          ownerEmail = "greg@rockthejvm.com",
-          jobInfo = jobInfo
-        )
-        val result = for
-          job     <- EitherT.liftF(jobIO)
+    "should save job" in withJobRepo { jobRepo =>
+      val result =
+        for
+          job     <- EitherT.liftF(
+            jobRepo.make(
+              ownerEmail = "greg@rockthejvm.com",
+              jobInfo = jobInfo
+            )
+          )
           created <- jobRepo.create(job)
-        yield
-          created shouldBe ()
-          jobRepo.all() shouldBe List(job)
+          result  <- jobRepo.find(job.id)
+        yield result
 
-        // Unwrap Either result
-        result.fold(
-          left => throw new RuntimeException("Something went wrong"),
-          right => right
-        )
-      }
+      val expectedJob = Job(
+        id = JobId.fromString("00000000-0000-0000-0000-000000000001"),
+        ownerEmail = "greg@rockthejvm.com",
+        date = LocalDateTime.parse("2023-01-01T00:00:00"),
+        active = false,
+        jobInfo = jobInfo
+      )
+
+      for actual <- result.value
+      yield actual shouldBe Either.right(expectedJob)
     }
+
   }
+
+  // TODO - add tests
+  //  should save updated job (use jobRepo.all())
+  //  should delete job
+  //  should fail to find job that doesn't exist
 }

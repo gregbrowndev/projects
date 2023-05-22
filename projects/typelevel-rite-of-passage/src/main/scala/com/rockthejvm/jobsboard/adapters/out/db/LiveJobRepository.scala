@@ -14,7 +14,10 @@ import doobie.postgres.implicits.*
 import doobie.util.Read
 import doobie.util.transactor.Transactor
 
-import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
+import com.rockthejvm.jobsboard.core.application.ports.out.{
+  JobRepository,
+  TimeAdapter
+}
 import com.rockthejvm.jobsboard.core.domain.job.{
   Job,
   JobId,
@@ -25,8 +28,10 @@ import com.rockthejvm.jobsboard.core.domain.job.{
   Salary
 }
 
-class LiveJobRepository[F[_]: MonadCancelThrow] private (xa: Transactor[F])
-    extends JobRepository[F] {
+class LiveJobRepository[F[_]: MonadCancelThrow] private (
+    xa: Transactor[F],
+    timeAdapter: TimeAdapter[F]
+) extends JobRepository[F](timeAdapter) {
 
   override def nextIdentity(): F[JobId] =
     JobId(UUID.randomUUID()).pure[F]
@@ -312,7 +317,8 @@ object LiveJobRepository {
     }
 
   def apply[F[_]: MonadCancelThrow](
-      xa: Transactor[F]
+      xa: Transactor[F],
+      timeAdapter: TimeAdapter[F]
   ): Resource[F, LiveJobRepository[F]] =
-    Resource.pure(new LiveJobRepository[F](xa))
+    Resource.pure(new LiveJobRepository[F](xa, timeAdapter))
 }

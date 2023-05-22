@@ -10,6 +10,8 @@ class FakeAdapterContainer[F[_]: Sync] private (
 
 object FakeAdapterContainer {
   def apply[F[_]: Sync]: Resource[F, FakeAdapterContainer[F]] =
-    for jobRepo <- FakeJobRepository[F]
+    for
+      timeAdapter <- FakeTimeAdapter[F]
+      jobRepo     <- FakeJobRepository[F](timeAdapter)
     yield new FakeAdapterContainer(jobRepo)
 }

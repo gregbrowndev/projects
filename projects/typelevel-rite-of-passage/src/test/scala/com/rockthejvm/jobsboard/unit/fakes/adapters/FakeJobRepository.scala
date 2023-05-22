@@ -4,37 +4,40 @@ import cats.data.EitherT
 import cats.effect.*
 import cats.implicits.*
 
-import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
+import com.rockthejvm.jobsboard.core.application.ports.out.{
+  JobRepository,
+  TimeAdapter
+}
 import com.rockthejvm.jobsboard.core.domain.job.*
 import com.rockthejvm.jobsboard.fixtures.*
 
-class FakeJobRepository[F[_]: Sync] private extends JobRepository[F] {
-  val idSequenceRef: F[Ref[F, Long]]   = Ref.of(1)
-  val jobListRef: F[Ref[F, List[Job]]] = Ref.of(List())
+class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
+    extends JobRepository[F](timeAdapter) {
+  val idSequence: Ref[F, Long]   = Ref.unsafe(0)
+  val jobList: Ref[F, List[Job]] = Ref.unsafe(List())
 
   override def nextIdentity(): F[JobId] = for {
-    idSequence <- idSequenceRef
-    id         <- idSequence.modify(seq => (seq + 1, seq))
+    id <- idSequence.updateAndGet(_ + 1)
+    _  <- Sync[F].delay(println(s"[FakeJobRepository] nextIdentity: $id"))
   } yield JobId.fromString(f"00000000-0000-0000-0000-${id}%012d")
 
   override def create(job: Job): EitherT[F, String, Unit] = for {
-    jobList <- EitherT.liftF(jobListRef)
-    _       <- EitherT.liftF(jobList.update(_ :+ job))
+    _ <- EitherT.liftF(jobList.update(_ :+ job))
+    _ <- EitherT.liftF(
+      Sync[F].delay(println("[FakeJobRepository] Created job"))
+    )
   } yield ()
 
   override def all(): F[List[Job]] = for {
-    jobList <- jobListRef
-    jobs    <- jobList.get
+    jobs <- jobList.get
   } yield jobs
 
   override def find(id: JobId): EitherT[F, String, Job] = for {
-    jobList <- EitherT.liftF(jobListRef)
-    jobOpt  <- EitherT.right(jobList.get.map(_.find(_.id == id)))
-    job     <- EitherT.fromOption(jobOpt, s"Job with ID $id not found")
+    jobOpt <- EitherT.right(jobList.get.map(_.find(_.id == id)))
+    job    <- EitherT.fromOption(jobOpt, s"Job with ID $id not found")
   } yield job
 
   override def update(job: Job): EitherT[F, String, Unit] = for {
-    jobList  <- EitherT.liftF(jobListRef)
     jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == job.id)))
     _        <-
       if jobIndex >= 0 then
@@ -43,7 +46,6 @@ class FakeJobRepository[F[_]: Sync] private extends JobRepository[F] {
   } yield ()
 
   override def delete(id: JobId): EitherT[F, String, Unit] = for {
-    jobList  <- EitherT.liftF(jobListRef)
     jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == id)))
     _        <-
       if jobIndex >= 0 then
@@ -53,6 +55,8 @@ class FakeJobRepository[F[_]: Sync] private extends JobRepository[F] {
 }
 
 object FakeJobRepository {
-  def apply[F[_]: Sync]: Resource[F, FakeJobRepository[F]] =
-    Resource.pure(new FakeJobRepository[F]())
+  def apply[F[_]: Sync](
+      timeAdapter: TimeAdapter[F]
+  ): Resource[F, FakeJobRepository[F]] =
+    Resource.pure(new FakeJobRepository[F](timeAdapter))
 }
