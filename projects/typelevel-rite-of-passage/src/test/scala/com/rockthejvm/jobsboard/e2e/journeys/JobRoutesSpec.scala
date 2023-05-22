@@ -28,6 +28,7 @@ import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
 import com.rockthejvm.jobsboard.core.domain.job as Domain
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.fakes.FakeAppContainer
+import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
 abstract class UnitSpec
     extends AsyncFreeSpec
