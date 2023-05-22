@@ -27,11 +27,13 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
   private val createJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ POST -> Root / "createJob" =>
       for {
-        cmd   <- req
+        cmd    <- req
           .as[Command.CreateJob]
           .logError(e => s"Parsing payload failed: $e")
-        jobId <- app.createJob(cmd)
-        resp  <- Created(jobId)
+        result <- app.createJob(cmd)
+        resp   <- result match
+          case Left(error)  => BadRequest(error)
+          case Right(jobId) => Created(jobId)
       } yield resp
   }
 

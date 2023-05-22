@@ -26,6 +26,7 @@ lazy val server = (project in file("."))
     name                := "typelevel-project",
     scalaVersion        := scala3Version,
     semanticdbEnabled   := true, // for OptimseImports
+    // semantic
     organization        := rockthejvm,
     libraryDependencies ++= Seq(
       "com.github.pureconfig" %% "pureconfig-core"               % pureConfigVersion,

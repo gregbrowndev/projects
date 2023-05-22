@@ -1,9 +1,12 @@
 package com.rockthejvm.jobsboard.adapters.in.http
 
 import cats.*
+import cats.data.OptionT
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits.*
+import org.http4s.HttpRoutes
 import org.http4s.ember.server.EmberServerBuilder
+import org.http4s.server.middleware.{ErrorAction, ErrorHandling}
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import pureconfig.ConfigSource
@@ -32,11 +35,22 @@ object Application extends IOApp {
         .default[IO]
         .withHost(appContainer.config.emberConfig.host)
         .withPort(appContainer.config.emberConfig.port)
-        .withHttpApp(httpApi.routes.orNotFound)
+        .withHttpApp(withErrorLogging(httpApi.routes).orNotFound)
         .build
     } yield server
 
     serverResource
       .use(_ => IO.println("Server ready!") *> IO.never)
       .as(ExitCode.Success)
+
+  def withErrorLogging(routes: HttpRoutes[IO]): HttpRoutes[IO] =
+    ErrorHandling.Recover.total(
+      ErrorAction.log(
+        routes,
+        messageFailureLogAction =
+          (t, msg) => OptionT.liftF(IO(println(msg)) >> IO(println(t))),
+        serviceErrorLogAction =
+          (t, msg) => OptionT.liftF(IO(println(msg)) >> IO(println(t)))
+      )
+    )
 }

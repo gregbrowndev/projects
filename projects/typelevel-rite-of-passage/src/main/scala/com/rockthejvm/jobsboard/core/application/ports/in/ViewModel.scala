@@ -8,6 +8,12 @@ import cats.implicits.*
 import com.rockthejvm.jobsboard.core.domain.job as Domain
 
 object ViewModel {
+  /* Note: io.circe.generic.auto.* automatically derives JSON de/encoders for
+   * all view models */
+
+  import io.circe.generic.auto.*
+  import io.circe.syntax.*
+
   type JobId = UUID
 
   case class Job(

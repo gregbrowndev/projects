@@ -4,10 +4,12 @@ import cats.effect.*
 import cats.effect.implicits.*
 import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.implicits.*
+import io.circe.Decoder
 import io.circe.generic.auto.*
 import io.circe.syntax.*
 import org.http4s.*
 import org.http4s.circe.CirceEntityCodec.*
+import org.http4s.client.Client
 import org.http4s.dsl.*
 import org.http4s.implicits.*
 import org.scalatest.freespec.AsyncFreeSpec
@@ -34,45 +36,32 @@ abstract class UnitSpec
     with Http4sDsl[IO]
 
 class JobRoutesSpec extends UnitSpec with JobFixture {
-
   given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
-  val clientResource: Resource[IO, (FakeAppContainer[IO], HttpApp[IO])] =
+  val clientResource: Resource[IO, (FakeAppContainer[IO], Client[IO])] =
     for
       appContainer <- FakeAppContainer[IO]
       httpApi      <- HttpApi[IO](appContainer.core.app)
-      // client       <- Client.fromHttpApp(httpApi.routes.orNotFound)
-      client        = httpApi.routes.orNotFound
+      client        = Client.fromHttpApp(httpApi.routes.orNotFound)
     yield (appContainer, client)
 
   "JobRoutes" - {
     "should return a job with a given id" in {
       clientResource.use { case (appContainer, client) =>
         for {
-          _         <- IO(println("Creating job"))
-          _         <- client.run(
-            Request(
+          jobId <- client.expect[ViewModel.JobId](
+            Request[IO](
               method = Method.POST,
-              uri = Uri.unsafeFromString("/api/jobs")
-            ).withEntity(awesomeJob.asJson)
+              uri = Uri.unsafeFromString("/api/jobs/createJob")
+            ).withEntity(createAwesomeJobCommand.asJson)
           )
-          _         <- IO(println("Created job"))
-          response  <- client.run(
-            Request(
+          job   <- client.expect[ViewModel.Job](
+            Request[IO](
               method = Method.GET,
-              uri = Uri.unsafeFromString(s"/api/jobs/${awesomeJobId}")
+              uri = Uri.unsafeFromString(s"/api/jobs/${jobId}")
             )
           )
-          _         <- IO(println("Found job")) *> IO(println(response.body))
-          _         <- IO(println("JobRepository contains: ")) *> IO(
-            appContainer.adapters.jobRepo.all().map(_.count)
-          )
-          retrieved <- response.as[ViewModel.Job]
-          _         <- IO(println("Decoded response")) *> IO(println(retrieved))
-        } yield {
-          response.status shouldBe Status.Ok
-          retrieved shouldBe awesomeJob
-        }
+        } yield job shouldBe awesomeJob
       }
     }
   }

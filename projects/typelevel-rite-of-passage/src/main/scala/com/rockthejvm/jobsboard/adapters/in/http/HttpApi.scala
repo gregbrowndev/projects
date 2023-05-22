@@ -12,7 +12,7 @@ import com.rockthejvm.jobsboard.adapters.in.http.routes.*
 import com.rockthejvm.jobsboard.core.application.ports.in.CoreApplication
 
 class HttpApi[F[_]: Concurrent: Logger] private (
-    val app: CoreApplication[F]
+    app: CoreApplication[F]
 ) {
   private val healthRoutes = HealthRoutes[F].routes
   private val jobRoutes    = JobRoutes[F](app).routes
