@@ -16,42 +16,41 @@ class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
   val idSequence: Ref[F, Long]   = Ref.unsafe(0)
   val jobList: Ref[F, List[Job]] = Ref.unsafe(List())
 
-  override def nextIdentity(): F[JobId] = for {
-    id <- idSequence.updateAndGet(_ + 1)
-    _  <- Sync[F].delay(println(s"[FakeJobRepository] nextIdentity: $id"))
-  } yield JobId.fromString(f"00000000-0000-0000-0000-${id}%012d")
+  override def nextIdentity(): F[JobId] =
+    for id <- idSequence.updateAndGet(_ + 1)
+    yield JobId.fromString(f"00000000-0000-0000-0000-${id}%012d")
 
-  override def create(job: Job): EitherT[F, String, Unit] = for {
-    _ <- EitherT.liftF(jobList.update(_ :+ job))
-    _ <- EitherT.liftF(
-      Sync[F].delay(println("[FakeJobRepository] Created job"))
-    )
-  } yield ()
+  override def create(job: Job): EitherT[F, String, Unit] =
+    for _ <- EitherT.liftF(jobList.update(_ :+ job))
+    yield ()
 
-  override def all(): F[List[Job]] = for {
-    jobs <- jobList.get
-  } yield jobs
+  override def all(): F[List[Job]] =
+    for jobs <- jobList.get
+    yield jobs
 
-  override def find(id: JobId): EitherT[F, String, Job] = for {
-    jobOpt <- EitherT.right(jobList.get.map(_.find(_.id == id)))
-    job    <- EitherT.fromOption(jobOpt, s"Job with ID '${id.value}' not found")
-  } yield job
+  override def find(id: JobId): EitherT[F, String, Job] =
+    for
+      jobOpt <- EitherT.right(jobList.get.map(_.find(_.id == id)))
+      job    <- EitherT.fromOption(jobOpt, s"Job with ID '${id.value}' not found")
+    yield job
 
-  override def update(job: Job): EitherT[F, String, Unit] = for {
-    jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == job.id)))
-    _        <-
-      if jobIndex >= 0 then
-        EitherT.liftF(jobList.update(list => list.updated(jobIndex, job)))
-      else EitherT.leftT[F, Unit](s"Job with ID '${job.id.value}' not found")
-  } yield ()
+  override def update(job: Job): EitherT[F, String, Unit] =
+    for
+      jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == job.id)))
+      _        <-
+        if jobIndex >= 0 then
+          EitherT.liftF(jobList.update(list => list.updated(jobIndex, job)))
+        else EitherT.leftT[F, Unit](s"Job with ID '${job.id.value}' not found")
+    yield ()
 
-  override def delete(id: JobId): EitherT[F, String, Unit] = for {
-    jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == id)))
-    _        <-
-      if jobIndex >= 0 then
-        EitherT.liftF(jobList.update(list => list.filterNot(_.id == id)))
-      else EitherT.leftT[F, Unit](s"Job with ID '${id.value}' not found")
-  } yield ()
+  override def delete(id: JobId): EitherT[F, String, Unit] =
+    for
+      jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == id)))
+      _        <-
+        if jobIndex >= 0 then
+          EitherT.liftF(jobList.update(list => list.filterNot(_.id == id)))
+        else EitherT.leftT[F, Unit](s"Job with ID '${id.value}' not found")
+    yield ()
 }
 
 object FakeJobRepository {

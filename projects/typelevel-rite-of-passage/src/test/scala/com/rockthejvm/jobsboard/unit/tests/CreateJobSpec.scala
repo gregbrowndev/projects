@@ -23,5 +23,13 @@ class CreateJobCommandSpec extends UnitSpec with JobFixture {
         }
       } yield assertion
     }
+
+    "should fail to create a job and return an error" in withAppContainer {
+      container =>
+        pending // TODO
+        val app = container.core.app
+        for jobCreated <- app.createJob(createInvalidJob)
+        yield jobCreated shouldMatchTo Left("TODO - add domain error")
+    }
   }
 }
