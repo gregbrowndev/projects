@@ -34,7 +34,7 @@ class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
 
   override def find(id: JobId): EitherT[F, String, Job] = for {
     jobOpt <- EitherT.right(jobList.get.map(_.find(_.id == id)))
-    job    <- EitherT.fromOption(jobOpt, s"Job with ID $id not found")
+    job    <- EitherT.fromOption(jobOpt, s"Job with ID '${id.value}' not found")
   } yield job
 
   override def update(job: Job): EitherT[F, String, Unit] = for {
@@ -42,7 +42,7 @@ class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
     _        <-
       if jobIndex >= 0 then
         EitherT.liftF(jobList.update(list => list.updated(jobIndex, job)))
-      else EitherT.leftT[F, Unit](s"Job with ID ${job.id} not found")
+      else EitherT.leftT[F, Unit](s"Job with ID '${job.id.value}' not found")
   } yield ()
 
   override def delete(id: JobId): EitherT[F, String, Unit] = for {
@@ -50,7 +50,7 @@ class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
     _        <-
       if jobIndex >= 0 then
         EitherT.liftF(jobList.update(list => list.filterNot(_.id == id)))
-      else EitherT.leftT[F, Unit](s"Job with ID $id not found")
+      else EitherT.leftT[F, Unit](s"Job with ID '${id.value}' not found")
   } yield ()
 }
 
