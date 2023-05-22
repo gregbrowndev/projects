@@ -9,6 +9,7 @@ class CreateJobCommandSpec extends UnitSpec with JobFixture {
   "CreateJobCommand" - {
     "should create a job and return its id" in withAppContainer { container =>
       val app = container.core.app
+      // TODO - convert this to EitherT impl. (see UpdateJobInfoSpec)
       for {
         jobCreated <- app.createJob(createAwesomeJobCommand)
         assertion  <- jobCreated match {
