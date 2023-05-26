@@ -30,12 +30,6 @@ import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.fakes.FakeAppContainer
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
-abstract class UnitSpec
-    extends AsyncFreeSpec
-    with AsyncIOSpec
-    with Matchers
-    with Http4sDsl[IO]
-
 class JobRoutesSpec extends UnitSpec with JobFixture {
   given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 

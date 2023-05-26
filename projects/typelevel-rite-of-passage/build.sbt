@@ -13,6 +13,7 @@ lazy val testContainerVersion   = "1.17.3"
 lazy val optimiseImportsVersion = "0.6.0"
 
 lazy val server = (project in file("."))
+  .enablePlugins(FlywayPlugin)
   .settings(
     name                 := "typelevel-project",
     scalaVersion         := scala3Version,
@@ -21,6 +22,7 @@ lazy val server = (project in file("."))
     semanticdbTargetRoot := baseDirectory.value / ".semanticdb",
     organization         := rockthejvm,
     libraryDependencies ++= Seq(
+      "com.github.geirolz"     %% "fly4s-core"                    % "0.0.17",
       "com.github.pureconfig"  %% "pureconfig-core"               % "0.17.1",
       "com.sun.mail"            % "javax.mail"                    % "1.6.2",
       "io.circe"               %% "circe-generic"                 % circeVersion,
@@ -36,15 +38,15 @@ lazy val server = (project in file("."))
       "org.tpolecat"           %% "doobie-postgres"               % doobieVersion,
       "org.typelevel"          %% "cats-effect"                   % catsEffectVersion,
       "org.typelevel"          %% "log4cats-slf4j"                % log4catsVersion,
+      "ch.qos.logback"          % "logback-classic"               % "1.4.0"              % Test,
+      "com.softwaremill.diffx" %% "diffx-scalatest-should"        % "0.8.3"              % Test,
       "org.typelevel"          %% "cats-laws"                     % catsVersion          % Test,
       "org.typelevel"          %% "cats-effect-laws"              % catsEffectVersion    % Test,
-      "ch.qos.logback"          % "logback-classic"               % "1.4.0"              % Test,
       "org.scalatest"          %% "scalatest"                     % "3.2.12"             % Test,
-      "com.softwaremill.diffx" %% "diffx-scalatest-should"        % "0.8.3"              % Test,
-      "org.tpolecat"           %% "doobie-scalatest"              % doobieVersion        % Test,
       "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.4.0"              % Test,
       "org.testcontainers"      % "testcontainers"                % testContainerVersion % Test,
       "org.testcontainers"      % "postgresql"                    % testContainerVersion % Test,
+      "org.tpolecat"           %% "doobie-scalatest"              % doobieVersion        % Test,
       "org.typelevel"          %% "log4cats-noop"                 % log4catsVersion      % Test
     ),
     Compile / mainClass  := Some(
@@ -58,8 +60,20 @@ lazy val server = (project in file("."))
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % optimiseImportsVersion
 
+// Flyway config
+// TODO - read these settings from application.conf. See unfinished plugin
+flywayUrl       := "jdbc:postgresql://localhost:5433/jobsboard"
+flywayUser      := "docker"
+flywayPassword  := "docker"
+flywayTable     := "migrations"
+flywayLocations := Seq("migrations")
+
 // Aliases
 addCommandAlias("com", "all compile test:compile")
 addCommandAlias("rel", "reload")
 addCommandAlias("fix", "all scalafixAll")
 addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
+
+addCommandAlias("testUnit", "testOnly com.rockthejvm.jobsboard.unit.*")
+addCommandAlias("testInt", "testOnly com.rockthejvm.jobsboard.integration.*")
+addCommandAlias("testE2e", "testOnly com.rockthejvm.jobsboard.e2e.*")

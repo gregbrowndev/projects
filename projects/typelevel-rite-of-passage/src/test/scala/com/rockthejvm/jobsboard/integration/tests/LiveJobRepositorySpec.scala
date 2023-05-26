@@ -1,42 +1,25 @@
-package com.rockthejvm.jobsboard.unit.fakes.adapters.tests
+package com.rockthejvm.jobsboard.integration.tests
 
 import java.time.LocalDateTime
-import scala.concurrent.*
 
 import cats.data.EitherT
-import cats.effect.*
+import cats.effect.IO
 import cats.effect.implicits.*
+import cats.effect.kernel.Resource
 import cats.implicits.*
 import org.scalatest.compatible.Assertion
+import org.scalatest.matchers.should.Matchers
 
-import com.rockthejvm.jobsboard.AppContainer
-import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
-import com.rockthejvm.jobsboard.core.application.ports.in.{
-  Command,
-  CoreApplication,
-  ViewModel
-}
-import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
+import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
 import com.rockthejvm.jobsboard.core.domain.job as Domain
-import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.fakes.adapters.{
-  FakeJobRepository,
-  FakeTimeAdapter
-}
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
+import com.rockthejvm.jobsboard.integration.Fixture
 
-class FakeJobRepositorySpec extends UnitSpec {
+class LiveJobRepositorySpec extends IntegrationSpec {
 
-  val fakeJobRepoRes: Resource[IO, FakeJobRepository[IO]] =
-    for
-      timeAdapter <- FakeTimeAdapter[IO]
-      jobRepo     <- FakeJobRepository[IO](timeAdapter)
-    yield jobRepo
-
-  def withJobRepo(
-      testCode: FakeJobRepository[IO] => IO[Assertion]
+  def withLiveJobRepo(
+      testCode: LiveJobRepository[IO] => IO[Assertion]
   ): IO[Assertion] =
-    fakeJobRepoRes.use(jobRepo => testCode(jobRepo))
+    Fixture.liveJobRepositoryResource.use(jobRepo => testCode(jobRepo))
 
   val jobInfo = Domain.JobInfo(
     company = "Awesome Company",
@@ -63,30 +46,22 @@ class FakeJobRepositorySpec extends UnitSpec {
     )
   )
 
-  "FakeJobRepository" - {
-    "should make job with monotonically increasing JobId" in withJobRepo {
-      jobRepo =>
-        for {
-          job        <- jobRepo.make(
-            ownerEmail = "greg@rockthejvm.com",
-            jobInfo = jobInfo
-          )
-          anotherJob <- jobRepo.make(
-            ownerEmail = "greg@rockthejvm.com",
-            jobInfo = jobInfo
-          )
-        } yield {
-          job.id shouldBe Domain.JobId.fromString(
-            "00000000-0000-0000-0000-000000000001"
-          )
-          anotherJob.id shouldBe Domain.JobId.fromString(
-            "00000000-0000-0000-0000-000000000002"
-          )
-        }
-
+  "LiveJobRepository" - {
+    "should make job with a unique JobId" in withLiveJobRepo { jobRepo =>
+      for
+        job        <- jobRepo.make(
+          ownerEmail = "greg@rockthejvm.com",
+          jobInfo = jobInfo
+        )
+        anotherJob <- jobRepo.make(
+          ownerEmail = "greg@rockthejvm.com",
+          jobInfo = jobInfo
+        )
+      yield job.id should not be anotherJob.id
     }
 
-    "should save job" in withJobRepo { jobRepo =>
+
+    "should save job" in withLiveJobRepo { jobRepo =>
       val result =
         for
           job    <- EitherT.liftF(
@@ -111,7 +86,7 @@ class FakeJobRepositorySpec extends UnitSpec {
       yield actual shouldBe Either.right(expectedJob)
     }
 
-    "should save updated job" in withJobRepo { jobRepo =>
+    "should save updated job" in withLiveJobRepo { jobRepo =>
       val result =
         for
           job       <- EitherT.liftF(
@@ -138,7 +113,7 @@ class FakeJobRepositorySpec extends UnitSpec {
       yield actual shouldBe Either.right(expectedJob)
     }
 
-    "should delete job" in withJobRepo { jobRepo =>
+    "should delete job" in withLiveJobRepo { jobRepo =>
       val result =
         for
           job    <- EitherT.liftF(
@@ -156,7 +131,7 @@ class FakeJobRepositorySpec extends UnitSpec {
       yield actual shouldBe Either.right(List())
     }
 
-    "should fail to find non-existent job" in withJobRepo { jobRepo =>
+    "should fail to find non-existent job" in withLiveJobRepo { jobRepo =>
       val result =
         for result <- jobRepo.find(
             Domain.JobId.fromString("00000000-0000-0000-0000-000000000001")
@@ -168,6 +143,6 @@ class FakeJobRepositorySpec extends UnitSpec {
         "Job with ID '00000000-0000-0000-0000-000000000001' not found"
       )
     }
-
   }
 }
+  

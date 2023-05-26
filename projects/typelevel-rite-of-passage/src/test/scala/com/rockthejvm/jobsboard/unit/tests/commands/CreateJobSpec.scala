@@ -1,8 +1,9 @@
-package com.rockthejvm.jobsboard.unit.tests
+package com.rockthejvm.jobsboard.unit.tests.commands
 
 import cats.effect.IO
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
+import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
 class CreateJobCommandSpec extends UnitSpec with JobFixture {
 
@@ -12,7 +13,7 @@ class CreateJobCommandSpec extends UnitSpec with JobFixture {
       // TODO - convert this to EitherT impl. (see UpdateJobInfoSpec)
       for {
         jobCreated <- app.createJob(createAwesomeJobCommand)
-        assertion  <- jobCreated match {
+        assertion  <- jobCreated match
           case Left(error)  => fail(error)
           case Right(jobId) =>
             for
@@ -21,7 +22,6 @@ class CreateJobCommandSpec extends UnitSpec with JobFixture {
                 case Left(error) => fail(error)
                 case Right(job)  => IO(job shouldMatchTo (awesomeJob))
             yield assertion
-        }
       } yield assertion
     }
 

@@ -24,6 +24,8 @@ final class AppContainer[F[_]: Async] private (
 
 object AppContainer {
   def apply[F[_]: Async]: Resource[F, AppContainer[F]] =
+    // TODO - add error handling to configuration loading using Kleisli
+    // see https://typelevel.org/cats/datatypes/kleisli.html#configuration
     for {
       config       <- Resource.eval(ConfigSource.default.loadF[F, AppConfig])
       gateways     <- LiveGatewayContainer[F](config)

@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.unit.tests
+package com.rockthejvm.jobsboard.unit.tests.commands
 
 import cats.data.EitherT
 import cats.effect.IO
@@ -6,24 +6,25 @@ import cats.effect.implicits.*
 import cats.implicits.*
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
+import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
 class UpdateJobInfoCommandSpec extends UnitSpec with JobFixture {
 
   "UpdateJobInfoCommand" - {
     "should update jobInfo" in withAppContainer { container =>
       val app      = container.core.app
-      val resultIO = for {
-        jobId <- EitherT(app.createJob(createAwesomeJobCommand))
-        _     <- EitherT(app.updateJobInfo(updateJobInfoCommand))
-        job   <- EitherT(app.findJob(jobId))
-      } yield job
+      val resultIO =
+        for
+          jobId <- EitherT(app.createJob(createAwesomeJobCommand))
+          _     <- EitherT(app.updateJobInfo(updateJobInfoCommand))
+          job   <- EitherT(app.findJob(jobId))
+        yield job
 
       for
         result    <- resultIO.value
-        assertion <- result match {
+        assertion <- result match
           case Left(error) => fail(error)
           case Right(job)  => IO(job shouldMatchTo updatedAwesomeJob)
-        }
       yield assertion
     }
 

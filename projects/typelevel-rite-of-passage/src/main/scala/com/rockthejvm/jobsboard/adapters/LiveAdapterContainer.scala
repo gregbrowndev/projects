@@ -4,12 +4,13 @@ import cats.effect.IO
 import cats.effect.implicits.*
 import cats.effect.kernel.{Async, Resource}
 import cats.implicits.*
-import doobie.hikari.HikariTransactor
-import doobie.util.ExecutionContexts
 import doobie.util.transactor.Transactor
 
 import com.rockthejvm.jobsboard.adapters.in.config.{AppConfig, PostgresConfig}
-import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
+import com.rockthejvm.jobsboard.adapters.out.db.{
+  LiveJobRepository,
+  TransactorFactory
+}
 import com.rockthejvm.jobsboard.adapters.out.time.LiveTimeAdapter
 import com.rockthejvm.jobsboard.core.AdapterContainer
 import com.rockthejvm.jobsboard.core.application.ports.out.{
@@ -22,25 +23,11 @@ final class LiveGatewayContainer[F[_]: Async] private (
 )
 
 object LiveGatewayContainer {
-  def makePostgresTransactor[F[_]: Async](
-      config: PostgresConfig
-  ): Resource[F, HikariTransactor[F]] = for {
-    // TODO - the thread pool needs to be instantiated once during start up
-    ce <- ExecutionContexts.fixedThreadPool(config.nThreads)
-    xa <- HikariTransactor.newHikariTransactor[F](
-      "org.postgresql.Driver",
-      config.url,
-      config.username,
-      config.password,
-      ce
-    )
-  } yield xa
-
   def apply[F[_]: Async](
       config: AppConfig
   ): Resource[F, LiveGatewayContainer[F]] =
     for {
-      xa <- makePostgresTransactor[F](config.postgresConfig)
+      xa <- TransactorFactory[F](config.postgresConfig)
     } yield new LiveGatewayContainer[F](transactor = xa)
 }
 
