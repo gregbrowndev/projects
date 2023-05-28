@@ -19,7 +19,7 @@ class CreateJobCommandSpec extends UnitSpec with JobFixture {
             for
               jobResult <- app.findJob(jobId)
               assertion <- jobResult match
-                case Left(error) => fail(error)
+                case Left(error) => fail(error.message)
                 case Right(job)  => IO(job shouldMatchTo (awesomeJob))
             yield assertion
       } yield assertion

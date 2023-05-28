@@ -27,6 +27,7 @@ import com.rockthejvm.jobsboard.core.domain.job.{
   Position,
   Salary
 }
+import com.rockthejvm.jobsboard.core.domain.DomainError as DE
 
 class LiveJobRepository[F[_]: MonadCancelThrow] private (
     xa: Transactor[F],
@@ -82,8 +83,8 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
       .map(_ -> ())
 
     /* No failure possible so pack into RightT (exceptions can occur but let
-     * them fail fast, e.g. connection times out) Use EitherT failure for
-     * domain/app specific errors like a unique contraint errorr or concurrency
+     * them fail fast, e.g. connection times out). Use EitherT failure for
+     * domain/app specific errors like a unique contraint error or concurrency
      * conflict (recoverable) so they can be handled in the business logic */
     EitherT.liftF(result)
 
@@ -114,7 +115,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
       .to[List]
       .transact(xa)
 
-  override def find(id: JobId): EitherT[F, String, Job] =
+  override def find(id: JobId): EitherT[F, DE.JobNotFound, Job] =
     val result = sql"""
       SELECT
         id,
@@ -142,9 +143,9 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
       .option
       .transact(xa)
 
-    EitherT.fromOptionF(result, s"Job $id not found")
+    EitherT.fromOptionF(result, DE.JobNotFound(id))
 
-  override def update(job: Job): EitherT[F, String, Unit] =
+  override def update(job: Job): EitherT[F, DE.JobNotFound, Unit] =
     val result: F[Unit] = sql"""
       UPDATE job SET
         date = ${job.date},
@@ -171,7 +172,8 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
 
     EitherT.liftF(result)
 
-  override def delete(id: JobId): EitherT[F, String, Unit] =
+  override def delete(id: JobId): EitherT[F, DE.JobNotFound, Unit] =
+    // TODO - should return DE.JobNotFound if not found (same as fake)
     val result: F[Unit] = sql"""
       DELETE FROM job
       WHERE id = ${id.value}

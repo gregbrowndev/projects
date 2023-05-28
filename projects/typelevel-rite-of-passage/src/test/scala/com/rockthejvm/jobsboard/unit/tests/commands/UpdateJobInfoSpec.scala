@@ -7,6 +7,7 @@ import cats.implicits.*
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
+import com.rockthejvm.jobsboard.core.domain.DomainError
 
 class UpdateJobInfoCommandSpec extends UnitSpec with JobFixture {
 
@@ -23,8 +24,9 @@ class UpdateJobInfoCommandSpec extends UnitSpec with JobFixture {
       for
         result    <- resultIO.value
         assertion <- result match
-          case Left(error) => fail(error)
-          case Right(job)  => IO(job shouldMatchTo updatedAwesomeJob)
+          case Left(e: DomainError.JobNotFound) => fail(e.message)
+          case Left(e)                      => fail(s"Unexpected error: $e")
+          case Right(job)                       => IO(job shouldMatchTo updatedAwesomeJob)
       yield assertion
     }
 

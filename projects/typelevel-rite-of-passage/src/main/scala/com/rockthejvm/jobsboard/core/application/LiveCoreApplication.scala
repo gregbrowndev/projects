@@ -11,6 +11,7 @@ import cats.syntax.all.*
 import cats.{Applicative, Monad}
 
 import com.rockthejvm.jobsboard.core.application.ports.in.{Command, ViewModel}
+import com.rockthejvm.jobsboard.core.domain.DomainError
 import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
 import com.rockthejvm.jobsboard.syntax.*
 
@@ -34,7 +35,7 @@ class LiveCoreApplication[F[_]: Sync] private (
 
   override def updateJobInfo(
       cmd: Command.UpdateJobInfo
-  ): F[Either[String, Unit]] =
+  ): F[Either[DomainError.JobNotFound, Unit]] =
     val jobId   = JobId(cmd.jobId)
     val jobInfo = ViewModel.JobInfo.toDomain(cmd.jobInfo)
     for {
@@ -43,7 +44,9 @@ class LiveCoreApplication[F[_]: Sync] private (
       result    <- jobRepo.update(updatedJob)
     } yield result
 
-  override def deleteJob(cmd: Command.DeleteJob): F[Either[String, Unit]] =
+  override def deleteJob(
+      cmd: Command.DeleteJob
+  ): F[Either[DomainError.JobNotFound, Unit]] =
     val jobId = JobId(cmd.jobId)
     for {
       job    <- jobRepo.find(jobId)
@@ -55,7 +58,9 @@ class LiveCoreApplication[F[_]: Sync] private (
     for jobList <- jobRepo.all()
     yield jobList.map(ViewModel.Job.fromDomain(_))
 
-  override def findJob(id: UUID): F[Either[String, ViewModel.Job]] =
+  override def findJob(
+      id: UUID
+  ): F[Either[DomainError.JobNotFound, ViewModel.Job]] =
     val jobId = JobId(id)
     for job <- jobRepo.find(jobId)
     yield ViewModel.Job.fromDomain(job)

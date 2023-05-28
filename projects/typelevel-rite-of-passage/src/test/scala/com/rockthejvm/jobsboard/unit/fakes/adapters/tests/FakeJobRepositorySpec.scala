@@ -24,6 +24,7 @@ import com.rockthejvm.jobsboard.unit.fakes.adapters.{
   FakeTimeAdapter
 }
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
+import com.rockthejvm.jobsboard.core.domain.DomainError
 
 class FakeJobRepositorySpec extends UnitSpec {
 
@@ -87,6 +88,8 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should save job" in withJobRepo { jobRepo =>
+      type ErrorType = String | DomainError.JobNotFound
+
       val result =
         for
           job    <- EitherT.liftF(
@@ -96,7 +99,7 @@ class FakeJobRepositorySpec extends UnitSpec {
             )
           )
           _      <- jobRepo.create(job)
-          result <- jobRepo.find(job.id)
+          result <- jobRepo.find(job.id).leftWiden[ErrorType]
         yield result
 
       val expectedJob = Domain.Job(
@@ -112,18 +115,22 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should save updated job" in withJobRepo { jobRepo =>
+      type ErrorType = Either[String, DomainError.JobNotFound]
+
       val result =
         for
-          job       <- EitherT.liftF(
-            jobRepo.make(
-              ownerEmail = "greg@rockthejvm.com",
-              jobInfo = jobInfo
+          job       <- EitherT
+            .liftF(
+              jobRepo.make(
+                ownerEmail = "greg@rockthejvm.com",
+                jobInfo = jobInfo
+              )
             )
-          )
-          _         <- jobRepo.create(job)
+            .leftWiden[ErrorType]
+          _         <- jobRepo.create(job).leftWiden[ErrorType]
           updatedJob = job.copy(active = true)
-          _         <- jobRepo.update(updatedJob)
-          result    <- jobRepo.find(job.id)
+          _         <- jobRepo.update(updatedJob).leftWiden[ErrorType]
+          result    <- jobRepo.find(job.id).leftWiden[ErrorType]
         yield result
 
       val expectedJob = Domain.Job(
@@ -157,15 +164,15 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should fail to find non-existent job" in withJobRepo { jobRepo =>
+      val jobId  =
+        Domain.JobId.fromString("00000000-0000-0000-0000-000000000001")
       val result =
-        for result <- jobRepo.find(
-            Domain.JobId.fromString("00000000-0000-0000-0000-000000000001")
-          )
+        for result <- jobRepo.find(jobId)
         yield result
 
       for actual <- result.value
       yield actual shouldBe Either.left(
-        "Job with ID '00000000-0000-0000-0000-000000000001' not found"
+        DomainError.JobNotFound(jobId)
       )
     }
 

@@ -47,7 +47,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
         result <- app.updateJobInfo(cmd)
         resp   <- result match {
           case Right(_) => Ok()
-          case Left(e)  => NotFound(FailureResponse(e))
+          case Left(e)  => NotFound(FailureResponse(e.message))
         }
       } yield resp
   }
@@ -62,7 +62,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
         result <- app.deleteJob(cmd)
         resp   <- result match {
           case Right(_) => Ok()
-          case Left(e)  => NotFound(FailureResponse(e))
+          case Left(e)  => NotFound(FailureResponse(e.message))
         }
       } yield resp
   }
@@ -83,7 +83,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
     case GET -> Root / UUIDVar(id) =>
       app.findJob(id).flatMap {
         case Right(job) => Ok(job)
-        case Left(err)  => NotFound(FailureResponse(err))
+        case Left(err)  => NotFound(FailureResponse(err.message))
       }
   }
 
