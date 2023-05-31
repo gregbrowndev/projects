@@ -5,9 +5,9 @@ import java.util.UUID
 import cats.data.EitherT
 import cats.effect.IO
 
+import com.rockthejvm.jobsboard.core.domain.DomainError
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
-import com.rockthejvm.jobsboard.core.domain.DomainError
 
 class FindJobQuerySpec extends UnitSpec with JobFixture {
   "FindJobQuery" - {

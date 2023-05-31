@@ -17,14 +17,13 @@ import com.rockthejvm.jobsboard.core.application.ports.in.{
   ViewModel
 }
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
-import com.rockthejvm.jobsboard.core.domain.job as Domain
+import com.rockthejvm.jobsboard.core.domain.{DomainError, job as Domain}
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.fakes.adapters.{
   FakeJobRepository,
   FakeTimeAdapter
 }
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
-import com.rockthejvm.jobsboard.core.domain.DomainError
 
 class FakeJobRepositorySpec extends UnitSpec {
 
@@ -115,7 +114,7 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should save updated job" in withJobRepo { jobRepo =>
-      type ErrorType = Either[String, DomainError.JobNotFound]
+      type ErrorType = String | DomainError.JobNotFound
 
       val result =
         for
@@ -126,10 +125,9 @@ class FakeJobRepositorySpec extends UnitSpec {
                 jobInfo = jobInfo
               )
             )
-            .leftWiden[ErrorType]
           _         <- jobRepo.create(job).leftWiden[ErrorType]
           updatedJob = job.copy(active = true)
-          _         <- jobRepo.update(updatedJob).leftWiden[ErrorType]
+          _         <- jobRepo.update(updatedJob)
           result    <- jobRepo.find(job.id).leftWiden[ErrorType]
         yield result
 

@@ -9,12 +9,11 @@
 //     url: String,
 //     username: String,
 //     password: String
-// ) 
+// )
 
 // object FlywayConfig {
 //   implicit val configReader: ConfigReader[FlywayConfig] = semiauto.deriveReader[FlywayConfig]
 // }
-
 
 // object FlywayConfigPlugin extends AutoPlugin {
 //   override def requires: Plugins = plugins.JvmPlugin

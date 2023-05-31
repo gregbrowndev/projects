@@ -9,8 +9,8 @@ import com.rockthejvm.jobsboard.core.application.ports.out.{
   TimeAdapter
 }
 import com.rockthejvm.jobsboard.core.domain.job.*
-import com.rockthejvm.jobsboard.fixtures.*
 import com.rockthejvm.jobsboard.core.domain.DomainError as DE
+import com.rockthejvm.jobsboard.fixtures.*
 
 class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
     extends JobRepository[F](timeAdapter) {
@@ -32,6 +32,7 @@ class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
   override def find(id: JobId): EitherT[F, DE.JobNotFound, Job] =
     for
       jobOpt <- EitherT.right(jobList.get.map(_.find(_.id == id)))
+      // TODO - figure out how to remove this explicit type annotation
       job    <- EitherT.fromOption[F](jobOpt, DE.JobNotFound(id)): EitherT[
         F,
         DE.JobNotFound,
@@ -40,25 +41,18 @@ class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
     yield job
 
   override def update(job: Job): EitherT[F, DE.JobNotFound, Unit] =
-    for
-      jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == job.id)))
-      _        <-
-        if jobIndex >= 0 then
-          EitherT.liftF(
-            jobList.update(list => list.updated(jobIndex, job))
-          )
-        else
-          EitherT.leftT[F, Unit](DE.JobNotFound(job.id)).leftWiden[DE.JobNotFound]
-    yield ()
+    for jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == job.id)))
+    yield
+      if jobIndex >= 0 then
+        EitherT.rightT(jobList.update(list => list.updated(jobIndex, job)))
+      else EitherT.leftT(DE.JobNotFound(job.id))
 
   override def delete(id: JobId): EitherT[F, DE.JobNotFound, Unit] =
-    for
-      jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == id)))
-      _        <-
-        if jobIndex >= 0 then
-          EitherT.liftF(jobList.update(list => list.filterNot(_.id == id)))
-        else EitherT.leftT[F, Unit](DE.JobNotFound(id)).leftWiden[DE.JobNotFound]
-    yield ()
+    for jobIndex <- EitherT.right(jobList.get.map(_.indexWhere(_.id == id)))
+    yield
+      if jobIndex >= 0 then
+        EitherT.rightT(jobList.update(list => list.filterNot(_.id == id)))
+      else EitherT.leftT(DE.JobNotFound(id))
 }
 
 object FakeJobRepository {

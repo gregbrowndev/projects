@@ -7,7 +7,7 @@ import cats.effect.kernel.Resource
 import cats.implicits.*
 import doobie.hikari.HikariTransactor
 import fly4s.core.Fly4s
-import fly4s.core.data.{Fly4sConfig, Location}
+import fly4s.core.data.{Fly4sConfig, Location, ValidatePattern}
 import fly4s.implicits.*
 import org.flywaydb.core.api.output.MigrateResult
 import org.testcontainers.containers.PostgreSQLContainer
@@ -18,7 +18,6 @@ import com.rockthejvm.jobsboard.adapters.out.db.{
   TransactorFactory
 }
 import com.rockthejvm.jobsboard.adapters.out.time.LiveTimeAdapter
-import fly4s.core.data.ValidatePattern
 
 object Fixture {
 

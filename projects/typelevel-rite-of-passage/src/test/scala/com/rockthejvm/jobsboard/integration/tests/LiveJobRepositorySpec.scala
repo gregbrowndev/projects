@@ -12,9 +12,8 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers
 
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
-import com.rockthejvm.jobsboard.core.domain.job as Domain
+import com.rockthejvm.jobsboard.core.domain.{DomainError, job as Domain}
 import com.rockthejvm.jobsboard.integration.Fixture
-import com.rockthejvm.jobsboard.core.domain.DomainError
 
 class LiveJobRepositorySpec extends IntegrationSpec {
 
@@ -64,9 +63,8 @@ class LiveJobRepositorySpec extends IntegrationSpec {
 
     "should save job" in withLiveJobRepo { jobRepo =>
       type ErrorType = String | DomainError.JobNotFound
-      // type ErrorType = Either[String, DomainError.JobNotFound]
 
-      val result: EitherT[IO, ErrorType, Domain.Job] =
+      val resultT: EitherT[IO, ErrorType, (Domain.Job, Domain.Job)] =
         for
           job    <- EitherT
             .liftF(
@@ -75,25 +73,16 @@ class LiveJobRepositorySpec extends IntegrationSpec {
                 jobInfo = jobInfo
               )
             )
-            .leftWiden[ErrorType]
           _      <- jobRepo.create(job)
           result <- jobRepo.find(job.id).leftWiden[ErrorType]
-        yield result
+        yield (job, result)
 
-      val expectedJob = Domain.Job(
-        id = Domain.JobId.fromString("00000000-0000-0000-0000-000000000001"),
-        ownerEmail = "greg@rockthejvm.com",
-        date = LocalDateTime.parse("2023-01-01T00:00:00"),
-        active = false,
-        jobInfo = jobInfo
-      )
-
-      for (actual <- result.value)
-        yield actual match {
-          case Right(job)                       => job shouldBe expectedJob
-          case Left(_: DomainError.JobNotFound) => fail("Job not found")
-          case Left(error)                      => fail(s"Unexpected error: $error")
-        }
+      for result <- resultT.value
+      yield result match {
+        case Right((expected, actual))        => actual shouldBe expected
+        case Left(_: DomainError.JobNotFound) => fail("Job not found")
+        case Left(error)                      => fail(s"Unexpected error: $error")
+      }
     }
 
     /* "should save updated job" in withLiveJobRepo { jobRepo => val result =
