@@ -26,7 +26,7 @@ class UpdateJobInfoSpec extends UnitSpec with JobFixture {
         assertion <- result match
           case Left(e: DomainError.JobNotFound) => fail(e.message)
           case Left(e)                          => fail(s"Unexpected error: $e")
-          case Right(job)                       => IO(job shouldMatchTo updatedAwesomeJob)
+          case Right(job)                       => IO(job shouldBe updatedAwesomeJob)
       yield assertion
     }
 

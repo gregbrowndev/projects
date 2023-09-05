@@ -56,7 +56,7 @@ class LiveCoreApplication[F[_]: Sync] private (
   // Queries
   override def allJobs(): F[List[ViewModel.Job]] =
     for jobList <- jobRepo.all()
-    yield jobList.map(ViewModel.Job.fromDomain(_))
+    yield jobList.map(ViewModel.Job.fromDomain)
 
   override def findJob(
       id: UUID

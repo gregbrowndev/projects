@@ -1,6 +1,7 @@
 package com.rockthejvm.jobsboard.unit.tests.commands
 
 import cats.effect.IO
+import com.softwaremill.diffx.scalatest.DiffShouldMatcher.*
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
@@ -20,7 +21,7 @@ class CreateJobSpec extends UnitSpec with JobFixture {
               jobResult <- app.findJob(jobId)
               assertion <- jobResult match
                 case Left(error) => fail(error.message)
-                case Right(job)  => IO(job shouldMatchTo (awesomeJob))
+                case Right(job)  => IO(job shouldBe (awesomeJob))
             yield assertion
       } yield assertion
     }
@@ -30,7 +31,7 @@ class CreateJobSpec extends UnitSpec with JobFixture {
         pending // TODO
         val app = container.core.app
         for jobCreated <- app.createJob(createInvalidJob)
-        yield jobCreated shouldMatchTo Left("TODO - add domain error")
+        yield jobCreated shouldBe Left("TODO - add domain error")
     }
   }
 }

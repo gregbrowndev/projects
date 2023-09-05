@@ -20,7 +20,7 @@ class AllJobsQuerySpec extends UnitSpec with JobFixture {
         result    <- resultIO.value
         assertion <- result match
           case Left(error) => fail(error)
-          case Right(jobs) => IO(jobs shouldMatchTo List(awesomeJob))
+          case Right(jobs) => IO(jobs shouldBe List(awesomeJob))
       yield assertion
     }
 
@@ -28,7 +28,7 @@ class AllJobsQuerySpec extends UnitSpec with JobFixture {
       val app = container.core.app
       for
         jobs      <- app.allJobs()
-        assertion <- IO(jobs shouldMatchTo List())
+        assertion <- IO(jobs shouldBe List())
       yield assertion
     }
   }

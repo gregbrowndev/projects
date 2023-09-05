@@ -9,7 +9,7 @@ import com.rockthejvm.jobsboard.core.domain.DomainError
 
 trait CoreApplication[F[_]: Sync] {
   // TODO - might be able to use Arrow to abstract over all commands/queries
-  
+
   // commands
   def createJob(cmd: Command.CreateJob): F[Either[String, UUID]]
   def updateJobInfo(
