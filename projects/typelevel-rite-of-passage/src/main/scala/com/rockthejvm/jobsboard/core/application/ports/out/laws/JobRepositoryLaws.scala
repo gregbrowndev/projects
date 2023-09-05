@@ -38,7 +38,7 @@ import cats.kernel.Eq
 /** Laws that must be obeyed by any `JobRepository`.
   */
 trait JobRepositoryLaws[F[_]: MonadCancelThrow] {
-  implicit val repo: JobRepository[F]
+  def repo: JobRepository[F]
 
   def saveAndFind(job: Job): IsEq[F[Option[Job]]] =
     // TODO - could simplify code to convert all to OptionT,
@@ -63,6 +63,6 @@ trait JobRepositoryLaws[F[_]: MonadCancelThrow] {
 
 object JobRepositoryLaws {
   def apply[F[_]: MonadCancelThrow](implicit
-      repo0: JobRepository[F]
-  ): JobRepositoryLaws[F] = new JobRepositoryLaws[F] { val repo = repo0 }
+      instance: JobRepository[F]
+  ): JobRepositoryLaws[F] = new JobRepositoryLaws[F] { override val repo: JobRepository[F] = instance }
 }

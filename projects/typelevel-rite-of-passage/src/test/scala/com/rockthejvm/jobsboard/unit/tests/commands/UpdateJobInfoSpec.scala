@@ -9,7 +9,7 @@ import com.rockthejvm.jobsboard.core.domain.DomainError
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
-class UpdateJobInfoCommandSpec extends UnitSpec with JobFixture {
+class UpdateJobInfoSpec extends UnitSpec with JobFixture {
 
   "UpdateJobInfoCommand" - {
     "should update jobInfo" in withAppContainer { container =>

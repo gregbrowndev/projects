@@ -5,7 +5,7 @@ import cats.effect.IO
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
-class CreateJobCommandSpec extends UnitSpec with JobFixture {
+class CreateJobSpec extends UnitSpec with JobFixture {
 
   "CreateJobCommand" - {
     "should create a job and return its id" in withAppContainer { container =>
