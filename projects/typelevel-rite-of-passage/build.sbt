@@ -1,9 +1,9 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
 lazy val rockthejvm    = "com.rockthejvm"
-lazy val scala3Version = "3.2.1"
+lazy val scala3Version = "3.3.0"
 
-lazy val circeVersion           = "0.14.5"
+lazy val circeVersion           = "0.14.1"
 lazy val catsVersion            = "2.9.0"
 lazy val catsEffectVersion      = "3.5.0"
 lazy val http4sVersion          = "0.23.19"
@@ -33,7 +33,7 @@ lazy val server = (project in file("."))
       "org.http4s"             %% "http4s-ember-server"           % http4sVersion,
       "org.http4s"             %% "http4s-circe"                  % http4sVersion,
       "org.scalacheck"         %% "scalacheck"                    % "1.17.0",          // TODO - should be test only
-      "org.slf4j"               % "slf4j-simple"                  % "2.0.5",
+//      "org.slf4j"               % "slf4j-simple"                  % "2.0.5",
       "org.tpolecat"           %% "doobie-core"                   % doobieVersion,
       "org.tpolecat"           %% "doobie-hikari"                 % doobieVersion,
       "org.tpolecat"           %% "doobie-postgres"               % doobieVersion,

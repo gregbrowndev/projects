@@ -13,9 +13,9 @@ trait JobRepository[F[_]: MonadCancelThrow](val timeAdapter: TimeAdapter[F]) {
   def nextIdentity(): F[JobId]
   def create(job: Job): EitherT[F, String, Unit]
   def all(): F[List[Job]]
-  def find(id: JobId): EitherT[F, DE.JobNotFound, Job]
-  def update(job: Job): EitherT[F, DE.JobNotFound, Unit]
-  def delete(id: JobId): EitherT[F, DE.JobNotFound, Unit]
+  def find(id: JobId): EitherT[F, String, Job]
+  def update(job: Job): EitherT[F, String, Unit]
+  def delete(id: JobId): EitherT[F, String, Unit]
 
   // TODO - refactor create/update to save function (collection-oriented API)
 

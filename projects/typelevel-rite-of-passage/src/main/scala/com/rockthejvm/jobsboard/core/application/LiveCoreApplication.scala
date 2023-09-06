@@ -35,7 +35,7 @@ class LiveCoreApplication[F[_]: Sync] private (
 
   override def updateJobInfo(
       cmd: Command.UpdateJobInfo
-  ): F[Either[DomainError.JobNotFound, Unit]] =
+  ): F[Either[String, Unit]] =
     val jobId   = JobId(cmd.jobId)
     val jobInfo = ViewModel.JobInfo.toDomain(cmd.jobInfo)
     for {
@@ -46,7 +46,7 @@ class LiveCoreApplication[F[_]: Sync] private (
 
   override def deleteJob(
       cmd: Command.DeleteJob
-  ): F[Either[DomainError.JobNotFound, Unit]] =
+  ): F[Either[String, Unit]] =
     val jobId = JobId(cmd.jobId)
     for {
       job    <- jobRepo.find(jobId)
@@ -60,7 +60,7 @@ class LiveCoreApplication[F[_]: Sync] private (
 
   override def findJob(
       id: UUID
-  ): F[Either[DomainError.JobNotFound, ViewModel.Job]] =
+  ): F[Either[String, ViewModel.Job]] =
     val jobId = JobId(id)
     for job <- jobRepo.find(jobId)
     yield ViewModel.Job.fromDomain(job)

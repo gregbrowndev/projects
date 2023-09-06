@@ -6,3 +6,7 @@ enum DomainError(val message: String) extends Product with Serializable {
   case JobNotFound(jobId: job.JobId)
       extends DomainError(s"Job '$jobId' was not found")
 }
+
+object domainError {
+  def jobNotFound(jobId: job.JobId): String = s"Job '$jobId' was not found"
+}

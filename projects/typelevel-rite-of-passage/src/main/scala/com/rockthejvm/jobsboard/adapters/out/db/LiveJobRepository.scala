@@ -33,6 +33,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
     xa: Transactor[F],
     timeAdapter: TimeAdapter[F]
 ) extends JobRepository[F](timeAdapter) {
+  import com.rockthejvm.jobsboard.core.domain.domainError.*
 
   override def nextIdentity(): F[JobId] =
     JobId(UUID.randomUUID()).pure[F]
@@ -115,7 +116,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
       .to[List]
       .transact(xa)
 
-  override def find(id: JobId): EitherT[F, DE.JobNotFound, Job] =
+  override def find(id: JobId): EitherT[F, String, Job] =
     val result = sql"""
       SELECT
         id,
@@ -143,9 +144,9 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
       .option
       .transact(xa)
 
-    EitherT.fromOptionF(result, DE.JobNotFound(id))
+    EitherT.fromOptionF(result, jobNotFound(id))
 
-  override def update(job: Job): EitherT[F, DE.JobNotFound, Unit] =
+  override def update(job: Job): EitherT[F, String, Unit] =
     val result: F[Unit] = sql"""
       UPDATE job SET
         date = ${job.date},
@@ -172,8 +173,8 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
 
     EitherT.liftF(result)
 
-  override def delete(id: JobId): EitherT[F, DE.JobNotFound, Unit] =
-    // TODO - should return DE.JobNotFound if not found (same as fake)
+  override def delete(id: JobId): EitherT[F, String, Unit] =
+    // TODO - should return String if not found (same as fake)
     val result: F[Unit] = sql"""
       DELETE FROM job
       WHERE id = ${id.value}

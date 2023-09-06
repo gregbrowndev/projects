@@ -22,9 +22,8 @@ class FindJobQuerySpec extends UnitSpec with JobFixture {
       for
         result    <- resultIO.value
         assertion <- result match
-          case Left(e: DomainError.JobNotFound) => fail(e.message)
-          case Left(e)                          => fail(s"Unexpected error: $e")
-          case Right(job)                       => IO(job shouldBe awesomeJob)
+          case Left(e)    => fail(s"Unexpected error: $e")
+          case Right(job) => IO(job shouldBe awesomeJob)
       yield assertion
     }
 
