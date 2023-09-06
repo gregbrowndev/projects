@@ -8,9 +8,10 @@ import cats.syntax.all.*
 import com.rockthejvm.jobsboard.core.application.ports.in.{Command, ViewModel}
 
 trait JobFixture {
-  val notFoundJobId = UUID.fromString("6ea79557-3112-4c84-a8f5-1d1e2c300948")
+  val notFoundJobId: UUID =
+    UUID.fromString("6ea79557-3112-4c84-a8f5-1d1e2c300948")
 
-  val awesomeJobInfo          = ViewModel.JobInfo(
+  val awesomeJobInfo: ViewModel.JobInfo          = ViewModel.JobInfo(
     company = "Awesome Company",
     title = "Tech Lead",
     description = "An awesome job in Berlin",
@@ -26,19 +27,20 @@ trait JobFixture {
     image = None,
     other = None
   )
-  val createAwesomeJobCommand = Command.CreateJob(
+  val createAwesomeJobCommand: Command.CreateJob = Command.CreateJob(
     ownerEmail = "greg@rockthejvm.com",
     jobInfo = awesomeJobInfo
   )
-  val awesomeJobId            = UUID.fromString("00000000-0000-0000-0000-000000000001")
-  val awesomeJob              = ViewModel.Job(
+  val awesomeJobId: UUID                         =
+    UUID.fromString("00000000-0000-0000-0000-000000000001")
+  val awesomeJob: ViewModel.Job                  = ViewModel.Job(
     id = awesomeJobId,
     date = LocalDateTime.parse("2023-01-01T00:00:00"),
     ownerEmail = "greg@rockthejvm.com",
     jobInfo = awesomeJobInfo
   )
 
-  val createInvalidJob = Command.CreateJob(
+  val createInvalidJob: Command.CreateJob = Command.CreateJob(
     ownerEmail = "",
     jobInfo = ViewModel.JobInfo(
       company = "",
@@ -58,7 +60,7 @@ trait JobFixture {
     )
   )
 
-  val updatedAwesomeJobInfo = ViewModel.JobInfo(
+  val updatedAwesomeJobInfo: ViewModel.JobInfo    = ViewModel.JobInfo(
     company = "Awesome Company (Spain Branch)",
     title = "Engineering Manager",
     description = "An awesome job in Barcelona",
@@ -74,15 +76,15 @@ trait JobFixture {
     tags = Some(List("scala", "scala-3", "zio")),
     other = Some("Some additional info")
   )
-  val updateJobInfoCommand  = Command.UpdateJobInfo(
+  val updateJobInfoCommand: Command.UpdateJobInfo = Command.UpdateJobInfo(
     jobId = awesomeJobId,
     jobInfo = updatedAwesomeJobInfo
   )
-  val updatedAwesomeJob     = awesomeJob.copy(
+  val updatedAwesomeJob: ViewModel.Job            = awesomeJob.copy(
     jobInfo = updatedAwesomeJobInfo
   )
 
-  val rockTheJvmNewJobInfo       = ViewModel.JobInfo(
+  val rockTheJvmNewJobInfo: ViewModel.JobInfo       = ViewModel.JobInfo(
     company = "RockTheJvm",
     title = "Technical Author",
     description = "For the glory of the RockTheJvm!",
@@ -99,16 +101,19 @@ trait JobFixture {
       Some(List("scala", "scala-3", "cats", "akka", "spark", "flink", "zio")),
     other = None
   )
-  val createRockTheJvmJobCommand = createAwesomeJobCommand.copy(
-    jobInfo = rockTheJvmNewJobInfo
-  )
-  val rockTheJvmNewJob           = awesomeJob.copy(
+  val createRockTheJvmJobCommand: Command.CreateJob =
+    createAwesomeJobCommand.copy(
+      jobInfo = rockTheJvmNewJobInfo
+    )
+  val rockTheJvmNewJob: ViewModel.Job               = awesomeJob.copy(
     id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
     jobInfo = rockTheJvmNewJobInfo
   )
 
-  val createAnotherAwesomeJobCommand = createAwesomeJobCommand.copy()
-  val anotherAwesomeJobId            =
+  val createAnotherAwesomeJobCommand: Command.CreateJob =
+    createAwesomeJobCommand.copy()
+  val anotherAwesomeJobId: UUID                         =
     UUID.fromString("00000000-0000-0000-0000-000000000003")
-  val anotherAwesomeJob              = awesomeJob.copy(id = anotherAwesomeJobId)
+  val anotherAwesomeJob: ViewModel.Job                  =
+    awesomeJob.copy(id = anotherAwesomeJobId)
 }

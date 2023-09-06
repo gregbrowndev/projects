@@ -45,9 +45,9 @@ object Fixture {
   ): PostgresConfig =
     PostgresConfig(
       nThreads = 1,
-      url = postgres.getJdbcUrl(),
-      username = postgres.getUsername(),
-      password = postgres.getPassword()
+      url = postgres.getJdbcUrl,
+      username = postgres.getUsername,
+      password = postgres.getPassword
     )
 
   val postgresResource: Resource[IO, PostgreSQLContainer[Nothing]] =
