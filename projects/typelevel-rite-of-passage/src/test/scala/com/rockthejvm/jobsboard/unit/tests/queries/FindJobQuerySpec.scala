@@ -5,7 +5,6 @@ import java.util.UUID
 import cats.data.EitherT
 import cats.effect.IO
 
-import com.rockthejvm.jobsboard.core.domain.DomainError
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
@@ -22,9 +21,8 @@ class FindJobQuerySpec extends UnitSpec with JobFixture {
       for
         result    <- resultIO.value
         assertion <- result match
-          case Left(e: DomainError.JobNotFound) => fail(e.message)
-          case Left(e)                          => fail(s"Unexpected error: $e")
-          case Right(job)                       => IO(job shouldBe awesomeJob)
+          case Left(e)    => fail(s"Unexpected error: $e")
+          case Right(job) => IO(job shouldBe awesomeJob)
       yield assertion
     }
 

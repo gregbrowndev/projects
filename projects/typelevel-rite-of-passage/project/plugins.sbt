@@ -6,6 +6,8 @@ addSbtPlugin("ch.epfl.scala"         % "sbt-scalafix"             % "0.10.4")
 addSbtPlugin("org.scalameta"         % "sbt-scalafmt"             % "2.5.0")
 addSbtPlugin("io.github.davidmweber" % "flyway-sbt"               % "5.2.0")
 
+addDependencyTreePlugin
+
 libraryDependencies ++= Seq(
-  "com.github.pureconfig" %% "pureconfig-core" % "0.17.1"
+  "com.github.pureconfig" %% "pureconfig-core" % "0.17.2"
 )

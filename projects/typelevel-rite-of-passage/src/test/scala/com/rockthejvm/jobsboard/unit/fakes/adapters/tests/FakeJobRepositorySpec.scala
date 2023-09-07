@@ -17,7 +17,7 @@ import com.rockthejvm.jobsboard.core.application.ports.in.{
   ViewModel
 }
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
-import com.rockthejvm.jobsboard.core.domain.{DomainError, job as Domain}
+import com.rockthejvm.jobsboard.core.domain.{domainError, job as Domain}
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.fakes.adapters.{
   FakeJobRepository,
@@ -87,8 +87,6 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should save job" in withJobRepo { jobRepo =>
-      type ErrorType = String | DomainError.JobNotFound
-
       val result =
         for
           job    <- EitherT.liftF(
@@ -98,7 +96,7 @@ class FakeJobRepositorySpec extends UnitSpec {
             )
           )
           _      <- jobRepo.create(job)
-          result <- jobRepo.find(job.id).leftWiden[ErrorType]
+          result <- jobRepo.find(job.id)
         yield result
 
       val expectedJob = Domain.Job(
@@ -114,8 +112,6 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should save updated job" in withJobRepo { jobRepo =>
-      type ErrorType = String | DomainError.JobNotFound
-
       val result =
         for
           job       <- EitherT
@@ -125,10 +121,13 @@ class FakeJobRepositorySpec extends UnitSpec {
                 jobInfo = jobInfo
               )
             )
-          _         <- jobRepo.create(job).leftWiden[ErrorType]
-          updatedJob = job.copy(active = true)
+          _         <- jobRepo.create(job)
+          updatedJob = job.copy(
+            active = true,
+            jobInfo = jobInfo.copy(company = "Another Company")
+          )
           _         <- jobRepo.update(updatedJob)
-          result    <- jobRepo.find(job.id).leftWiden[ErrorType]
+          result    <- jobRepo.find(job.id)
         yield result
 
       val expectedJob = Domain.Job(
@@ -136,7 +135,7 @@ class FakeJobRepositorySpec extends UnitSpec {
         ownerEmail = "greg@rockthejvm.com",
         date = LocalDateTime.parse("2023-01-01T00:00:00"),
         active = true,
-        jobInfo = jobInfo
+        jobInfo = jobInfo.copy(company = "Another Company")
       )
 
       for actual <- result.value
@@ -170,7 +169,7 @@ class FakeJobRepositorySpec extends UnitSpec {
 
       for actual <- result.value
       yield actual shouldBe Either.left(
-        DomainError.JobNotFound(jobId)
+        domainError.jobNotFound(jobId)
       )
     }
 

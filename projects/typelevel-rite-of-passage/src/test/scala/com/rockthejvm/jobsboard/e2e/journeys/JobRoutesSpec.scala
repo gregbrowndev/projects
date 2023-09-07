@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.unit
+package com.rockthejvm.jobsboard.e2e.journeys
 
 import cats.effect.*
 import cats.effect.implicits.*
