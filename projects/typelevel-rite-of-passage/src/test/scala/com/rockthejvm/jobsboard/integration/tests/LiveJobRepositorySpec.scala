@@ -12,7 +12,7 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers
 
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
-import com.rockthejvm.jobsboard.core.domain.{job as Domain}
+import com.rockthejvm.jobsboard.core.domain.job as Domain
 import com.rockthejvm.jobsboard.integration.Fixture
 
 class LiveJobRepositorySpec extends IntegrationSpec {
@@ -78,8 +78,8 @@ class LiveJobRepositorySpec extends IntegrationSpec {
 
       for result <- resultT.value
       yield result match {
-        case Right((expected, actual))        => actual shouldBe expected
-        case Left(error)                      => fail(s"Unexpected error: $error")
+        case Right((expected, actual)) => actual shouldBe expected
+        case Left(error)               => fail(s"Unexpected error: $error")
       }
     }
 

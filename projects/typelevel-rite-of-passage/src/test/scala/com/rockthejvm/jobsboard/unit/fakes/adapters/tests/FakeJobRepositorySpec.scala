@@ -17,10 +17,7 @@ import com.rockthejvm.jobsboard.core.application.ports.in.{
   ViewModel
 }
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
-import com.rockthejvm.jobsboard.core.domain.{
-  domainError,
-  job as Domain
-}
+import com.rockthejvm.jobsboard.core.domain.{domainError, job as Domain}
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.fakes.adapters.{
   FakeJobRepository,

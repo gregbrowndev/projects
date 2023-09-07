@@ -59,7 +59,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
         tags,
         other
       ) VALUES (
-        ${job.id},
+        ${job.id.value},
         ${job.date},
         ${job.ownerEmail},
         ${job.active},
@@ -165,7 +165,7 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
         image =  ${job.jobInfo.meta.image},
         tags = ${job.jobInfo.meta.tags},
         other =  ${job.jobInfo.meta.other}
-      WHERE id = ${job.id}
+      WHERE id = ${job.id.value}
       """.update.run
       .transact(xa)
       .map(_ -> ())
