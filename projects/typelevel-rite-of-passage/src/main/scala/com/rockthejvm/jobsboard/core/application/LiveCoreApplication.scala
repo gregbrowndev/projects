@@ -11,7 +11,6 @@ import cats.syntax.all.*
 import cats.{Applicative, Monad}
 
 import com.rockthejvm.jobsboard.core.application.ports.in.{Command, ViewModel}
-import com.rockthejvm.jobsboard.core.domain.DomainError
 import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
 import com.rockthejvm.jobsboard.syntax.*
 

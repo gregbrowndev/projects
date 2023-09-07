@@ -27,7 +27,6 @@ import com.rockthejvm.jobsboard.core.domain.job.{
   Position,
   Salary
 }
-import com.rockthejvm.jobsboard.core.domain.DomainError as DE
 
 class LiveJobRepository[F[_]: MonadCancelThrow] private (
     xa: Transactor[F],

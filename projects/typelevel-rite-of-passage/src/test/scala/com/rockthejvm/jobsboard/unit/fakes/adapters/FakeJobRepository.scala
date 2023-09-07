@@ -9,7 +9,6 @@ import com.rockthejvm.jobsboard.core.application.ports.out.{
   TimeAdapter
 }
 import com.rockthejvm.jobsboard.core.domain.job.*
-import com.rockthejvm.jobsboard.core.domain.DomainError as DE
 import com.rockthejvm.jobsboard.fixtures.*
 
 class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])

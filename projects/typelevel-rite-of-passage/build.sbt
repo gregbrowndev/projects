@@ -9,7 +9,7 @@ lazy val catsEffectVersion      = "3.5.0"
 lazy val http4sVersion          = "0.23.19"
 lazy val doobieVersion          = "1.0.0-RC1"
 lazy val log4catsVersion        = "2.5.0"
-lazy val testContainerVersion   = "1.17.6"
+lazy val testContainerVersion   = "1.19.0"
 lazy val optimiseImportsVersion = "0.6.0"
 
 lazy val server = (project in file("."))
@@ -46,7 +46,8 @@ lazy val server = (project in file("."))
       "com.softwaremill.diffx" %% "diffx-scalatest-should"        % "0.8.3" % Test,
       "org.typelevel"          %% "cats-laws"                     % catsVersion,       // TODO - should be test only
       "org.typelevel"          %% "cats-effect-laws"              % catsEffectVersion, // TODO - should be test only
-      "org.scalatest"          %% "scalatest"                     % "3.2.15" % Test,
+      "org.scalactic"          %% "scalactic"                     % "3.2.16",
+      "org.scalatest"          %% "scalatest"                     % "3.2.16" % Test,
       "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.4.0" % Test,
       "org.typelevel"          %% "discipline-scalatest"          % "2.2.0" % Test,
       "org.testcontainers"      % "testcontainers"                % testContainerVersion % Test,
@@ -68,8 +69,8 @@ ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"
 // Flyway config
 // TODO - read these settings from application.conf. See unfinished plugin
 flywayUrl       := "jdbc:postgresql://localhost:5433/jobsboard"
-flywayUser      := "docker"
-flywayPassword  := "docker"
+flywayUser      := "admin"
+flywayPassword  := "admin"
 flywayTable     := "migrations"
 flywayLocations := Seq("migrations")
 

@@ -5,7 +5,6 @@ import java.util.UUID
 import cats.data.EitherT
 import cats.effect.IO
 
-import com.rockthejvm.jobsboard.core.domain.DomainError
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 

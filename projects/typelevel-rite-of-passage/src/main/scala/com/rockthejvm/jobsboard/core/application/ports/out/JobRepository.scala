@@ -6,7 +6,6 @@ import cats.implicits.*
 
 import com.rockthejvm.jobsboard.core.application.ports.out.TimeAdapter
 import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
-import com.rockthejvm.jobsboard.core.domain.DomainError as DE
 
 trait JobRepository[F[_]: MonadCancelThrow](val timeAdapter: TimeAdapter[F]) {
   // "algebra", i.e. CRUD

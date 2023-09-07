@@ -18,7 +18,6 @@ import com.rockthejvm.jobsboard.core.application.ports.in.{
 }
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
 import com.rockthejvm.jobsboard.core.domain.{
-  DomainError,
   domainError,
   job as Domain
 }
@@ -91,8 +90,6 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should save job" in withJobRepo { jobRepo =>
-      type ErrorType = String | DomainError.JobNotFound
-
       val result =
         for
           job    <- EitherT.liftF(
@@ -102,7 +99,7 @@ class FakeJobRepositorySpec extends UnitSpec {
             )
           )
           _      <- jobRepo.create(job)
-          result <- jobRepo.find(job.id).leftWiden[ErrorType]
+          result <- jobRepo.find(job.id)
         yield result
 
       val expectedJob = Domain.Job(
@@ -118,8 +115,6 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should save updated job" in withJobRepo { jobRepo =>
-      type ErrorType = String | DomainError.JobNotFound
-
       val result =
         for
           job       <- EitherT
@@ -129,13 +124,13 @@ class FakeJobRepositorySpec extends UnitSpec {
                 jobInfo = jobInfo
               )
             )
-          _         <- jobRepo.create(job).leftWiden[ErrorType]
+          _         <- jobRepo.create(job)
           updatedJob = job.copy(
             active = true,
             jobInfo = jobInfo.copy(company = "Another Company")
           )
           _         <- jobRepo.update(updatedJob)
-          result    <- jobRepo.find(job.id).leftWiden[ErrorType]
+          result    <- jobRepo.find(job.id)
         yield result
 
       val expectedJob = Domain.Job(
