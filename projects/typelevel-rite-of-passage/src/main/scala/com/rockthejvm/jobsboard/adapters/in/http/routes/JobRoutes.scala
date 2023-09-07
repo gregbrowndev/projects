@@ -10,6 +10,7 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 import org.typelevel.log4cats.Logger
 
+import com.rockthejvm.jobsboard.adapters.in.http.validation.syntax.*
 import com.rockthejvm.jobsboard.adapters.in.http.responses.FailureResponse
 import com.rockthejvm.jobsboard.adapters.in.logging.syntax.*
 import com.rockthejvm.jobsboard.core.application.ports.in.{
@@ -26,15 +27,14 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
   // POST /api/jobs/createJob { cmd }
   private val createJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ POST -> Root / "createJob" =>
-      for {
-        cmd    <- req
-          .as[Command.CreateJob]
-          .logError(e => s"Parsing payload failed: $e")
-        result <- app.createJob(cmd)
-        resp   <- result match
-          case Left(error)  => BadRequest(error)
-          case Right(jobId) => Created(jobId)
-      } yield resp
+      req.validate[Command.CreateJob] { cmd =>
+        for {
+          result <- app.createJob(cmd)
+          resp <- result match
+            case Left(error) => BadRequest(error)
+            case Right(jobId) => Created(jobId)
+        } yield resp
+      }
   }
 
   // POST /api/jobs/updateJobInfo { cmd }
