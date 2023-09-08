@@ -49,7 +49,7 @@ class JobRoutesSpec extends UnitSpec with JobFixture {
               method = Method.POST,
               uri = Uri.unsafeFromString("/api/jobs/createJob")
             ).withEntity(createAwesomeJobCommand.asJson)
-          )
+          ) // TODO: add logging to log the error message
           job   <- client.expect[ViewModel.Job](
             Request[IO](
               method = Method.GET,

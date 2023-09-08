@@ -10,8 +10,8 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 import org.typelevel.log4cats.Logger
 
-import com.rockthejvm.jobsboard.adapters.in.http.validation.syntax.*
 import com.rockthejvm.jobsboard.adapters.in.http.responses.FailureResponse
+import com.rockthejvm.jobsboard.adapters.in.http.validation.syntax.*
 import com.rockthejvm.jobsboard.adapters.in.logging.syntax.*
 import com.rockthejvm.jobsboard.core.application.ports.in.{
   Command,
@@ -20,7 +20,7 @@ import com.rockthejvm.jobsboard.core.application.ports.in.{
 }
 
 class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
-    extends Http4sDsl[F] {
+    extends HttpValidationDsl[F] {
 
   // Commands
 
@@ -30,9 +30,9 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
       req.validate[Command.CreateJob] { cmd =>
         for {
           result <- app.createJob(cmd)
-          resp <- result match
-            case Left(error) => BadRequest(error)
+          resp   <- result match
             case Right(jobId) => Created(jobId)
+            case Left(error)  => BadRequest(error)
         } yield resp
       }
   }
@@ -40,31 +40,29 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
   // POST /api/jobs/updateJobInfo { cmd }
   private val updateJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ PUT -> Root / "updateJobInfo" =>
-      for {
-        cmd    <- req
-          .as[Command.UpdateJobInfo]
-          .logError(e => s"Parsing payload failed: $e")
-        result <- app.updateJobInfo(cmd)
-        resp   <- result match {
-          case Right(_) => Ok()
-          case Left(e)  => NotFound(FailureResponse(e))
-        }
-      } yield resp
+      req.validate[Command.UpdateJobInfo] { cmd =>
+        for {
+          result <- app.updateJobInfo(cmd)
+          resp   <- result match {
+            case Right(_) => Ok()
+            case Left(e)  => NotFound(FailureResponse(e))
+          }
+        } yield resp
+      }
   }
 
   // POST /api/jobs/deleteJob { cmd }
   private val deleteJobRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ DELETE -> Root / "deleteJob" =>
-      for {
-        cmd    <- req
-          .as[Command.DeleteJob]
-          .logError(e => s"Parsing payload failed: $e")
-        result <- app.deleteJob(cmd)
-        resp   <- result match {
-          case Right(_) => Ok()
-          case Left(e)  => NotFound(FailureResponse(e))
-        }
-      } yield resp
+      req.validate[Command.DeleteJob] { cmd =>
+        for {
+          result <- app.deleteJob(cmd)
+          resp   <- result match {
+            case Right(_) => Ok()
+            case Left(e)  => NotFound(FailureResponse(e))
+          }
+        } yield resp
+      }
   }
 
   // Queries
@@ -87,7 +85,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (val app: CoreApplication[F])
       }
   }
 
-  val routes = Router(
+  val routes: HttpRoutes[F] = Router(
     "/jobs" -> (
       allJobsRoute
         <+> createJobRoute

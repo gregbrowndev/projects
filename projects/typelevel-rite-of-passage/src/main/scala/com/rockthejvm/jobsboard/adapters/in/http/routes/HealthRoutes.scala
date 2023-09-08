@@ -15,7 +15,7 @@ class HealthRoutes[F[_]: Concurrent: Logger] extends Http4sDsl[F] {
       Ok("All going great!")
   }
 
-  val routes = Router(
+  val routes: HttpRoutes[F] = Router(
     "/health" -> healthRoutes
   )
 }
