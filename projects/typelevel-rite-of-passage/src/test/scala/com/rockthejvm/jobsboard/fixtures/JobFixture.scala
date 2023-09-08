@@ -53,7 +53,7 @@ trait JobFixture {
       salaryLo = None,
       salaryHi = Some(3000),
       currency = "",
-      externalUrl = "https://rockthejvm.com/awesomejob",
+      externalUrl = "rockthejvm.com/awesomejob",
       image = None,
       tags = Some(List("scala", "scala-3", "cats")),
       other = None
