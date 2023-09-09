@@ -11,13 +11,8 @@ import org.scalatest.compatible.Assertion
 
 import com.rockthejvm.jobsboard.AppContainer
 import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
-import com.rockthejvm.jobsboard.core.application.ports.in.{
-  Command,
-  CoreApplication,
-  ViewModel
-}
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
-import com.rockthejvm.jobsboard.core.domain.{domainError, job as Domain}
+import com.rockthejvm.jobsboard.core.domain.model.{DomainError, job as Domain}
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.fakes.adapters.{
   FakeJobRepository,
@@ -27,18 +22,15 @@ import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
 class FakeJobRepositorySpec extends UnitSpec {
 
-  val fakeJobRepoRes: Resource[IO, FakeJobRepository[IO]] =
-    for
-      timeAdapter <- FakeTimeAdapter[IO]
-      jobRepo     <- FakeJobRepository[IO](timeAdapter)
-    yield jobRepo
-
   def withJobRepo(
       testCode: FakeJobRepository[IO] => IO[Assertion]
   ): IO[Assertion] =
+    val fakeJobRepoRes: Resource[IO, FakeJobRepository[IO]] =
+      for jobRepo <- FakeJobRepository[IO]
+      yield jobRepo
     fakeJobRepoRes.use(jobRepo => testCode(jobRepo))
 
-  val jobInfo = Domain.JobInfo(
+  val jobInfo: Domain.JobInfo = Domain.JobInfo(
     company = "Awesome Company",
     position = Domain.Position(
       title = "Tech Lead",
@@ -67,19 +59,13 @@ class FakeJobRepositorySpec extends UnitSpec {
     "should make job with monotonically increasing JobId" in withJobRepo {
       jobRepo =>
         for {
-          job        <- jobRepo.make(
-            ownerEmail = "greg@rockthejvm.com",
-            jobInfo = jobInfo
-          )
-          anotherJob <- jobRepo.make(
-            ownerEmail = "greg@rockthejvm.com",
-            jobInfo = jobInfo
-          )
+          jobId        <- jobRepo.nextIdentity()
+          anotherJobId <- jobRepo.nextIdentity()
         } yield {
-          job.id shouldBe Domain.JobId.fromString(
+          jobId shouldBe Domain.JobId.fromString(
             "00000000-0000-0000-0000-000000000001"
           )
-          anotherJob.id shouldBe Domain.JobId.fromString(
+          anotherJobId shouldBe Domain.JobId.fromString(
             "00000000-0000-0000-0000-000000000002"
           )
         }
@@ -87,17 +73,18 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should save job" in withJobRepo { jobRepo =>
-      val result =
-        for
-          job    <- EitherT.liftF(
-            jobRepo.make(
-              ownerEmail = "greg@rockthejvm.com",
-              jobInfo = jobInfo
-            )
-          )
-          _      <- jobRepo.create(job)
-          result <- jobRepo.find(job.id)
-        yield result
+      val result = for
+        jobId  <- EitherT.liftF(jobRepo.nextIdentity())
+        job     = Domain.Job(
+          id = jobId,
+          date = LocalDateTime.parse("2023-01-01T00:00:00"),
+          ownerEmail = "greg@rockthejvm.com",
+          active = false,
+          jobInfo = jobInfo
+        )
+        _      <- jobRepo.create(job)
+        result <- jobRepo.find(job.id)
+      yield result
 
       val expectedJob = Domain.Job(
         id = Domain.JobId.fromString("00000000-0000-0000-0000-000000000001"),
@@ -114,13 +101,14 @@ class FakeJobRepositorySpec extends UnitSpec {
     "should save updated job" in withJobRepo { jobRepo =>
       val result =
         for
-          job       <- EitherT
-            .liftF(
-              jobRepo.make(
-                ownerEmail = "greg@rockthejvm.com",
-                jobInfo = jobInfo
-              )
-            )
+          jobId     <- EitherT.liftF(jobRepo.nextIdentity())
+          job        = Domain.Job(
+            id = jobId,
+            date = LocalDateTime.parse("2023-01-01T00:00:00"),
+            ownerEmail = "greg@rockthejvm.com",
+            active = true,
+            jobInfo = jobInfo
+          )
           _         <- jobRepo.create(job)
           updatedJob = job.copy(
             active = true,
@@ -145,11 +133,13 @@ class FakeJobRepositorySpec extends UnitSpec {
     "should delete job" in withJobRepo { jobRepo =>
       val result =
         for
-          job    <- EitherT.liftF(
-            jobRepo.make(
-              ownerEmail = "greg@rockthejvm.com",
-              jobInfo = jobInfo
-            )
+          jobId  <- EitherT.liftF(jobRepo.nextIdentity())
+          job     = Domain.Job(
+            id = jobId,
+            date = LocalDateTime.parse("2023-01-01T00:00:00"),
+            ownerEmail = "greg@rockthejvm.com",
+            active = true,
+            jobInfo = jobInfo
           )
           _      <- jobRepo.create(job)
           _      <- jobRepo.delete(job.id)
@@ -161,15 +151,16 @@ class FakeJobRepositorySpec extends UnitSpec {
     }
 
     "should fail to find non-existent job" in withJobRepo { jobRepo =>
-      val jobId  =
+      val jobId =
         Domain.JobId.fromString("00000000-0000-0000-0000-000000000001")
+
       val result =
         for result <- jobRepo.find(jobId)
         yield result
 
       for actual <- result.value
       yield actual shouldBe Either.left(
-        domainError.jobNotFound(jobId)
+        DomainError.jobNotFound(jobId)
       )
     }
 

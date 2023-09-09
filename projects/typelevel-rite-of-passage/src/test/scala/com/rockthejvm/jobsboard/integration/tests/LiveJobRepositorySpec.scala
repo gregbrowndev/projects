@@ -12,7 +12,7 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers
 
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
-import com.rockthejvm.jobsboard.core.domain.job as Domain
+import com.rockthejvm.jobsboard.core.domain.model.job as Domain
 import com.rockthejvm.jobsboard.integration.Fixture
 
 class LiveJobRepositorySpec extends IntegrationSpec {
@@ -22,7 +22,7 @@ class LiveJobRepositorySpec extends IntegrationSpec {
   ): IO[Assertion] =
     Fixture.liveJobRepositoryResource.use(jobRepo => testCode(jobRepo))
 
-  val jobInfo = Domain.JobInfo(
+  val jobInfo: Domain.JobInfo = Domain.JobInfo(
     company = "Awesome Company",
     position = Domain.Position(
       title = "Tech Lead",
@@ -50,28 +50,22 @@ class LiveJobRepositorySpec extends IntegrationSpec {
   "LiveJobRepository" - {
     "should make job with a unique JobId" in withLiveJobRepo { jobRepo =>
       for
-        job        <- jobRepo.make(
-          ownerEmail = "greg@rockthejvm.com",
-          jobInfo = jobInfo
-        )
-        anotherJob <- jobRepo.make(
-          ownerEmail = "greg@rockthejvm.com",
-          jobInfo = jobInfo
-        )
-      yield job.id should not be anotherJob.id
+        jobId        <- jobRepo.nextIdentity()
+        anotherJobId <- jobRepo.nextIdentity()
+      yield jobId should not be anotherJobId
     }
 
     "should save job" in withLiveJobRepo { jobRepo =>
-
       val resultT: EitherT[IO, String, (Domain.Job, Domain.Job)] =
         for
-          job    <- EitherT
-            .liftF(
-              jobRepo.make(
-                ownerEmail = "greg@rockthejvm.com",
-                jobInfo = jobInfo
-              )
-            )
+          jobId  <- EitherT.liftF(jobRepo.nextIdentity())
+          job     = Domain.Job(
+            id = jobId,
+            date = LocalDateTime.parse("2023-01-01T00:00:00"),
+            ownerEmail = "greg@rockthejvm.com",
+            active = true,
+            jobInfo = jobInfo
+          )
           _      <- jobRepo.create(job)
           result <- jobRepo.find(job.id)
         yield (job, result)

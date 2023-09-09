@@ -13,7 +13,9 @@ import doobie.util.ExecutionContexts
 
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
 import com.rockthejvm.jobsboard.adapters.out.time.LiveTimeAdapter
-import com.rockthejvm.jobsboard.core.domain.job.{
+import com.rockthejvm.jobsboard.core.application.services.impl.LiveJobService
+import com.rockthejvm.jobsboard.core.application.services.{CreateJobArgsDTO, JobInfoDTO, UpdateJobInfoArgsDTO}
+import com.rockthejvm.jobsboard.core.domain.model.job.{
   Job,
   JobInfo,
   JobInfoMeta,
@@ -37,61 +39,43 @@ object JobsPlayground extends IOApp.Simple {
 
   // Run with: sbt "runMain com.rockthejvm.playground.JobsPlayground"
   override def run: IO[Unit] =
-    val jobRepoResource = for {
-      xa          <- makePostgresResource()
-      timeAdapter <- LiveTimeAdapter[IO]
-      jobRepo     <- LiveJobRepository[IO](xa, timeAdapter)
-    } yield jobRepo
-
-    jobRepoResource.use { jobRepo =>
-      val jobIO = jobRepo.make(
-        ownerEmail = "gregbrowndev@gmail.com",
-        jobInfo = JobInfo(
-          company = "Rock the JVM",
-          position = Position(
-            title = "Senior Engineer",
-            description = "10x developer",
-            remote = false,
-            seniority = Some("Senior")
-          ),
-          location = Location(
-            office = "London",
-            country = Some("UK")
-          ),
-          salary = Salary(
-            salaryLo = None,
-            salaryHi = Some(80000),
-            currency = "GBP"
-          ),
-          meta = JobInfoMeta(
-            externalUrl = "www.rockthejvm.com/jobs/1234",
-            image = None,
-            tags = None,
-            other = None
-          )
-        )
-      )
-      for {
-        job          <- jobIO
-        _            <- jobRepo.create(job).getOrRaise(new RuntimeException("ERROR!"))
-        _            <- IO(println("Created job...")) *> IO(StdIn.readLine)
-        allJobs      <- jobRepo.all()
-        _            <- IO(println(s"All jobs: $allJobs")) *> IO(StdIn.readLine)
-        updatedJob    = job.copy(active = true)
-        _            <- jobRepo
-          .update(updatedJob)
-          .getOrRaise(new RuntimeException("ERROR!"))
-        _            <- IO(println("Updated job...")) *> IO(StdIn.readLine)
-        myJob        <- jobRepo
-          .find(id = job.id)
-          .getOrRaise(new RuntimeException("ERROR!"))
-        _            <- IO(println(s"Your job: $myJob")) *> IO(StdIn.readLine)
-        _            <- jobRepo
-          .delete(id = job.id)
-          .getOrRaise(new RuntimeException("ERROR!"))
-        _            <- IO(println("Deleted job...")) *> IO(StdIn.readLine)
-        allJobsFinal <- jobRepo.all()
-        _            <- IO(println(s"All jobs: $allJobsFinal")) *> IO(StdIn.readLine)
-      } yield ()
-    }
+//    val jobServiceResource = for {
+//      xa          <- makePostgresResource()
+//      timeAdapter <- LiveTimeAdapter[IO]
+//      jobRepo     <- LiveJobRepository[IO](xa)
+//      jobService  <- LiveJobService[IO](jobRepo, timeAdapter)
+//    } yield jobService
+//
+//    jobServiceResource.use { jobService =>
+//      val createJobArgsDTO = CreateJobArgsDTO(
+//        ownerEmail = "gregbrowndev@gmail.com",
+//        jobInfo = JobInfoDTO(
+//          company = "Rock the JVM",
+//          title = "Senior Engineer",
+//          description = "10x developer",
+//          remote = false,
+//          seniority = Some("Senior"),
+//          office = "London",
+//          country = Some("UK"),
+//          salaryLo = None,
+//          salaryHi = Some(80000),
+//          currency = "GBP",
+//          externalUrl = "www.rockthejvm.com/jobs/1234",
+//          image = None,
+//          tags = None,
+//          other = None
+//        )
+//      )
+//
+//      for {
+//        createJobResult <- EitherT.liftF(jobService.createJob(createJobArgsDTO))
+//        _               <- EitherT {
+//          createJobResult.fold(
+//            error => IO(Left(error)),
+//            job => IO(Right(job))
+//          )
+//        }
+//      } yield ()
+//    }
+    IO.unit
 }

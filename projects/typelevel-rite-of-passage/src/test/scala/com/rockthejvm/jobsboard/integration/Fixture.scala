@@ -99,8 +99,7 @@ object Fixture {
 
   val liveJobRepositoryResource: Resource[IO, LiveJobRepository[IO]] =
     for
-      xa          <- Fixture.transactorResource
-      timeAdapter <- LiveTimeAdapter[IO]
-      jobRepo     <- LiveJobRepository[IO](xa, timeAdapter)
+      xa      <- Fixture.transactorResource
+      jobRepo <- LiveJobRepository[IO](xa)
     yield jobRepo
 }

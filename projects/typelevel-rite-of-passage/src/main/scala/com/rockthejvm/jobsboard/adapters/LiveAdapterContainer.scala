@@ -43,6 +43,6 @@ object LiveAdapterContainer {
   ): Resource[F, LiveAdapterContainer[F]] =
     for {
       timeAdapter <- LiveTimeAdapter[F]
-      jobRepo     <- LiveJobRepository[F](gatewayContainer.transactor, timeAdapter)
+      jobRepo     <- LiveJobRepository[F](gatewayContainer.transactor)
     } yield new LiveAdapterContainer(jobRepo, timeAdapter)
 }

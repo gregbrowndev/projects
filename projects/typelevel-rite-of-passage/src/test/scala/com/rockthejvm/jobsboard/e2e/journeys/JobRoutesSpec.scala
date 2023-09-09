@@ -1,5 +1,7 @@
 package com.rockthejvm.jobsboard.e2e.journeys
 
+import java.util.UUID
+
 import cats.effect.*
 import cats.effect.implicits.*
 import cats.effect.testing.scalatest.AsyncIOSpec
@@ -19,13 +21,8 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import com.rockthejvm.jobsboard.AppContainer
 import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
-import com.rockthejvm.jobsboard.core.application.ports.in.{
-  Command,
-  CoreApplication,
-  ViewModel
-}
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
-import com.rockthejvm.jobsboard.core.domain.job as Domain
+import com.rockthejvm.jobsboard.core.application.services.*
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.fakes.FakeAppContainer
 import com.rockthejvm.jobsboard.unit.tests.UnitSpec
@@ -36,7 +33,7 @@ class JobRoutesSpec extends UnitSpec with JobFixture {
   val clientResource: Resource[IO, (FakeAppContainer[IO], Client[IO])] =
     for
       appContainer <- FakeAppContainer[IO]
-      httpApi      <- HttpApi[IO](appContainer.core.app)
+      httpApi      <- HttpApi[IO](jobService = appContainer.core.services.jobs)
       client        = Client.fromHttpApp(httpApi.routes.orNotFound)
     yield (appContainer, client)
 
@@ -44,13 +41,13 @@ class JobRoutesSpec extends UnitSpec with JobFixture {
     "should return a job with a given id" in {
       clientResource.use { case (appContainer, client) =>
         for {
-          jobId <- client.expect[ViewModel.JobId](
+          jobId <- client.expect[UUID](
             Request[IO](
               method = Method.POST,
               uri = Uri.unsafeFromString("/api/jobs/createJob")
             ).withEntity(createAwesomeJobCommand.asJson)
           ) // TODO: add logging to log the error message
-          job   <- client.expect[ViewModel.Job](
+          job   <- client.expect[JobDTO](
             Request[IO](
               method = Method.GET,
               uri = Uri.unsafeFromString(s"/api/jobs/${jobId}")

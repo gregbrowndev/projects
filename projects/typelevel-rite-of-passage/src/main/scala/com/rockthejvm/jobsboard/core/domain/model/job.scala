@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.core.domain
+package com.rockthejvm.jobsboard.core.domain.model
 
 import java.time.LocalDateTime
 import java.util.UUID

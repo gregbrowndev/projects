@@ -18,7 +18,7 @@ import com.rockthejvm.jobsboard.core.application.ports.out.{
   JobRepository,
   TimeAdapter
 }
-import com.rockthejvm.jobsboard.core.domain.job.{
+import com.rockthejvm.jobsboard.core.domain.model.job.{
   Job,
   JobId,
   JobInfo,
@@ -29,10 +29,9 @@ import com.rockthejvm.jobsboard.core.domain.job.{
 }
 
 class LiveJobRepository[F[_]: MonadCancelThrow] private (
-    xa: Transactor[F],
-    timeAdapter: TimeAdapter[F]
-) extends JobRepository[F](timeAdapter) {
-  import com.rockthejvm.jobsboard.core.domain.domainError.*
+    xa: Transactor[F]
+) extends JobRepository[F] {
+  import com.rockthejvm.jobsboard.core.domain.model.DomainError.*
 
   override def nextIdentity(): F[JobId] =
     JobId(UUID.randomUUID()).pure[F]
@@ -319,8 +318,7 @@ object LiveJobRepository {
     }
 
   def apply[F[_]: MonadCancelThrow](
-      xa: Transactor[F],
-      timeAdapter: TimeAdapter[F]
+      xa: Transactor[F]
   ): Resource[F, LiveJobRepository[F]] =
-    Resource.pure(new LiveJobRepository[F](xa, timeAdapter))
+    Resource.pure(new LiveJobRepository[F](xa))
 }
