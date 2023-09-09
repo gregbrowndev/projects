@@ -12,12 +12,12 @@ class UpdateJobInfoSpec extends UnitSpec with JobFixture {
 
   "UpdateJobInfoCommand" - {
     "should update jobInfo" in withAppContainer { container =>
-      val app      = container.core.app
-      val resultIO =
+      val jobService = container.core.services.jobs
+      val resultIO   =
         for
-          jobId <- EitherT(app.createJob(createAwesomeJobCommand))
-          _     <- EitherT(app.updateJobInfo(updateJobInfoCommand))
-          job   <- EitherT(app.findJob(jobId))
+          jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
+          _     <- EitherT(jobService.updateJobInfo(updateJobInfoCommand))
+          job   <- EitherT(jobService.findJob(jobId))
         yield job
 
       for

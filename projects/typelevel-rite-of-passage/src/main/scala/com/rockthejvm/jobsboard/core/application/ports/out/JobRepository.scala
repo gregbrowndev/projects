@@ -4,10 +4,9 @@ import cats.data.EitherT
 import cats.effect.MonadCancelThrow
 import cats.implicits.*
 
-import com.rockthejvm.jobsboard.core.application.ports.out.TimeAdapter
-import com.rockthejvm.jobsboard.core.domain.job.{Job, JobId, JobInfo}
+import com.rockthejvm.jobsboard.core.domain.model.job.{Job, JobId, JobInfo}
 
-trait JobRepository[F[_]: MonadCancelThrow](val timeAdapter: TimeAdapter[F]) {
+trait JobRepository[F[_]: MonadCancelThrow] {
   // "algebra", i.e. CRUD
   def nextIdentity(): F[JobId]
   def create(job: Job): EitherT[F, String, Unit]
@@ -17,17 +16,4 @@ trait JobRepository[F[_]: MonadCancelThrow](val timeAdapter: TimeAdapter[F]) {
   def delete(id: JobId): EitherT[F, String, Unit]
 
   // TODO - refactor create/update to save function (collection-oriented API)
-
-  // TODO - Ideally, the factory function should live somewhere else
-  def make(ownerEmail: String, jobInfo: JobInfo): F[Job] =
-    for {
-      id   <- nextIdentity()
-      date <- timeAdapter.now()
-    } yield Job(
-      id = id,
-      date = date,
-      ownerEmail = ownerEmail,
-      active = false,
-      jobInfo = jobInfo
-    )
 }

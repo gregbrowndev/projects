@@ -11,11 +11,12 @@ import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 class FindJobQuerySpec extends UnitSpec with JobFixture {
   "FindJobQuery" - {
     "should return a job given its ID" in withAppContainer { container =>
-      val app      = container.core.app
+      val jobService = container.core.services.jobs
+
       val resultIO =
         for
-          jobId <- EitherT(app.createJob(createAwesomeJobCommand))
-          job   <- EitherT(app.findJob(jobId))
+          jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
+          job   <- EitherT(jobService.findJob(jobId))
         yield job
 
       for
@@ -28,9 +29,10 @@ class FindJobQuerySpec extends UnitSpec with JobFixture {
 
     "should return an error when job is not found" in withAppContainer {
       container =>
-        val app      = container.core.app
+        val jobService = container.core.services.jobs
+
         val resultIO =
-          for job <- EitherT(app.findJob(UUID.randomUUID()))
+          for job <- EitherT(jobService.findJob(UUID.randomUUID()))
           yield job
 
         for

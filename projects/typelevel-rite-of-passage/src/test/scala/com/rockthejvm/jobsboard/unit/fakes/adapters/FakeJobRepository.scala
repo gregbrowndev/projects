@@ -8,12 +8,11 @@ import com.rockthejvm.jobsboard.core.application.ports.out.{
   JobRepository,
   TimeAdapter
 }
-import com.rockthejvm.jobsboard.core.domain.job.*
+import com.rockthejvm.jobsboard.core.domain.model.job.*
 import com.rockthejvm.jobsboard.fixtures.*
 
-class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
-    extends JobRepository[F](timeAdapter) {
-  import com.rockthejvm.jobsboard.core.domain.domainError.*
+class FakeJobRepository[F[_]: Sync] extends JobRepository[F] {
+  import com.rockthejvm.jobsboard.core.domain.model.DomainError.*
 
   val idSequence: Ref[F, Long]   = Ref.unsafe(0)
   val jobList: Ref[F, List[Job]] = Ref.unsafe(List())
@@ -61,8 +60,6 @@ class FakeJobRepository[F[_]: Sync] private (timeAdapter: TimeAdapter[F])
 }
 
 object FakeJobRepository {
-  def apply[F[_]: Sync](
-      timeAdapter: TimeAdapter[F]
-  ): Resource[F, FakeJobRepository[F]] =
-    Resource.pure(new FakeJobRepository[F](timeAdapter))
+  def apply[F[_]: Sync]: Resource[F, FakeJobRepository[F]] =
+    Resource.pure(new FakeJobRepository[F])
 }

@@ -8,7 +8,7 @@ import cats.data.Validated.*
 import cats.data.*
 import cats.implicits.*
 
-import com.rockthejvm.jobsboard.core.application.ports.in.{Command, ViewModel}
+import com.rockthejvm.jobsboard.core.application.services.*
 
 object validators {
 
@@ -39,9 +39,9 @@ object validators {
       case Failure(_) => InvalidUrl(fieldName).invalidNel
     }
 
-  given createJobCommandValidator: Validator[Command.CreateJob] =
-    (cmd: Command.CreateJob) => {
-      val Command.CreateJob(
+  given createJobCommandValidator: Validator[CreateJobArgsDTO] =
+    (cmd: CreateJobArgsDTO) => {
+      val CreateJobArgsDTO(
         ownerEmail,
         jobInfo
       ) = cmd
@@ -53,12 +53,12 @@ object validators {
       (
         ownerEmail.validNel,
         validJobInfo
-      ).mapN(Command.CreateJob.apply) // ValidatedNel
+      ).mapN(CreateJobArgsDTO.apply) // ValidatedNel
     }
 
-  given updateJobInfoValidator: Validator[Command.UpdateJobInfo] =
-    (cmd: Command.UpdateJobInfo) => {
-      val Command.UpdateJobInfo(
+  given updateJobInfoValidator: Validator[UpdateJobInfoArgsDTO] =
+    (cmd: UpdateJobInfoArgsDTO) => {
+      val UpdateJobInfoArgsDTO(
         jobId,
         jobInfo
       ) = cmd
@@ -68,21 +68,21 @@ object validators {
       (
         jobId.validNel,
         validJobInfo
-      ).mapN(Command.UpdateJobInfo.apply) // ValidatedNel
+      ).mapN(UpdateJobInfoArgsDTO.apply) // ValidatedNel
     }
 
-  given deleteJobValidator: Validator[Command.DeleteJob] =
-    (cmd: Command.DeleteJob) => {
-      val Command.DeleteJob(jobId) = cmd
+  given deleteJobValidator: Validator[DeleteJobArgsDTO] =
+    (cmd: DeleteJobArgsDTO) => {
+      val DeleteJobArgsDTO(jobId) = cmd
 
       (
         jobId.validNel
-      ).map(Command.DeleteJob.apply) // ValidatedNel
+      ).map(DeleteJobArgsDTO.apply) // ValidatedNel
     }
 
-  given jobInfoValidator: Validator[ViewModel.JobInfo] =
-    (jobInfo: ViewModel.JobInfo) => {
-      val ViewModel.JobInfo(
+  given jobInfoValidator: Validator[JobInfoDTO] =
+    (jobInfo: JobInfoDTO) => {
+      val JobInfoDTO(
         company,
         title,
         description,
@@ -121,6 +121,6 @@ object validators {
         image.validNel,
         tags.validNel,
         other.validNel
-      ).mapN(ViewModel.JobInfo.apply) // ValidatedNel
+      ).mapN(JobInfoDTO.apply) // ValidatedNel
     }
 }

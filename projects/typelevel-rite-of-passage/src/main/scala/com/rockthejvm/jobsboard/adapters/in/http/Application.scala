@@ -30,7 +30,7 @@ object Application extends IOApp {
   override def run(args: List[String]): IO[ExitCode] =
     val serverResource = for {
       appContainer <- AppContainer[IO]
-      httpApi      <- HttpApi[IO](appContainer.core.app)
+      httpApi      <- HttpApi[IO](jobService = appContainer.core.services.jobs)
       server       <- EmberServerBuilder
         .default[IO]
         .withHost(appContainer.config.emberConfig.host)
@@ -43,7 +43,7 @@ object Application extends IOApp {
       .use(_ => IO.println("Server ready!") *> IO.never)
       .as(ExitCode.Success)
 
-  def withErrorLogging(routes: HttpRoutes[IO]): HttpRoutes[IO] =
+  private def withErrorLogging(routes: HttpRoutes[IO]): HttpRoutes[IO] =
     ErrorHandling.Recover.total(
       ErrorAction.log(
         routes,

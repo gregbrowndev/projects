@@ -9,11 +9,12 @@ import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 class AllJobsQuerySpec extends UnitSpec with JobFixture {
   "AllJobsQuery" - {
     "should return a list of jobs" in withAppContainer { container =>
-      val app      = container.core.app
+      val jobService = container.core.services.jobs
+
       val resultIO =
         for
-          _    <- EitherT(app.createJob(createAwesomeJobCommand))
-          jobs <- EitherT.liftF(app.allJobs())
+          _    <- EitherT(jobService.createJob(createAwesomeJobCommand))
+          jobs <- EitherT.liftF(jobService.allJobs())
         yield jobs
 
       for
@@ -25,9 +26,10 @@ class AllJobsQuerySpec extends UnitSpec with JobFixture {
     }
 
     "should return an empty list of jobs" in withAppContainer { container =>
-      val app = container.core.app
+      val jobService = container.core.services.jobs
+
       for
-        jobs      <- app.allJobs()
+        jobs      <- jobService.allJobs()
         assertion <- IO(jobs shouldBe List())
       yield assertion
     }

@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.core.domain
+package com.rockthejvm.jobsboard.core.domain.model
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -62,4 +62,14 @@ object job {
         JobInfoMeta("", None, None, None)
       )
   }
+
+  final case class JobFilter(
+      companies: Option[List[String]] = None,
+      locations: Option[List[String]] = None,
+      countries: Option[List[String]] = None,
+      seniorities: Option[List[String]] = None,
+      tags: Option[List[String]] = None,
+      maxSalary: Option[Int] = None,
+      remote: Option[Boolean] = None
+  )
 }
