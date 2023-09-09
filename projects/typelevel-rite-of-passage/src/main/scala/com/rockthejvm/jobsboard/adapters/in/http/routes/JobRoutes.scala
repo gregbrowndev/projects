@@ -64,13 +64,9 @@ class JobRoutes[F[_]: Concurrent: Logger] private (
 
   // Queries
 
-  object OffsetQueryParam
-      extends OptionalQueryParamDecoderMatcher[Int]("offset")
-  object LimitQueryParam extends OptionalQueryParamDecoderMatcher[Int]("limit")
-
   // GET /api/jobs?offset=x&limit=y&filters=z
   private val allJobsRoute: HttpRoutes[F] = HttpRoutes.of[F] {
-    case GET -> Root :? OffsetQueryParam(offset) +& LimitQueryParam(limit) =>
+    case GET -> Root =>
       for {
 
         jobsList <- jobService.allJobs()
