@@ -4,7 +4,7 @@ import cats.effect.IO
 import com.softwaremill.diffx.scalatest.DiffShouldMatcher.*
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
+import com.rockthejvm.jobsboard.unit.UnitSpec
 
 class CreateJobSpec extends UnitSpec with JobFixture {
 

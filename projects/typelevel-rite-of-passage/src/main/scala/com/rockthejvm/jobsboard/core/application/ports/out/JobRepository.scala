@@ -21,8 +21,8 @@ trait JobRepository[F[_]: MonadCancelThrow] {
   def all(): F[List[Job]]
 
   def all(
-           filter: JobFilterDTO,
-           pagination: PaginationDTO
+      filter: JobFilterDTO,
+      pagination: PaginationDTO
   ): F[List[Job]]
 
   // TODO - refactor create/update to save function (collection-oriented API)

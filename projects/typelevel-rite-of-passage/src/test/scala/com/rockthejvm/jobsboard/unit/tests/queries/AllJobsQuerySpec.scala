@@ -6,7 +6,7 @@ import cats.effect.IO
 import com.rockthejvm.jobsboard.core.application.services.JobFilterDTO
 import com.rockthejvm.jobsboard.core.application.services.pagination.PaginationDTO
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
+import com.rockthejvm.jobsboard.unit.UnitSpec
 
 class AllJobsQuerySpec extends UnitSpec with JobFixture {
   "AllJobsQuery" - {

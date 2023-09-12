@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.unit.fakes.adapters
+package com.rockthejvm.jobsboard.unit.fixtures.adapters
 
 import cats.data.EitherT
 import cats.effect.*
@@ -58,8 +58,8 @@ class FakeJobRepository[F[_]: Sync] extends JobRepository[F] {
     yield jobs
 
   override def all(
-                    filter: JobFilterDTO,
-                    pagination: PaginationDTO
+      filter: JobFilterDTO,
+      pagination: PaginationDTO
   ): F[List[Job]] =
     for jobs <- jobList.get
     yield jobs

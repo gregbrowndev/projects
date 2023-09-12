@@ -88,7 +88,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (
 
   // GET /api/jobs?offset=x&limit=y&filters=z
   private val allJobsRoute: HttpRoutes[F] = HttpRoutes.of[F] {
-    case req @ GET -> Root :? // FilterQueryParam(filter) +&
+    case req @ GET -> Root :? FilterQueryParam(filter) +&
         OffsetQueryParam(
           offset
         ) +& LimitQueryParam(
@@ -96,7 +96,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (
         ) =>
       for {
         jobsList <- jobService.find(
-          JobFilterDTO(remote = false.some),
+          filter.getOrElse(JobFilterDTO()),
           PaginationDTO(offset, limit)
         )
         resp     <- Ok(jobsList)

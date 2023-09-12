@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.unit.fakes.adapters
+package com.rockthejvm.jobsboard.unit.fixtures.adapters
 
 import java.time.LocalDateTime
 

@@ -13,14 +13,9 @@ import org.scalatest.matchers.should.Matchers
 
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
 import com.rockthejvm.jobsboard.core.domain.model.job as Domain
-import com.rockthejvm.jobsboard.integration.Fixture
+import com.rockthejvm.jobsboard.integration.{Fixture, IntegrationSpec}
 
 class LiveJobRepositorySpec extends IntegrationSpec {
-
-  def withLiveJobRepo(
-      testCode: LiveJobRepository[IO] => IO[Assertion]
-  ): IO[Assertion] =
-    Fixture.liveJobRepositoryResource.use(jobRepo => testCode(jobRepo))
 
   val jobInfo: Domain.JobInfo = Domain.JobInfo(
     company = "Awesome Company",

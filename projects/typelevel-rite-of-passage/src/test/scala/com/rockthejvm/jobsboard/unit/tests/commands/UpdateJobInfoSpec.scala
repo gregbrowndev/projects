@@ -6,7 +6,7 @@ import cats.effect.implicits.*
 import cats.implicits.*
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
+import com.rockthejvm.jobsboard.unit.UnitSpec
 
 class UpdateJobInfoSpec extends UnitSpec with JobFixture {
 

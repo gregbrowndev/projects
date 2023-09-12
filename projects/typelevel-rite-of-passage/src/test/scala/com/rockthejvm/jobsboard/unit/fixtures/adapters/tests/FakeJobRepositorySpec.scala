@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.unit.fakes.adapters.tests
+package com.rockthejvm.jobsboard.unit.fixtures.adapters.tests
 
 import java.time.LocalDateTime
 import scala.concurrent.*
@@ -14,11 +14,11 @@ import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
 import com.rockthejvm.jobsboard.core.domain.model.{DomainError, job as Domain}
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.fakes.adapters.{
+import com.rockthejvm.jobsboard.unit.UnitSpec
+import com.rockthejvm.jobsboard.unit.fixtures.adapters.{
   FakeJobRepository,
   FakeTimeAdapter
 }
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
 class FakeJobRepositorySpec extends UnitSpec {
 

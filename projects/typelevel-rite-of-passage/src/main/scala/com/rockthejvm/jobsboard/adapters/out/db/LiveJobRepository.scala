@@ -175,8 +175,8 @@ class LiveJobRepository[F[_]: MonadCancelThrow: Logger] private (
       .transact(xa)
 
   override def all(
-                    filter: JobFilterDTO,
-                    pagination: PaginationDTO
+      filter: JobFilterDTO,
+      pagination: PaginationDTO
   ): F[List[Job]] = {
     val whereFragment: Fragment = Fragments.whereAndOpt(
       filter.companies

@@ -9,6 +9,7 @@ import cats.effect.kernel.{Resource, Sync}
 import cats.implicits.*
 import cats.syntax.all.*
 import cats.{Applicative, Monad}
+import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.core.application.ports.out.{
   JobRepository,
@@ -27,7 +28,7 @@ import com.rockthejvm.jobsboard.core.domain.model.job.{
 }
 import com.rockthejvm.jobsboard.syntax.*
 
-class LiveJobService[F[_]: Sync] private (
+class LiveJobService[F[_]: Sync: Logger] private (
     val jobRepo: JobRepository[F],
     val timeAdapter: TimeAdapter[F]
 ) extends JobService[F] {
@@ -153,7 +154,7 @@ class LiveJobService[F[_]: Sync] private (
 }
 
 object LiveJobService {
-  def apply[F[_]: Sync](
+  def apply[F[_]: Sync: Logger](
       jobRepo: JobRepository[F],
       timeAdapter: TimeAdapter[F]
   ): Resource[F, LiveJobService[F]] =

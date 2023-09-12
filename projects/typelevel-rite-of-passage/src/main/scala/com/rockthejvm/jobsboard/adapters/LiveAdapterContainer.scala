@@ -19,7 +19,7 @@ import com.rockthejvm.jobsboard.core.application.ports.out.{
   TimeAdapter
 }
 
-final class LiveGatewayContainer[F[_]: Async] private (
+final class LiveGatewayContainer[F[_]: Async: Logger] private (
     val transactor: Transactor[F]
 )
 
@@ -32,7 +32,7 @@ object LiveGatewayContainer {
     } yield new LiveGatewayContainer[F](transactor = xa)
 }
 
-final class LiveAdapterContainer[F[_]: Async] private (
+final class LiveAdapterContainer[F[_]: Async: Logger] private (
     val jobRepo: JobRepository[F],
     val timeAdapter: TimeAdapter[F]
 ) extends AdapterContainer[F]

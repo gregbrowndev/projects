@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.e2e.journeys
+package com.rockthejvm.jobsboard.e2e.tests
 
 import java.util.UUID
 
@@ -21,26 +21,17 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
 import com.rockthejvm.jobsboard.core.application.services.*
+import com.rockthejvm.jobsboard.e2e.E2eSpec
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.fakes.FakeAppContainer
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
-class CreateJobJourneySpec extends UnitSpec with JobFixture {
-  given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
+class CreateJobJourneySpec extends E2eSpec with JobFixture {
 
   given jobFilterQueryParamEncoder: QueryParamEncoder[JobFilterDTO] =
     QueryParamEncoder[String].contramap(_.asJson.noSpaces)
 
-  val clientResource: Resource[IO, (FakeAppContainer[IO], Client[IO])] =
-    for
-      appContainer <- FakeAppContainer[IO]
-      httpApi      <- HttpApi[IO](jobService = appContainer.core.services.jobs)
-      client        = Client.fromHttpApp(httpApi.routes.orNotFound)
-    yield (appContainer, client)
-
   "CreateJob" - {
-    "should return a job with a given id" in {
-      clientResource.use { case (appContainer, client) =>
+    "should allow user to create a job and query for it" in withClient {
+      client =>
         for {
           jobId <- client.expect[UUID](
             Request[IO](
@@ -60,21 +51,33 @@ class CreateJobJourneySpec extends UnitSpec with JobFixture {
 
           _ = job shouldBe awesomeJob
 
-          jobs <- client.expect[List[JobDTO]](
+          jobsList1 <- client.expect[List[JobDTO]](
             Request[IO](
               method = Method.GET,
               uri = Uri
                 .unsafeFromString("/api/jobs")
-//                .withQueryParam("filter", JobFilterDTO(remote = false.some))
+                .withQueryParam("filter", JobFilterDTO(remote = false.some))
                 .withQueryParam("offset", 0)
                 .withQueryParam("limit", 10)
             )
           )
 
-          _ = jobs should contain(awesomeJob)
+          _ = jobsList1 should contain(awesomeJob)
+
+          jobsList2 <- client.expect[List[JobDTO]](
+            Request[IO](
+              method = Method.GET,
+              uri = Uri
+                .unsafeFromString("/api/jobs")
+                .withQueryParam("filter", JobFilterDTO(remote = true.some))
+                .withQueryParam("offset", 0)
+                .withQueryParam("limit", 10)
+            )
+          )
+
+          _ = jobsList2 should be(empty)
 
         } yield succeed
-      }
     }
   }
 }
