@@ -4,16 +4,12 @@ import java.time.LocalDateTime
 
 import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.implicits.*
-import cats.effect.kernel.Resource
 import cats.implicits.*
-import cats.syntax.either.*
 import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers
 
-import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
 import com.rockthejvm.jobsboard.core.domain.model.job as Domain
-import com.rockthejvm.jobsboard.integration.{Fixture, IntegrationSpec}
+import com.rockthejvm.jobsboard.integration.IntegrationSpec
 
 class LiveJobRepositorySpec extends IntegrationSpec {
 

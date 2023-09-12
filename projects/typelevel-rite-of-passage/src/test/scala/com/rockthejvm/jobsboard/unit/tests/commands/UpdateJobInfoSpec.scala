@@ -2,8 +2,6 @@ package com.rockthejvm.jobsboard.unit.tests.commands
 
 import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.implicits.*
-import cats.implicits.*
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
 import com.rockthejvm.jobsboard.unit.UnitSpec

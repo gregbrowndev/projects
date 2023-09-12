@@ -1,14 +1,8 @@
 package com.rockthejvm.jobsboard.core.application.services.impl
 
-import java.util.UUID
-
-import cats.Applicative.*
 import cats.data.EitherT
-import cats.effect.implicits.*
 import cats.effect.kernel.{Resource, Sync}
-import cats.implicits.*
 import cats.syntax.all.*
-import cats.{Applicative, Monad}
 import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.core.application.ports.out.{
