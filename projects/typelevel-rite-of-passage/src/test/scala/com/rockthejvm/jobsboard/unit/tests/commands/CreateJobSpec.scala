@@ -14,12 +14,12 @@ class CreateJobSpec extends UnitSpec with JobFixture {
 
       // TODO - convert this to EitherT impl. (see UpdateJobInfoSpec)
       for {
-        jobCreated <- jobService.createJob(createAwesomeJobCommand)
-        assertion  <- jobCreated match
+        createJobResult <- jobService.createJob(createAwesomeJobCommand)
+        assertion       <- createJobResult match
           case Left(error)  => fail(error)
           case Right(jobId) =>
             for
-              jobResult <- jobService.findJob(jobId)
+              jobResult <- jobService.get(jobId)
               assertion <- jobResult match
                 case Left(error) => fail(error)
                 case Right(job)  => IO(job shouldBe (awesomeJob))
@@ -31,8 +31,8 @@ class CreateJobSpec extends UnitSpec with JobFixture {
       container =>
         pending // TODO
         val jobService = container.core.services.jobs
-        for jobCreated <- jobService.createJob(createInvalidJob)
-        yield jobCreated shouldBe Left("TODO - add domain error")
+        for createJobResult <- jobService.createJob(createInvalidJob)
+        yield createJobResult shouldBe Left("TODO - add domain error")
     }
   }
 }

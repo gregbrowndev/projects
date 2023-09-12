@@ -26,6 +26,7 @@ lazy val server = (project in file("."))
       "com.github.pureconfig"  %% "pureconfig-core"               % "0.17.2",
       "com.sun.mail"            % "javax.mail"                    % "1.6.2",
       "io.circe"               %% "circe-generic"                 % circeVersion,
+      "io.circe"               %% "circe-parser"                  % circeVersion,
       "io.circe"               %% "circe-fs2"                     % circeVersion,
       "io.github.jmcardon"     %% "tsec-http4s"                   % "0.4.0",
       "org.http4s"             %% "http4s-dsl"                    % http4sVersion,

@@ -66,8 +66,8 @@ class LiveJobRepositorySpec extends IntegrationSpec {
             active = true,
             jobInfo = jobInfo
           )
-          _      <- jobRepo.create(job)
-          result <- jobRepo.find(job.id)
+          _      <- jobRepo.save(job)
+          result <- jobRepo.get(job.id)
         yield (job, result)
 
       for result <- resultT.value

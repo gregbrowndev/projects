@@ -14,7 +14,11 @@ import doobie.util.ExecutionContexts
 import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
 import com.rockthejvm.jobsboard.adapters.out.time.LiveTimeAdapter
 import com.rockthejvm.jobsboard.core.application.services.impl.LiveJobService
-import com.rockthejvm.jobsboard.core.application.services.{CreateJobArgsDTO, JobInfoDTO, UpdateJobInfoArgsDTO}
+import com.rockthejvm.jobsboard.core.application.services.{
+  CreateJobArgsDTO,
+  JobInfoDTO,
+  UpdateJobInfoArgsDTO
+}
 import com.rockthejvm.jobsboard.core.domain.model.job.{
   Job,
   JobInfo,

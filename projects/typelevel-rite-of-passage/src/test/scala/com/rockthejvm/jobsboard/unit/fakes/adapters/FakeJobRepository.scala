@@ -4,12 +4,10 @@ import cats.data.EitherT
 import cats.effect.*
 import cats.implicits.*
 
-import com.rockthejvm.jobsboard.core.application.ports.out.{
-  JobRepository,
-  TimeAdapter
-}
+import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
+import com.rockthejvm.jobsboard.core.application.services.JobFilterDTO
+import com.rockthejvm.jobsboard.core.application.services.pagination.PaginationDTO
 import com.rockthejvm.jobsboard.core.domain.model.job.*
-import com.rockthejvm.jobsboard.fixtures.*
 
 class FakeJobRepository[F[_]: Sync] extends JobRepository[F] {
   import com.rockthejvm.jobsboard.core.domain.model.DomainError.*
@@ -21,20 +19,9 @@ class FakeJobRepository[F[_]: Sync] extends JobRepository[F] {
     for id <- idSequence.updateAndGet(_ + 1)
     yield JobId.fromString(f"00000000-0000-0000-0000-${id}%012d")
 
-  override def create(job: Job): EitherT[F, String, Unit] =
+  override def save(job: Job): EitherT[F, String, Unit] =
     for _ <- EitherT.liftF(jobList.update(_ :+ job))
     yield ()
-
-  override def all(): F[List[Job]] =
-    for jobs <- jobList.get
-    yield jobs
-
-  override def find(id: JobId): EitherT[F, String, Job] =
-    for
-      jobOpt <- EitherT.right(jobList.get.map(_.find(_.id == id)))
-      // TODO - figure out how to remove this explicit type annotation
-      job    <- EitherT.fromOption[F](jobOpt, jobNotFound(id))
-    yield job
 
   override def update(job: Job): EitherT[F, String, Unit] =
     for {
@@ -57,6 +44,25 @@ class FakeJobRepository[F[_]: Sync] extends JobRepository[F] {
           EitherT.leftT(jobNotFound(id))
         }
     yield result
+
+  override def get(id: JobId): EitherT[F, String, Job] =
+    for
+      jobOpt <- EitherT.right(jobList.get.map(_.find(_.id == id)))
+      // TODO - figure out how to remove this explicit type annotation
+      job    <- EitherT.fromOption[F](jobOpt, jobNotFound(id))
+    yield job
+
+  override def all(
+  ): F[List[Job]] =
+    for jobs <- jobList.get
+    yield jobs
+
+  override def all(
+                    filter: JobFilterDTO,
+                    pagination: PaginationDTO
+  ): F[List[Job]] =
+    for jobs <- jobList.get
+    yield jobs
 }
 
 object FakeJobRepository {

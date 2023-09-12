@@ -82,8 +82,8 @@ class FakeJobRepositorySpec extends UnitSpec {
           active = false,
           jobInfo = jobInfo
         )
-        _      <- jobRepo.create(job)
-        result <- jobRepo.find(job.id)
+        _      <- jobRepo.save(job)
+        result <- jobRepo.get(job.id)
       yield result
 
       val expectedJob = Domain.Job(
@@ -109,13 +109,13 @@ class FakeJobRepositorySpec extends UnitSpec {
             active = true,
             jobInfo = jobInfo
           )
-          _         <- jobRepo.create(job)
+          _         <- jobRepo.save(job)
           updatedJob = job.copy(
             active = true,
             jobInfo = jobInfo.copy(company = "Another Company")
           )
           _         <- jobRepo.update(updatedJob)
-          result    <- jobRepo.find(job.id)
+          result    <- jobRepo.get(job.id)
         yield result
 
       val expectedJob = Domain.Job(
@@ -141,7 +141,7 @@ class FakeJobRepositorySpec extends UnitSpec {
             active = true,
             jobInfo = jobInfo
           )
-          _      <- jobRepo.create(job)
+          _      <- jobRepo.save(job)
           _      <- jobRepo.delete(job.id)
           result <- EitherT.liftF(jobRepo.all())
         yield result
@@ -155,7 +155,7 @@ class FakeJobRepositorySpec extends UnitSpec {
         Domain.JobId.fromString("00000000-0000-0000-0000-000000000001")
 
       val result =
-        for result <- jobRepo.find(jobId)
+        for result <- jobRepo.get(jobId)
         yield result
 
       for actual <- result.value

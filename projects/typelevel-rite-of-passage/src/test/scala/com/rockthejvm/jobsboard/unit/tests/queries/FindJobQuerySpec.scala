@@ -16,7 +16,7 @@ class FindJobQuerySpec extends UnitSpec with JobFixture {
       val resultIO =
         for
           jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
-          job   <- EitherT(jobService.findJob(jobId))
+          job   <- EitherT(jobService.get(jobId))
         yield job
 
       for
@@ -32,7 +32,7 @@ class FindJobQuerySpec extends UnitSpec with JobFixture {
         val jobService = container.core.services.jobs
 
         val resultIO =
-          for job <- EitherT(jobService.findJob(UUID.randomUUID()))
+          for job <- EitherT(jobService.get(UUID.randomUUID().toString))
           yield job
 
         for

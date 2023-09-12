@@ -13,11 +13,13 @@ import doobie.postgres.*
 import doobie.postgres.implicits.*
 import doobie.util.Read
 import doobie.util.transactor.Transactor
+import doobie.{Fragment, Fragments}
+import org.typelevel.log4cats.Logger
 
-import com.rockthejvm.jobsboard.core.application.ports.out.{
-  JobRepository,
-  TimeAdapter
-}
+import com.rockthejvm.jobsboard.adapters.in.logging.syntax.*
+import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
+import com.rockthejvm.jobsboard.core.application.services.JobFilterDTO
+import com.rockthejvm.jobsboard.core.application.services.pagination.PaginationDTO
 import com.rockthejvm.jobsboard.core.domain.model.job.{
   Job,
   JobId,
@@ -28,15 +30,39 @@ import com.rockthejvm.jobsboard.core.domain.model.job.{
   Salary
 }
 
-class LiveJobRepository[F[_]: MonadCancelThrow] private (
+class LiveJobRepository[F[_]: MonadCancelThrow: Logger] private (
     xa: Transactor[F]
 ) extends JobRepository[F] {
   import com.rockthejvm.jobsboard.core.domain.model.DomainError.*
 
+  private val selectFragment: Fragment =
+    fr"""
+      SELECT
+        id,
+        date,
+        ownerEmail,
+        active,
+        company,
+        title,
+        description,
+        seniority,
+        remote,
+        office,
+        country,
+        salaryLo,
+        salaryHi,
+        currency,
+        externalUrl,
+        image,
+        tags,
+        other
+      FROM job
+    """
+
   override def nextIdentity(): F[JobId] =
     JobId(UUID.randomUUID()).pure[F]
 
-  override def create(job: Job): EitherT[F, String, Unit] =
+  override def save(job: Job): EitherT[F, String, Unit] =
     val result: F[Unit] = sql"""
       INSERT INTO job (
         id,
@@ -87,65 +113,9 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
      * conflict (recoverable) so they can be handled in the business logic */
     EitherT.liftF(result)
 
-  override def all(): F[List[Job]] =
-    sql"""
-      SELECT
-        id,
-        date,
-        ownerEmail,
-        active,
-        company,
-        title,
-        description,
-        seniority,
-        remote,
-        office,
-        country,
-        salaryLo,
-        salaryHi,
-        currency,
-        externalUrl,
-        image,
-        tags,
-        other
-      FROM job
-    """
-      .query[Job]
-      .to[List]
-      .transact(xa)
-
-  override def find(id: JobId): EitherT[F, String, Job] =
-    val result = sql"""
-      SELECT
-        id,
-        date,
-        ownerEmail,
-        active,
-        company,
-        title,
-        description,
-        seniority,
-        remote,
-        office,
-        country,
-        salaryLo,
-        salaryHi,
-        currency,
-        externalUrl,
-        image,
-        tags,
-        other
-      FROM job
-      WHERE id = ${id.value}
-    """
-      .query[Job]
-      .option
-      .transact(xa)
-
-    EitherT.fromOptionF(result, jobNotFound(id))
-
   override def update(job: Job): EitherT[F, String, Unit] =
-    val result: F[Unit] = sql"""
+    val result: F[Unit] =
+      sql"""
       UPDATE job SET
         date = ${job.date},
         ownerEmail = ${job.ownerEmail},
@@ -166,21 +136,84 @@ class LiveJobRepository[F[_]: MonadCancelThrow] private (
         other =  ${job.jobInfo.meta.other}
       WHERE id = ${job.id.value}
       """.update.run
-      .transact(xa)
-      .map(_ -> ())
+        .transact(xa)
+        .map(_ -> ())
 
     EitherT.liftF(result)
 
   override def delete(id: JobId): EitherT[F, String, Unit] =
     // TODO - should return String if not found (same as fake)
-    val result: F[Unit] = sql"""
+    val result: F[Unit] =
+      sql"""
       DELETE FROM job
       WHERE id = ${id.value}
       """.update.run
-      .transact(xa)
-      .map(_ -> ())
+        .transact(xa)
+        .map(_ -> ())
 
     EitherT.liftF(result)
+
+  override def get(id: JobId): EitherT[F, String, Job] =
+    val whereFragment: Fragment = Fragments.whereAnd(
+      fr"id = ${id.value}"
+    )
+
+    val statement: Fragment =
+      selectFragment ++ whereFragment
+
+    val result = statement
+      .query[Job]
+      .option
+      .transact(xa)
+
+    EitherT.fromOptionF(result, jobNotFound(id))
+
+  override def all(): F[List[Job]] =
+    selectFragment
+      .query[Job]
+      .to[List]
+      .transact(xa)
+
+  override def all(
+                    filter: JobFilterDTO,
+                    pagination: PaginationDTO
+  ): F[List[Job]] = {
+    val whereFragment: Fragment = Fragments.whereAndOpt(
+      filter.companies
+        .flatMap(_.toNel)
+        .map(companies => Fragments.in(fr"company", companies)),
+      filter.locations
+        .flatMap(_.toNel)
+        .map(locations => Fragments.in(fr"office", locations)),
+      filter.countries
+        .flatMap(_.toNel)
+        .map(countries => Fragments.in(fr"country", countries)),
+      filter.seniorities
+        .flatMap(_.toNel)
+        .map(seniorities => Fragments.in(fr"seniority", seniorities)),
+      filter.tags
+        .flatMap(_.toNel)
+        .map(tags => Fragments.or(tags.toList.map(tag => fr"tags @> $tag")*)),
+      // TODO: we can optimise this code using either:
+      //   1. WHERE tags && ARRAY['tag1', 'tag2', 'tag3']
+      //   2. WHERE tags @> ANY(ARRAY['tag1', 'tag2', 'tag3']::text[])
+      filter.maxSalary
+        .map(maxSalary => fr"salaryHi <= $maxSalary"),
+      filter.remote.map(remote => fr"remote = $remote")
+    )
+
+    val paginationFragment: Fragment =
+      fr"OFFSET ${pagination.offset} LIMIT ${pagination.limit}"
+
+    val statement: Fragment =
+      selectFragment ++ whereFragment ++ paginationFragment
+
+    Logger[F].info(s"Executing query: $statement") *>
+      statement
+        .query[Job]
+        .to[List]
+        .transact(xa)
+  }
 }
 
 object LiveJobRepository {
@@ -317,7 +350,7 @@ object LiveJobRepository {
         )
     }
 
-  def apply[F[_]: MonadCancelThrow](
+  def apply[F[_]: MonadCancelThrow: Logger](
       xa: Transactor[F]
   ): Resource[F, LiveJobRepository[F]] =
     Resource.pure(new LiveJobRepository[F](xa))

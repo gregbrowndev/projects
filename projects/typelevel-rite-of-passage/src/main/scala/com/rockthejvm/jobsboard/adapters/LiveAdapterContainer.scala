@@ -5,6 +5,7 @@ import cats.effect.implicits.*
 import cats.effect.kernel.{Async, Resource}
 import cats.implicits.*
 import doobie.util.transactor.Transactor
+import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.adapters.in.config.{AppConfig, PostgresConfig}
 import com.rockthejvm.jobsboard.adapters.out.db.{
@@ -23,7 +24,7 @@ final class LiveGatewayContainer[F[_]: Async] private (
 )
 
 object LiveGatewayContainer {
-  def apply[F[_]: Async](
+  def apply[F[_]: Async: Logger](
       config: AppConfig
   ): Resource[F, LiveGatewayContainer[F]] =
     for {
@@ -38,7 +39,7 @@ final class LiveAdapterContainer[F[_]: Async] private (
 
 object LiveAdapterContainer {
 
-  def apply[F[_]: Async](
+  def apply[F[_]: Async: Logger](
       gatewayContainer: LiveGatewayContainer[F]
   ): Resource[F, LiveAdapterContainer[F]] =
     for {

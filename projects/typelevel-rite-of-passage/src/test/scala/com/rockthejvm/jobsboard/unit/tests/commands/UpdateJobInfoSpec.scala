@@ -17,7 +17,7 @@ class UpdateJobInfoSpec extends UnitSpec with JobFixture {
         for
           jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
           _     <- EitherT(jobService.updateJobInfo(updateJobInfoCommand))
-          job   <- EitherT(jobService.findJob(jobId))
+          job   <- EitherT(jobService.get(jobId))
         yield job
 
       for

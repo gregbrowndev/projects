@@ -16,7 +16,7 @@ class DeleteJobSpec extends UnitSpec with JobFixture {
         for
           jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
           _     <- EitherT(jobService.deleteJob(DeleteJobArgsDTO(jobId = jobId)))
-          job   <- EitherT(jobService.findJob(jobId))
+          job   <- EitherT(jobService.get(jobId))
         yield job
 
       for

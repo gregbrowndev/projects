@@ -14,7 +14,7 @@ object job {
       id: JobId,
       date: LocalDateTime,
       ownerEmail: String,
-      active: Boolean = false,
+      active: Boolean,
       jobInfo: JobInfo
   )
 
