@@ -10,9 +10,7 @@ import com.rockthejvm.jobsboard.unit.UnitSpec
 
 class AllJobsQuerySpec extends UnitSpec with JobFixture {
   "AllJobsQuery" - {
-    "should return a list of jobs" in withAppContainer { container =>
-      val jobService = container.core.services.jobs
-
+    "should return a list of jobs" in withJobService { jobService =>
       val resultIO =
         for
           _    <- EitherT(jobService.createJob(createAwesomeJobCommand))
@@ -32,9 +30,7 @@ class AllJobsQuerySpec extends UnitSpec with JobFixture {
       yield assertion
     }
 
-    "should return an empty list of jobs" in withAppContainer { container =>
-      val jobService = container.core.services.jobs
-
+    "should return an empty list of jobs" in withJobService { jobService =>
       for
         jobs      <- jobService.find(
           JobFilterDTO(),

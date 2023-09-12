@@ -1,11 +1,7 @@
 package com.rockthejvm.jobsboard.adapters.in.http.routes
 
-import cats.MonadThrow
 import cats.effect.Concurrent
 import cats.implicits.*
-import io.circe.jawn
-import org.http4s.circe.jsonOf
-import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 import org.http4s.{EntityDecoder, HttpRoutes, ParseFailure, QueryParamDecoder}
 import org.typelevel.log4cats.Logger
@@ -76,7 +72,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (
   object LimitQueryParam extends OptionalQueryParamDecoderMatcher[Int]("limit")
   object FilterQueryParam
       extends OptionalQueryParamDecoderMatcher[JobFilterDTO](
-        "filters"
+        "filter"
       )
 
   given jobFilterQueryParamDecoder: QueryParamDecoder[JobFilterDTO] =
@@ -86,7 +82,7 @@ class JobRoutes[F[_]: Concurrent: Logger] private (
       )
     }
 
-  // GET /api/jobs?offset=x&limit=y&filters=z
+  // GET /api/jobs?filters=x&offset=y&limit=z
   private val allJobsRoute: HttpRoutes[F] = HttpRoutes.of[F] {
     case req @ GET -> Root :? FilterQueryParam(filter) +&
         OffsetQueryParam(

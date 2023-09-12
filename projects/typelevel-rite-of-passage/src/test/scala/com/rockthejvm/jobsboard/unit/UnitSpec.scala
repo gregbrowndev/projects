@@ -10,6 +10,7 @@ import org.scalatest.matchers.should.Matchers
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 
+import com.rockthejvm.jobsboard.core.application.services.JobService
 import com.rockthejvm.jobsboard.unit.fixtures.FakeAppContainer
 
 abstract class UnitSpec
@@ -25,4 +26,11 @@ abstract class UnitSpec
       testCode: FakeAppContainer[IO] => IO[Assertion]
   ): IO[Assertion] =
     FakeAppContainer[IO].use(appContainer => testCode(appContainer))
+
+  def withJobService(
+      testCode: JobService[IO] => IO[Assertion]
+  ): IO[Assertion] =
+    withAppContainer { appContainer =>
+      testCode(appContainer.core.services.jobs)
+    }
 }

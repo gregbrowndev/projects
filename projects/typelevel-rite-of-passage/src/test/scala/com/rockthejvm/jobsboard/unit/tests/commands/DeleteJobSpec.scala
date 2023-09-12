@@ -10,9 +10,8 @@ import com.rockthejvm.jobsboard.unit.UnitSpec
 class DeleteJobSpec extends UnitSpec with JobFixture {
 
   "DeleteJobCommand" - {
-    "should delete the job" in withAppContainer { container =>
-      val jobService = container.core.services.jobs
-      val resultIO   =
+    "should delete the job" in withJobService { jobService =>
+      val resultIO =
         for
           jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
           _     <- EitherT(jobService.deleteJob(DeleteJobArgsDTO(jobId = jobId)))

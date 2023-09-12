@@ -9,9 +9,7 @@ import com.rockthejvm.jobsboard.unit.UnitSpec
 class CreateJobSpec extends UnitSpec with JobFixture {
 
   "CreateJobCommand" - {
-    "should create a job and return its id" in withAppContainer { container =>
-      val jobService = container.core.services.jobs
-
+    "should create a job and return its id" in withJobService { jobService =>
       // TODO - convert this to EitherT impl. (see UpdateJobInfoSpec)
       for {
         createJobResult <- jobService.createJob(createAwesomeJobCommand)
@@ -27,10 +25,9 @@ class CreateJobSpec extends UnitSpec with JobFixture {
       } yield assertion
     }
 
-    "should fail to create a job and return an error" in withAppContainer {
-      container =>
+    "should fail to create a job and return an error" in withJobService {
+      jobService =>
         pending // TODO
-        val jobService = container.core.services.jobs
         for createJobResult <- jobService.createJob(createInvalidJob)
         yield createJobResult shouldBe Left("TODO - add domain error")
     }

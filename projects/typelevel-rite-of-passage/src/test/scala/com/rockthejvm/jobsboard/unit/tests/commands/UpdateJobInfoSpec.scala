@@ -9,9 +9,8 @@ import com.rockthejvm.jobsboard.unit.UnitSpec
 class UpdateJobInfoSpec extends UnitSpec with JobFixture {
 
   "UpdateJobInfoCommand" - {
-    "should update jobInfo" in withAppContainer { container =>
-      val jobService = container.core.services.jobs
-      val resultIO   =
+    "should update jobInfo" in withJobService { jobService =>
+      val resultIO =
         for
           jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
           _     <- EitherT(jobService.updateJobInfo(updateJobInfoCommand))
@@ -26,8 +25,8 @@ class UpdateJobInfoSpec extends UnitSpec with JobFixture {
       yield assertion
     }
 
-    "should fail to update jobInfo and return an error" in withAppContainer {
-      container =>
+    "should fail to update jobInfo and return an error" in withJobService {
+      jobService =>
         pending // TODO
         ???
     }
