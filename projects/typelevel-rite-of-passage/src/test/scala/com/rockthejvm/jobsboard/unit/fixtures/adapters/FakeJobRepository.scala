@@ -62,7 +62,41 @@ class FakeJobRepository[F[_]: Sync] extends JobRepository[F] {
       pagination: PaginationDTO
   ): F[List[Job]] =
     for jobs <- jobList.get
-    yield jobs
+    yield filterJobs(jobs, filter, pagination)
+
+  private def filterJobs(
+      jobs: List[Job],
+      filter: JobFilterDTO,
+      pagination: PaginationDTO
+  ): List[Job] = {
+    val filteredJobs = jobs.filter { job =>
+      (filter.companies.isEmpty || filter.companies.forall(
+        _.contains(job.jobInfo.company)
+      )) &&
+      (filter.locations.isEmpty || filter.locations.forall(
+        _.contains(job.jobInfo.location)
+      )) &&
+      (filter.countries.isEmpty || filter.countries.exists(
+        _.contains(job.jobInfo.location.country)
+      )) &&
+      (filter.seniorities.isEmpty || filter.seniorities.forall(seniorities =>
+        job.jobInfo.position.seniority.exists(s => seniorities.contains(s))
+      )) &&
+      (filter.tags.isEmpty || filter.tags.forall(tags =>
+        job.jobInfo.meta.tags.exists(jobTags =>
+          tags.forall(jobTag => jobTags.contains(jobTag))
+        )
+      )) &&
+      (filter.maxSalary.isEmpty || filter.maxSalary.forall(maxSalary =>
+        job.jobInfo.salary.salaryHi.exists(s => s <= maxSalary)
+      )) &&
+      (filter.remote.isEmpty || filter.remote.forall(remote =>
+        remote == job.jobInfo.position.remote
+      ))
+    }
+
+    filteredJobs.slice(pagination.offset, pagination.offset + pagination.limit)
+  }
 }
 
 object FakeJobRepository {
