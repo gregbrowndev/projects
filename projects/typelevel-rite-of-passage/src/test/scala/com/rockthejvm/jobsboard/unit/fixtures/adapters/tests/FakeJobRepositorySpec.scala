@@ -1,4 +1,4 @@
-package com.rockthejvm.jobsboard.unit.fakes.adapters.tests
+package com.rockthejvm.jobsboard.unit.fixtures.adapters.tests
 
 import java.time.LocalDateTime
 import scala.concurrent.*
@@ -14,11 +14,11 @@ import com.rockthejvm.jobsboard.adapters.in.http.HttpApi
 import com.rockthejvm.jobsboard.core.application.ports.out.JobRepository
 import com.rockthejvm.jobsboard.core.domain.model.{DomainError, job as Domain}
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.fakes.adapters.{
+import com.rockthejvm.jobsboard.unit.UnitSpec
+import com.rockthejvm.jobsboard.unit.fixtures.adapters.{
   FakeJobRepository,
   FakeTimeAdapter
 }
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
 
 class FakeJobRepositorySpec extends UnitSpec {
 
@@ -82,8 +82,8 @@ class FakeJobRepositorySpec extends UnitSpec {
           active = false,
           jobInfo = jobInfo
         )
-        _      <- jobRepo.create(job)
-        result <- jobRepo.find(job.id)
+        _      <- jobRepo.save(job)
+        result <- jobRepo.get(job.id)
       yield result
 
       val expectedJob = Domain.Job(
@@ -109,13 +109,13 @@ class FakeJobRepositorySpec extends UnitSpec {
             active = true,
             jobInfo = jobInfo
           )
-          _         <- jobRepo.create(job)
+          _         <- jobRepo.save(job)
           updatedJob = job.copy(
             active = true,
             jobInfo = jobInfo.copy(company = "Another Company")
           )
           _         <- jobRepo.update(updatedJob)
-          result    <- jobRepo.find(job.id)
+          result    <- jobRepo.get(job.id)
         yield result
 
       val expectedJob = Domain.Job(
@@ -141,7 +141,7 @@ class FakeJobRepositorySpec extends UnitSpec {
             active = true,
             jobInfo = jobInfo
           )
-          _      <- jobRepo.create(job)
+          _      <- jobRepo.save(job)
           _      <- jobRepo.delete(job.id)
           result <- EitherT.liftF(jobRepo.all())
         yield result
@@ -155,7 +155,7 @@ class FakeJobRepositorySpec extends UnitSpec {
         Domain.JobId.fromString("00000000-0000-0000-0000-000000000001")
 
       val result =
-        for result <- jobRepo.find(jobId)
+        for result <- jobRepo.get(jobId)
         yield result
 
       for actual <- result.value

@@ -2,22 +2,19 @@ package com.rockthejvm.jobsboard.unit.tests.commands
 
 import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.implicits.*
-import cats.implicits.*
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
+import com.rockthejvm.jobsboard.unit.UnitSpec
 
 class UpdateJobInfoSpec extends UnitSpec with JobFixture {
 
   "UpdateJobInfoCommand" - {
-    "should update jobInfo" in withAppContainer { container =>
-      val jobService = container.core.services.jobs
-      val resultIO   =
+    "should update jobInfo" in withJobService { jobService =>
+      val resultIO =
         for
           jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
           _     <- EitherT(jobService.updateJobInfo(updateJobInfoCommand))
-          job   <- EitherT(jobService.findJob(jobId))
+          job   <- EitherT(jobService.get(jobId))
         yield job
 
       for
@@ -28,8 +25,8 @@ class UpdateJobInfoSpec extends UnitSpec with JobFixture {
       yield assertion
     }
 
-    "should fail to update jobInfo and return an error" in withAppContainer {
-      container =>
+    "should fail to update jobInfo and return an error" in withJobService {
+      jobService =>
         pending // TODO
         ???
     }

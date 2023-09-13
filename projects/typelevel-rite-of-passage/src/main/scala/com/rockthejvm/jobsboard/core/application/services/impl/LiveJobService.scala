@@ -1,20 +1,16 @@
 package com.rockthejvm.jobsboard.core.application.services.impl
 
-import java.util.UUID
-
-import cats.Applicative.*
 import cats.data.EitherT
-import cats.effect.implicits.*
 import cats.effect.kernel.{Resource, Sync}
-import cats.implicits.*
 import cats.syntax.all.*
-import cats.{Applicative, Monad}
+import org.typelevel.log4cats.Logger
 
 import com.rockthejvm.jobsboard.core.application.ports.out.{
   JobRepository,
   TimeAdapter
 }
 import com.rockthejvm.jobsboard.core.application.services.*
+import com.rockthejvm.jobsboard.core.application.services.pagination.PaginationDTO
 import com.rockthejvm.jobsboard.core.domain.model.job.{
   Job,
   JobId,
@@ -26,7 +22,7 @@ import com.rockthejvm.jobsboard.core.domain.model.job.{
 }
 import com.rockthejvm.jobsboard.syntax.*
 
-class LiveJobService[F[_]: Sync] private (
+class LiveJobService[F[_]: Sync: Logger] private (
     val jobRepo: JobRepository[F],
     val timeAdapter: TimeAdapter[F]
 ) extends JobService[F] {
@@ -42,16 +38,16 @@ class LiveJobService[F[_]: Sync] private (
           jobInfo = jobInfo
         )
       )
-      _   <- jobRepo.create(job) // TODO errors ignored?
-    yield job.id.value
+      _   <- jobRepo.save(job) // TODO errors ignored?
+    yield job.id.value.toString
 
   override def updateJobInfo(
       args: UpdateJobInfoArgsDTO
   ): F[UpdateJobInfoResponseDTO] =
-    val jobId   = JobId(args.jobId)
+    val jobId   = JobId.fromString(args.jobId)
     val jobInfo = jobInfoFromDTO(args.jobInfo)
     for {
-      job       <- jobRepo.find(jobId)
+      job       <- jobRepo.get(jobId)
       updatedJob = job.copy(
         jobInfo = jobInfo
       )
@@ -59,23 +55,26 @@ class LiveJobService[F[_]: Sync] private (
     } yield result
 
   override def deleteJob(args: DeleteJobArgsDTO): F[DeleteJobResponseDTO] =
-    val jobId = JobId(args.jobId)
+    val jobId = JobId.fromString(args.jobId)
     for {
-      job    <- jobRepo.find(jobId)
+      job    <- jobRepo.get(jobId)
       result <- jobRepo.delete(job.id)
     } yield result
 
   // Queries
 
-  override def allJobs(): F[List[JobDTO]] =
-    for jobList <- jobRepo.all()
+  override def find(
+      filter: JobFilterDTO,
+      pagination: PaginationDTO
+  ): F[List[JobDTO]] =
+    for jobList <- jobRepo.all(filter, pagination)
     yield jobList.map(jobToDTO)
 
-  override def findJob(
-      id: UUID
+  override def get(
+      id: String
   ): F[Either[String, JobDTO]] =
-    val jobId = JobId(id)
-    for job <- jobRepo.find(jobId)
+    val jobId = JobId.fromString(id)
+    for job <- jobRepo.get(jobId)
     yield jobToDTO(job)
 
   // Factories
@@ -122,7 +121,7 @@ class LiveJobService[F[_]: Sync] private (
 
   private def jobToDTO(job: Job): JobDTO =
     JobDTO(
-      id = job.id.value,
+      id = job.id.value.toString,
       date = job.date,
       ownerEmail = job.ownerEmail,
       active = job.active,
@@ -149,7 +148,7 @@ class LiveJobService[F[_]: Sync] private (
 }
 
 object LiveJobService {
-  def apply[F[_]: Sync](
+  def apply[F[_]: Sync: Logger](
       jobRepo: JobRepository[F],
       timeAdapter: TimeAdapter[F]
   ): Resource[F, LiveJobService[F]] =

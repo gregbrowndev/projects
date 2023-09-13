@@ -6,8 +6,7 @@ import java.util.UUID
 import com.rockthejvm.jobsboard.core.application.services.*
 
 trait JobFixture {
-  val notFoundJobId: UUID =
-    UUID.fromString("6ea79557-3112-4c84-a8f5-1d1e2c300948")
+  val notFoundJobId: String = "6ea79557-3112-4c84-a8f5-1d1e2c300948"
 
   val awesomeJobInfo: JobInfoDTO                = JobInfoDTO(
     company = "Awesome Company",
@@ -29,8 +28,7 @@ trait JobFixture {
     ownerEmail = "greg@rockthejvm.com",
     jobInfo = awesomeJobInfo
   )
-  val awesomeJobId: UUID                        =
-    UUID.fromString("00000000-0000-0000-0000-000000000001")
+  val awesomeJobId: String                      = "00000000-0000-0000-0000-000000000001"
   val awesomeJob: JobDTO                        = JobDTO(
     id = awesomeJobId,
     date = LocalDateTime.parse("2023-01-01T00:00:00"),
@@ -104,14 +102,13 @@ trait JobFixture {
       jobInfo = rockTheJvmNewJobInfo
     )
   val rockTheJvmNewJob: JobDTO                     = awesomeJob.copy(
-    id = UUID.fromString("00000000-0000-0000-0000-000000000002"),
+    id = "00000000-0000-0000-0000-000000000002",
     jobInfo = rockTheJvmNewJobInfo
   )
 
   val createAnotherAwesomeJobCommand: CreateJobArgsDTO =
     createAwesomeJobCommand.copy()
-  val anotherAwesomeJobId: UUID                        =
-    UUID.fromString("00000000-0000-0000-0000-000000000003")
+  val anotherAwesomeJobId: String                      = "00000000-0000-0000-0000-000000000003"
   val anotherAwesomeJob: JobDTO                        =
     awesomeJob.copy(id = anotherAwesomeJobId)
 }

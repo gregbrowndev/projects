@@ -6,17 +6,15 @@ import cats.data.EitherT
 import cats.effect.IO
 
 import com.rockthejvm.jobsboard.fixtures.JobFixture
-import com.rockthejvm.jobsboard.unit.tests.UnitSpec
+import com.rockthejvm.jobsboard.unit.UnitSpec
 
 class FindJobQuerySpec extends UnitSpec with JobFixture {
   "FindJobQuery" - {
-    "should return a job given its ID" in withAppContainer { container =>
-      val jobService = container.core.services.jobs
-
+    "should return a job given its ID" in withJobService { jobService =>
       val resultIO =
         for
           jobId <- EitherT(jobService.createJob(createAwesomeJobCommand))
-          job   <- EitherT(jobService.findJob(jobId))
+          job   <- EitherT(jobService.get(jobId))
         yield job
 
       for
@@ -27,12 +25,10 @@ class FindJobQuerySpec extends UnitSpec with JobFixture {
       yield assertion
     }
 
-    "should return an error when job is not found" in withAppContainer {
-      container =>
-        val jobService = container.core.services.jobs
-
+    "should return an error when job is not found" in withJobService {
+      jobService =>
         val resultIO =
-          for job <- EitherT(jobService.findJob(UUID.randomUUID()))
+          for job <- EitherT(jobService.get(UUID.randomUUID().toString))
           yield job
 
         for

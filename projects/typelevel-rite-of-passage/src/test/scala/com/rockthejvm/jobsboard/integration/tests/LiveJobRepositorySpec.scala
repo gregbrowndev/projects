@@ -4,23 +4,14 @@ import java.time.LocalDateTime
 
 import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.implicits.*
-import cats.effect.kernel.Resource
 import cats.implicits.*
-import cats.syntax.either.*
 import org.scalatest.compatible.Assertion
 import org.scalatest.matchers.should.Matchers
 
-import com.rockthejvm.jobsboard.adapters.out.db.LiveJobRepository
 import com.rockthejvm.jobsboard.core.domain.model.job as Domain
-import com.rockthejvm.jobsboard.integration.Fixture
+import com.rockthejvm.jobsboard.integration.IntegrationSpec
 
 class LiveJobRepositorySpec extends IntegrationSpec {
-
-  def withLiveJobRepo(
-      testCode: LiveJobRepository[IO] => IO[Assertion]
-  ): IO[Assertion] =
-    Fixture.liveJobRepositoryResource.use(jobRepo => testCode(jobRepo))
 
   val jobInfo: Domain.JobInfo = Domain.JobInfo(
     company = "Awesome Company",
@@ -66,8 +57,8 @@ class LiveJobRepositorySpec extends IntegrationSpec {
             active = true,
             jobInfo = jobInfo
           )
-          _      <- jobRepo.create(job)
-          result <- jobRepo.find(job.id)
+          _      <- jobRepo.save(job)
+          result <- jobRepo.get(job.id)
         yield (job, result)
 
       for result <- resultT.value

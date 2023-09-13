@@ -1,25 +1,25 @@
 package com.rockthejvm.jobsboard.integration
 
-import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.implicits.*
 import cats.effect.kernel.Resource
-import cats.implicits.*
 import doobie.hikari.HikariTransactor
 import fly4s.core.Fly4s
 import fly4s.core.data.{Fly4sConfig, Location, ValidatePattern}
 import fly4s.implicits.*
 import org.flywaydb.core.api.output.MigrateResult
 import org.testcontainers.containers.PostgreSQLContainer
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import com.rockthejvm.jobsboard.adapters.in.config.PostgresConfig
 import com.rockthejvm.jobsboard.adapters.out.db.{
   LiveJobRepository,
   TransactorFactory
 }
-import com.rockthejvm.jobsboard.adapters.out.time.LiveTimeAdapter
 
 object Fixture {
+
+  given logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
   /** Creates a `Resource` to provide a Fly4s client that connects to the
     * database using `config`. The Fly4s client provides an API to manage the
