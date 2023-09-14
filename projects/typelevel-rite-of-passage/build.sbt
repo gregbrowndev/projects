@@ -1,23 +1,23 @@
-ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / version                                        := "0.1.0-SNAPSHOT"
+ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
 
 lazy val rockthejvm    = "com.rockthejvm"
 lazy val scala3Version = "3.3.0"
 
-lazy val circeVersion           = "0.14.1"
-lazy val catsVersion            = "2.9.0"
-lazy val catsEffectVersion      = "3.5.0"
-lazy val http4sVersion          = "0.23.19"
-lazy val doobieVersion          = "1.0.0-RC1"
-lazy val log4catsVersion        = "2.5.0"
-lazy val testContainerVersion   = "1.19.0"
-lazy val optimiseImportsVersion = "0.6.0"
+lazy val circeVersion         = "0.14.1"
+lazy val catsVersion          = "2.9.0"
+lazy val catsEffectVersion    = "3.5.0"
+lazy val http4sVersion        = "0.23.19"
+lazy val doobieVersion        = "1.0.0-RC1"
+lazy val log4catsVersion      = "2.5.0"
+lazy val testContainerVersion = "1.19.0"
 
 lazy val server = (project in file("."))
-  .enablePlugins(FlywayPlugin)
+  .enablePlugins(FlywayPlugin, JavaAppPackaging)
   .settings(
     name                 := "typelevel-project",
     scalaVersion         := scala3Version,
-    semanticdbEnabled    := true, // for OptimseImports
+    semanticdbEnabled    := true, // for OptimiseImports
     semanticdbVersion    := scalafixSemanticdb.revision,
     semanticdbTargetRoot := baseDirectory.value / ".semanticdb",
     organization         := rockthejvm,
@@ -64,8 +64,6 @@ lazy val server = (project in file("."))
     ),
     Global / excludeLintKeys ++= Set(semanticdbTargetRoot)
   )
-
-ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % optimiseImportsVersion
 
 // Flyway config
 // TODO - read these settings from application.conf. See unfinished plugin
