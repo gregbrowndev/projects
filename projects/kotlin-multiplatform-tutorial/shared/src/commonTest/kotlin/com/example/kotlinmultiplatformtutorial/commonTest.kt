@@ -7,6 +7,6 @@ class CommonGreetingTest {
 
     @Test
     fun testExample() {
-        assertTrue(Greeting().greet().contains("Hello"), "Check 'Hello' is mentioned")
+        assertTrue(Greeting().greet().any { it.contains("Hello") or it.contains("Hi")}, "Check 'Hello' is mentioned")
     }
 }
