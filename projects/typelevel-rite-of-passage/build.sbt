@@ -13,7 +13,8 @@ lazy val log4catsVersion      = "2.5.0"
 lazy val testContainerVersion = "1.19.0"
 
 lazy val server = (project in file("."))
-  .enablePlugins(FlywayPlugin, JavaAppPackaging)
+  .enablePlugins(FlywayPlugin, JavaAppPackaging, DockerPlugin)
+  .configs(IntegrationTest)
   .settings(
     name                 := "typelevel-project",
     scalaVersion         := scala3Version,
@@ -64,6 +65,10 @@ lazy val server = (project in file("."))
     ),
     Global / excludeLintKeys ++= Set(semanticdbTargetRoot)
   )
+
+// DockerPlugin config
+// see https://www.scala-sbt.org/sbt-native-packager/formats/docker.html#configuration
+dockerExposedPorts := Seq(8080)
 
 // Flyway config
 // TODO - read these settings from application.conf. See unfinished plugin
