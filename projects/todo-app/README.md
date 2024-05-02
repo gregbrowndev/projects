@@ -1,7 +1,30 @@
 # To Do App
 
-## Overview
+## Questions
 
+- Is the tsconfig.json inside the `server` project necessary given the codebase is bundled by the
+  downstream `web-ui` project? What effect does this bundling have? Must the projects share the
+  exact same TS configuration? Does the `server` code still get compiled and built as its own
+  project? If not and given we may use Turborepo, will this lead to duplicate work if the `server`
+  is consumed by multiple end-user apps?
+
+
+## Aims
+
+- Compact - minimise cost, cold-starts and cold-start time
+
+  As a monolithic, full-stack app that can be deployed as a single FaaS, the possibility of a cold
+  start is reduced because the same function can perform the UI rendering (SSR) and server-side logic.
+
+  This also reduces the number of FaaS invocations since SSR data fetching and any access to the DB
+  does not require additional network calls.
+
+  However, bundling a larger application together may increase the bundle size and therefore hurt
+  cold-start performance. 
+
+
+
+## Overview
 
 ### How this project is structured
 
@@ -32,7 +55,6 @@ Install pnpm:
 corepack enable pnpm
 ```
 
-
 Install turbo:
 
 ```
@@ -40,14 +62,21 @@ pnpm install turbo --global
 ```
 
 
+Install monorepo packages:
+
 ```
-cd packages/web-ui
 yarn install
 ```
+
+
+
+Start `dev` in `web-ui` workspace:
 
 ```
 yarn workspace web-ui dev
 ```
+
+
 
 Viewing workspaces info:
 
@@ -55,8 +84,15 @@ Viewing workspaces info:
 yarn workspaces info   
 ```
 
-Creating a new package:
+Add dependency to root workspace:
+
+```
+yarn add --dev -W prettier
+```
+
+Creating a new workspace:
 
 ```
 npm init -w ./packages/server
 ```
+
