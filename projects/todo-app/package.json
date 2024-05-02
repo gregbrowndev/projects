@@ -1,0 +1,10 @@
+{
+  "name": "todo-app",
+  "private": "true",
+  "version": "1.0.0",
+  "workspaces": ["packages/*"],
+  "packageManager": "yarn@1.22.22",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
