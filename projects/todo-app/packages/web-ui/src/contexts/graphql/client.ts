@@ -2,19 +2,13 @@ import {cacheExchange, Client, createClient, fetchExchange, SSRExchange, ssrExch
 import {executeExchange} from '@urql/exchange-execute';
 import {schema} from "@repo/server/src/schema";
 
-
-export const makeSSRExchange = () => {
+export const makeGraphQLClient: () => [Client, SSRExchange] = () => {
     const isClient = typeof window !== 'undefined';
-    return ssrExchange({
+    const ssr = ssrExchange({
         isClient
     });
-}
-
-export const makeGraphQLClient: (ssr: SSRExchange) => Promise<Client> = async (ssr) => {
-    const isClient = typeof window !== 'undefined';
 
     let transportExchange = fetchExchange;
-
     if (!isClient) {
         // TODO: does this need to be dynamically imported to avoid server code leaking into client-side bundle?
         // const { schema } = await import("@repo/server/src/schema")
@@ -23,9 +17,11 @@ export const makeGraphQLClient: (ssr: SSRExchange) => Promise<Client> = async (s
         })
     }
 
-    return createClient({
+    const client = createClient({
         url: 'http://localhost:3000/api/graphql',
         exchanges: [cacheExchange, ssr, transportExchange],
         suspense: true,
     });
+
+    return [client, ssr]
 }
