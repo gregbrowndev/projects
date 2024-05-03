@@ -24,6 +24,7 @@
     "@repo/eslint-config": "*",
     "@repo/jest-presets": "*",
     "@repo/typescript-config": "*",
-    "@types/node": "^20.12.8"
+    "@types/node": "^20.12.8",
+    "eslint": "^8"
   }
 }

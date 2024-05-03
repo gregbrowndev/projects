@@ -2,7 +2,7 @@
   "name": "@repo/jest-presets",
   "version": "1.0.0",
   "private": true,
-  "license": "MIT",
+  "license": "",
   "files": [
     "browser/jest-preset.js",
     "node/jest-preset.js"
