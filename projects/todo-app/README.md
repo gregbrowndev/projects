@@ -49,39 +49,34 @@ NextJS and the server were hosted as separate functions.
 
 ## Development
 
-Install pnpm:
+### Prerequisites
 
-```
-corepack enable pnpm
-```
+- nvm or fnm
 
-Install turbo:
+- NodeJS (current version)
 
-```
-pnpm install turbo --global
-```
+  ```
+  nvm use
+  ```
+  
+- yarn
 
+  ```
+  corepack enable
+  ```
+
+- turbo
+
+  ```
+  yarn global add turbo
+  ```
+
+### Manage monorepo dependencies
 
 Install monorepo packages:
 
 ```
 yarn install
-```
-
-
-
-Start `dev` in `web-ui` workspace:
-
-```
-yarn workspace web-ui dev
-```
-
-
-
-Viewing workspaces info:
-
-```
-yarn workspaces info   
 ```
 
 Add dependency to root workspace:
@@ -90,9 +85,66 @@ Add dependency to root workspace:
 yarn add --dev -W prettier
 ```
 
+Add dependency to workspace:
+
+```
+yarn workspace web-ui add --dev storybook
+```
+
+or if you are in workspace directory, you can use `yarn add` as normal:
+
+```
+yarn add --dev storybook
+```
+
+### Manage workspaces
+
+Viewing workspaces info:
+
+```
+yarn workspaces info   
+```
+
 Creating a new workspace:
+
+> TODO: can this be done in `yarn`?
 
 ```
 npm init -w ./packages/server
 ```
+
+### Run monorepo tasks
+
+Build monorepo:
+
+```
+turbo build
+```
+
+Run `dev` in all workspaces:
+
+```
+turbo dev
+```
+
+
+Run `dev` in `web-ui` workspace:
+
+```
+turbo dev --filter=web-ui
+```
+
+Run `dev` in `web-ui` workspace (using `yarn`)
+
+```
+yarn workspace web-ui dev
+```
+
+Deploy monorepo:
+
+```
+npx turbo run deploy
+```
+
+
 
