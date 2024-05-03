@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src/",
+    "lint": "eslint --config .eslintrc.js --ext .ts ./",
     "test": "jest --detectOpenHandles"
   },
   "main": "src/index.ts",

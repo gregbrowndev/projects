@@ -9,6 +9,42 @@
   is consumed by multiple end-user apps?
 
 
+## To Dos
+
+- [ ] Monorepo set up
+  - [x] Yarn workspaces
+  - [x] Turborepo (DONE)
+  - [ ] Create a package for config-prettier?
+- [ ] Modulith architecture
+  - [ ] Create workspace for each module
+  - [ ] Figure out dependency management
+  - [ ] Set up GraphQL modules + schema merging
+- [ ] Set up Firebase
+  - [ ] Set up GCP account with Terraform 
+  - [ ] Set up emulator suite
+  - [ ] Deploy as cloud function into dev environment
+  - [ ] Set up CI/CD
+  - [ ] Set up Firestore
+- [ ] Implement application use-cases
+  - [ ] Sign up (with Firebase Auth)
+    - Account verification flow (verify email etc.)
+    - Store credentials in Firebase Auth but User (profile/details)
+      in app DB. Need workflow, or create account on first sign in.
+  - [ ] Sign in
+    - JWT or Oauth?
+  - [ ] Sign out (frontend-only)
+  - [ ] Get ToDos
+  - [ ] Get ToDo
+  - [ ] Create ToDo
+  - [ ] Edit ToDo
+  - [ ] Complete ToDo
+  - [ ] Delete ToDo
+- [ ] SRE
+  - [ ] Sentry
+  - [ ] Log aggregation 
+  - [ ] Metrics
+  - [ ] Tracing
+
 ## Aims
 
 - Compact - minimise cost, cold-starts and cold-start time
@@ -20,9 +56,7 @@
   does not require additional network calls.
 
   However, bundling a larger application together may increase the bundle size and therefore hurt
-  cold-start performance. 
-
-
+  cold-start performance.
 
 ## Overview
 
@@ -33,19 +67,18 @@ The project is structured using Yarn Workspaces.
 - `web-ui` contains a NextJS project
 - `server` contains a GraphQL API
 
-The `server` project is installed into `web-ui` as a dependency. This means NextJS 
-is able to self-host the GraphQL API a monolithic, full-stack application. 
+The `server` project is installed into `web-ui` as a dependency. This means NextJS
+is able to self-host the GraphQL API a monolithic, full-stack application.
 
-During client-side rendering (CSR), the browser makes GraphQL requests to the host server. 
+During client-side rendering (CSR), the browser makes GraphQL requests to the host server.
 Since NextJS hosts the GraphQL server as a route, it can serve these requests within the same
 process. During server-side rendering (SSR), the Apollo Client uses `SchemaLink` instead of
 `HttpLink` to handle the query in-memory. This means no additional network calls are required.
 
-All of this is beneficial for cost and latency optimisation. Since the monolithic server is 
-deployed on GCP Cloud Functions, rendering the UI and performing server actions are performed 
+All of this is beneficial for cost and latency optimisation. Since the monolithic server is
+deployed on GCP Cloud Functions, rendering the UI and performing server actions are performed
 on same function type. This reduces the chance of cold starts which would be more likely if
 NextJS and the server were hosted as separate functions.
-
 
 ## Development
 
@@ -58,7 +91,7 @@ NextJS and the server were hosted as separate functions.
   ```
   nvm use
   ```
-  
+
 - yarn
 
   ```
@@ -102,7 +135,7 @@ yarn add --dev storybook
 Viewing workspaces info:
 
 ```
-yarn workspaces info   
+yarn workspaces info
 ```
 
 Creating a new workspace:
@@ -115,6 +148,10 @@ npm init -w ./packages/server
 
 ### Run monorepo tasks
 
+This project uses Turbo to handle tasks across the monorepo
+
+See [examples](https://github.com/vercel/turbo/tree/main/examples/kitchen-sink) for more examples for setting Turbo up.
+
 Build monorepo:
 
 ```
@@ -126,7 +163,6 @@ Run `dev` in all workspaces:
 ```
 turbo dev
 ```
-
 
 Run `dev` in `web-ui` workspace:
 
@@ -145,6 +181,3 @@ Deploy monorepo:
 ```
 npx turbo run deploy
 ```
-
-
-

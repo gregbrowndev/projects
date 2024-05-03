@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "To Do App",
-  description: "A To-Do app demonstrating a compact full-stack monolith architecture",
+  description:
+    "A To-Do app demonstrating a compact full-stack monolith architecture",
 };
 
 export default function RootLayout({
@@ -16,12 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
-        <body className={inter.className}>
-            <GraphqlProvider>
-                {children}
-            </GraphqlProvider>
-        </body>
-      </html>
+    <html lang="en">
+      <body className={inter.className}>
+        <GraphqlProvider>{children}</GraphqlProvider>
+      </body>
+    </html>
   );
 }
