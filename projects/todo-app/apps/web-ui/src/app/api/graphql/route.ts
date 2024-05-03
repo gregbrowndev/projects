@@ -1,6 +1,6 @@
 // Next.js Custom Route Handler: https://nextjs.org/docs/app/building-your-application/routing/router-handlers
 import { createYoga } from 'graphql-yoga'
-import {schema} from "@repo/server/src/schema";
+import {schema} from "@repo/server/graphql";
 
 const { handleRequest } = createYoga({
     schema,

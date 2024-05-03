@@ -1,6 +1,6 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-    extends: ["@repo/eslint-config/server.js"],
+    extends: ["@repo/config-eslint/server.js"],
     jsparser: "@typescript-eslint/parser",
     parserOptions: {
         project: true,
