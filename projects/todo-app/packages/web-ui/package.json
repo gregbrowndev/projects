@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "clean": "rm -rf .next node_modules",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@repo/server": "*",
@@ -19,11 +21,12 @@
     "urql": "^4.0.7"
   },
   "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/jest-presets": "*",
+    "@repo/typescript-config": "*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
