@@ -14,6 +14,8 @@ Goals:
 
 ## Development
 
+### Create the EKS cluster
+
 To get started:
 
 ```shell
@@ -24,19 +26,20 @@ terraform init
 Plan:
 
 ```shell
-AWS_PROFILE=personal terraform plan
+export AWS_PROFILE=personal
+terraform plan
 ```
 
 Apply:
 
 ```shell
-AWS_PROFILE=personal terraform apply
+terraform apply
 ```
 
 Destroy:
 
 ```shell
-AWS_PROFILE=personal terraform destroy
+terraform destroy
 ```
 
 ## Notes
@@ -89,8 +92,79 @@ Part 2: https://www.youtube.com/watch?v=uiuoNToeMFE&list=PLiMWaCMwGJXnKY6XmeifEp
   - In this tutorial, we will use the policy managed by Amazon, `AmazonEKSClusterPolicy`, which contains all the permissions that the cluster needs. However, this policy assumes you will use a legacy provider that additionally requires load balancing permissions. These permissions constitute over half of the policy (i.e the `elasticloadbalancing` permissions). In the following sections, we will install AWS Load Balancer Controller that will take on that responsibility. At that point, we will create our own separate role to remove these redundant permissions.
   - K8s workers require several permissions of their own:
     - The `AmazonWorkerNodePolicy` policy provides core EC2 functionality permissions, e.g. `ec2:DescribeInstances`.
-    - "EKS pod identity" allows fine-grained access to control of pod permissions, e.g. giving access to a pod to read/write to a specific S3 bucket.
-    - Before the v3 of Pod Identities, we had to use an OpenID Connect provider and IAM roles for service accounts.
+    - The latest v3 of `AmazonWorkerNodePolicy` also allows "EKS pod identity" for fine-grained access to control of pod permissions, e.g. giving access to a pod to read/write to a specific S3 bucket.
+    - Before we had Pod Identities(`AmazonWorkerNodePolicy` v2), we had to use an OpenID Connect provider and IAM roles for service accounts to achieve the same thing.
     - We will look at the three separate methods for authentication later in the tutorial.
-  - We have to grant EKS access to modify IP address configuration on EKS worker nodes.
-    - When we create a pod on K8s, it is assigned an IP from the secondary IP address range assigned to the worker node. We're not using virtual networks like Flannel or Calico,
+  - We have to grant EKS access to modify IP address configuration on EKS worker nodes using the `AmazonEKS_CNI_Policy`.
+    - When we create a pod on K8s, it is assigned an IP from the secondary IP address range assigned to the worker node. We're not using virtual networks like Flannel or Calico, we get native AWS IP addresses for each pod. Later in the course, we will create k8s Service of type `LoadBalancer` which allows `Instance mode` and `IP mode`. The former is used for `NodePort` Services, while the latter works with `LoadBalancer` Services to route traffic directly to pod IPs.
+    - Using `NodePort` isn't recommended in production due to security, scalability, and latency issues.
+      - `NodePort` opens a port on the underlying worker node, making the node vulnerable to attacks.
+      - `NodePort` is limited to 2767 ports per node (30000-32767)
+      - `NodePort` increases latency as there are more network hops involved
+      - However, `NodePort` is a lot more cost efficient, as `LoadBalancer` Services create a Network Load Balancer per Service. For this reason, it is common to use Istio to handle cluster networking for both ingress (proxying) and load balancing, as well as the other benefits Istio brings (TLS, centralised network monitoring/tooling).
+  - Lastly, the `AmazonEC2ContainerRegistryReadOnly` policy is used to grant EKS permission to pull Docker images from ECR.
+
+In the code:
+
+- _7-eks.tf_:
+  - We create an IAM role per cluster, e.g. `"${local.name_prefix}-${local.eks_name}-eks-cluster"` in case we have multiple clusters per environment.
+  - We set up the network settings with `endpoint_public_access=true` to make the cluster publicly accessible.
+    - Later in the tutorial, we will see how to set up a private EKS cluster using AWS Client VPN and a private DNS that we can use for ingress and private services that we don't want to expose to the internet, e.g. Grafana dashboards, Temporal UI, etc.
+    - Even with a public cluster, the worker nodes will still be deployed on the private subnets without public IP addresses.
+  - We specified the two private subnets to place the worker nodes. It is required to have 2 AZs. EKS will create cross-account elastic network interface in these subnets to allow communication between worker nodes and the K8s control plane.
+  - We configured authentication to use `API`.
+    - We used to have to manage authentication using `aws_auth` ConfigMap in kube system namespace. However, this is deprecated now. It wasn't convenient to manage existing ConfigMaps in K8s using Terraform resources.
+    - AWS developed an API that we can use to add users to the cluster. You can still use ConfigMap and even both ConfigMap and API. But the API is highly recommended for user management. In the next section, we cover how to add IAM roles and IAM users to access the cluster.
+  - We set the `bootstrap_cluster_creator_admin_permissions=true` to grant the Terraform user admin priveleges. This option defaults to `true` anyway, but we want to be explicit. For us, because we will use Terraform to deploy Helm Charts and plain YAML resources.
+- _8-nodes.tf_:
+  - We create an IAM role for the worker nodes. We add `ec2.amazonaws.com` as the trust relationship instead of `eks.amazonaws.com` like we did in the eks cluster. In the next setion, we'll create an IAM role with a trust policy that allows specific users to assume it.
+  - We attached the three IAM policies discussed earlier to the nodes.
+  - Finally, we add the node group itself.
+    - Behind the scenes its managed as an EC2 autoscaling group.
+    - EKS has three types of autoscaling groups:
+      - Self-managed node groups:
+        - We can create the nodes ourselves using Terraform and Packer templates to customise the EC2 VM to install any packages we need.
+        - Limitations: EKS will not drain the node during upgrades. This can be done semi-manually.
+      - Managed node groups:
+        - We'll use these in this tutorial. They are a lot easier to manage and upgrade as this is managed by the EKS control plane.
+      - Fargate:
+        - Fully managed node groups, "serverless" K8s, that only require the user to deploy their containers and EKS will automatically provision and scale the worker nodes for you.
+        - A lot easier to manage but a lot more expensive. It has limitations such as EBS volumes.
+    - We set the `node_group_name` to general
+      - In production, it is common to have different node groups for different workloads, e.g. CPU optimised node groups, memory optimised node groups, or even GPU node groups for machine learning.
+      - Another common node group is for spot instances. This node group can be used for fault-tolerant workloads that can handle interuptions, such as batch/streaming jobs and async workflows. Spot instances can save up to 90%.
+    - We add the two private subnets to place the worker nodes.
+      - In production, if we have data intensive workloads, such as running Kafka and 100s of services that read and write to Kafka from different AZs, cross AZ data transfer costs can be super expensive, even more expensive than the compute!
+      - We could place all the worker nodes in a single AZ - you don't always need to create a highly available cluster by spreading nodes in different zones.
+    - For `capacity_type` we chose `ON_DEMAND` but we also have `STANDARD` and `SPOT`. We also set the `instance_types`.
+      - In a future tutorial, the instructor will show a strategy to come up with the proper node size.
+    - The `scaling_config` by itself will not autoscale but we can set the minimum and maximum nodes as well as the `desired_size`. We will need to deploy addition components called Cluster Autoscaler to adjust the `desired_size` based on the load, such as how many pending pods we have and their resource requirements.
+    - The `update_config` is used for cluster upgrades.
+    - The `labels` are used for pod affinity and node selectors. There are some built-in labels derived from the node group that serve the same purpose. However, in practice when you try to migrate applications from one node group to another with the same labels it is much easier to use custom labels.
+
+At the end of this part:
+
+Check you're connected with the correct user:
+
+```shell
+export AWS_PROFILE=personal
+aws sts get-caller-identity
+```
+
+Next, update the local kubeconfig with the following command:
+
+```shell
+aws eks update-kubeconfig --region eu-west-2 --name eks-tutorial-dev-demo
+```
+
+Verify you can access the nodes (shows we have admin privileges):
+
+```shell
+kubectl get nodes
+```
+
+Double check we have admin privileges in the EKS cluster (should output "yes"):
+
+```shell
+kubectl auth can-i "*" "*"
+```

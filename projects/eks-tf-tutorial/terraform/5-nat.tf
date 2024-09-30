@@ -14,5 +14,5 @@ resource "aws_nat_gateway" "nat" {
     Name = "${local.name_prefix}-nat"
   }
 
-  depends_on = [ aws_internet_gateway.igw ]
+  depends_on = [aws_internet_gateway.igw]
 }

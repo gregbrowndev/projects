@@ -1,5 +1,13 @@
 provider "aws" {
   region = local.region
+
+  default_tags {
+    tags = {
+      Terraform     = true
+      Project = local.project
+      Environment   = local.env
+    }
+  }
 }
 
 terraform {
