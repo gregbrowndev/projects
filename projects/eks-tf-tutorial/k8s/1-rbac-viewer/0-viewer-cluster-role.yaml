@@ -4,6 +4,6 @@ kind: ClusterRole
 metadata:
   name: viewer
 rules:
-- apiGroups: ["*"]
-  resources: ["pods", "services", "deployments", "replicasets", "ingresses", "configmaps", "secrets"]
-  verbs: ["get", "list", "watch"]
+  - apiGroups: ["*"]
+    resources: ["deployments", "configmaps", "pods", "secrets", "services"]
+    verbs: ["get", "list", "watch"]

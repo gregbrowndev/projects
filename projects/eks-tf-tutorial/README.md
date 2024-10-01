@@ -4,6 +4,8 @@
 
 This project follows Anton Putra's YouTube tutorial series to set up [Kubernetes on AWS EKS using Terraform](https://www.youtube.com/watch?v=aRXg75S5DWA&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=1&ab_channel=AntonPutra).
 
+GitHub source code: [AWS EKS Kubernetes Tutorial](https://github.com/antonputra/tutorials/blob/main/lessons/196/README.md)
+
 Goals:
 
 - Get a comprehensive understanding of best practices for setting up IAM roles and permissions both for managing

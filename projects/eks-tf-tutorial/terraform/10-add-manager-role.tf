@@ -1,5 +1,7 @@
 data "aws_caller_identity" "current" {}
 
+// TODO: if we created a manager IAM Group, would we then only allow user's in the
+// manager group to assume the role? e.g. the Principal would be the group ARN?
 resource "aws_iam_role" "eks_admin" {
   name = "${local.name_prefix}-${local.eks_name}-eks-admin"
 
@@ -18,7 +20,7 @@ resource "aws_iam_role" "eks_admin" {
 }
 
 resource "aws_iam_policy" "eks_admin" {
-  name  = "AmazonEKSAdminPolicy"
+  name = "AmazonEKSAdminPolicy"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -30,12 +32,12 @@ resource "aws_iam_policy" "eks_admin" {
         Resource = "*"
       },
       {
-        Effect = "Allow",
-        Action = "iam:PassRole",
+        Effect   = "Allow",
+        Action   = "iam:PassRole",
         Resource = "*",
         Condition = {
           StringEquals = {
-            "iam:PassedToService": "eks.amazonaws.com"
+            "iam:PassedToService" : "eks.amazonaws.com"
           }
         }
       }
@@ -44,7 +46,7 @@ resource "aws_iam_policy" "eks_admin" {
 }
 
 resource "aws_iam_role_policy_attachment" "eks_admin" {
-  role = aws_iam_role.eks_admin.name
+  role       = aws_iam_role.eks_admin.name
   policy_arn = aws_iam_policy.eks_admin.arn
 }
 
@@ -59,8 +61,8 @@ resource "aws_iam_policy" "eks_assume_admin" {
     Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow",
-        Action = "sts:AssumeRole",
+        Effect   = "Allow",
+        Action   = "sts:AssumeRole",
         Resource = aws_iam_role.eks_admin.arn
       }
     ]
@@ -69,13 +71,13 @@ resource "aws_iam_policy" "eks_assume_admin" {
 
 # Best practice: instead attach policy to IAM group and put `manager` in group
 resource "aws_iam_user_policy_attachment" "manager" {
-  user = aws_iam_user.manager.name
+  user       = aws_iam_user.manager.name
   policy_arn = aws_iam_policy.eks_assume_admin.arn
 }
 
 # Best practice: using IAM roles due to temporary credentials
 resource "aws_eks_access_entry" "manager" {
-  cluster_name = aws_eks_cluster.eks.name
-  principal_arn = aws_iam_user.manager.arn
-  kubernetes_groups = [ "my-admin" ]
+  cluster_name      = aws_eks_cluster.eks.name
+  principal_arn     = aws_iam_role.eks_admin.arn
+  kubernetes_groups = ["my-admin"]
 }

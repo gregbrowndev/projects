@@ -3,9 +3,9 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Terraform     = true
-      Project = local.project
-      Environment   = local.env
+      Terraform   = true
+      Project     = local.project
+      Environment = local.env
     }
   }
 }
