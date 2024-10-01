@@ -12,9 +12,32 @@ Goals:
 - Explore an alternative way to work with Terraform than I've used previously, e.g. managing environments and the tool chain
 - Set up [SOPS](https://github.com/getsops/sops) to manage secrets in code and simplify development onboarding and deployment
 
+## Table of Contents
+
+<!-- toc -->
+
+- [Development](#development)
+  * [Prerequisites](#prerequisites)
+  * [Getting Started](#getting-started)
+- [Notes](#notes)
+  * [Part 1: Create AWS VPC](#part-1-create-aws-vpc)
+  * [Part 2: Create EKS Cluster](#part-2-create-eks-cluster)
+  * [Part 3: Add IAM User and IAM Role](#part-3-add-iam-user-and-iam-role)
+
+<!-- tocstop -->
+
 ## Development
 
-### Create the EKS cluster
+### Prerequisites
+
+- Install [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+
+The table of contents in this README can be generated using `markdown-toc`:
+
+- Install `npm install -g markdown-toc`
+- Run `make docs` to generate the table of contents
+
+### Getting Started
 
 To get started:
 
@@ -38,13 +61,15 @@ terraform apply
 
 Destroy:
 
+> Note: we created IAM User keys manually, for `developer` and `manager` IAM Users. These keys will need to be deleted manually to tear down the infra.
+
 ```shell
 terraform destroy
 ```
 
 ## Notes
 
-### Part 1
+### Part 1: Create AWS VPC
 
 Part 1: [YouTube Link](https://www.youtube.com/watch?v=aRXg75S5DWA&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=2&ab_channel=AntonPutra)
 
@@ -77,7 +102,7 @@ At the end of part 1, we set up the Terraform ready to apply:
 - The instructor said its not recommended to authenticate using long-lived AWS credentials, instead the best practice is to use IAM roles with short-lived credential tokens. However, this is out of scope of this tutorial.
 - We also deleted the default VPC in AWS as we would never use it in a real environment. Its very easy to recreate is you ever do want to create a new one.
 
-### Part 2
+### Part 2: Create EKS Cluster
 
 Part 2: [YouTube Link](https://www.youtube.com/watch?v=uiuoNToeMFE&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=3&ab_channel=AntonPutra)
 
@@ -184,4 +209,165 @@ Double check we have admin privileges in the EKS cluster (should output "yes"):
 
 ```shell
 kubectl auth can-i "*" "*"
+```
+
+### Part 3: Add IAM User and IAM Role
+
+Part 3: [YouTube Link](https://www.youtube.com/watch?v=6COvT1Zu9o0&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=3&ab_channel=AntonPutra)
+
+Overview:
+
+- We have created the EKS cluster and our IAM User has admin privileges to the cluster. However, we will also have other team members that want to use/admin the cluster.
+  - Other DevOps team members also need admin privileges
+  - Dev team 1 needs read/write access to a specific namespace and team 2 to access another
+- Note: We might want to create a namespace quota to restrict number of pods, cpu and memory that can be allocated by that team. We use quotas to prevent interference between teams.
+- The best practice is to create a common IAM Role that team members can assume, e.g. admin, team1, team2, etc. which has only the permissions it needs.
+- When we deploy our EKS cluster in production, we would typically only grant read-only access to namespaces for team 1 and 2, for example.
+- In AWS, we use IAM Users and Roles for identities and permissions, but in EKS we use service accounts, users and RBAC (e.g. via the `ClusterRoleBinding` kind manifest).
+
+In the first part of this video:
+
+- We'll map IAM User and Roles to custom RBAC groups.
+- For a detailed tutorial on EKS RBAC, see [Kubernetes RBAC Explained](https://www.youtube.com/watch?v=iE9Qb8dHqWI)
+- We'll map IAM User to `AmazonEKSDeveloperPolicy` which grants minimum permissions, e.g. updating local K8s config and connecting to EKS cluster
+- Then in K8s we'll create a viewer-role, using `ClusterRole`, with read-only access for certain objects, e.g. `deployments` and `configmaps`.
+- Next, we'll use `ClusterRoleBinding` to bind the viewer RBAC role to a "my-viewer" RBAC group.
+- Finally, we'll use EKS API to link IAM Users to this K8s RBAC group.
+
+In the second part of this video:
+
+- It's not ideal to use IAM Users with long-lived credentials to access the EKS cluster. Instead, we'll create an `eks-admin` IAM Role with `AmazonEKSAdminPolicy` which IAM Users can assume. IAM Roles can authenticate against EKS using short-lived auth tokens.
+- In K8s, we cannot use built-in RBAC groups that start with system prefix, so we'll create a new group, `my-admin`, using a `ClusterRoleBinding` and grant them the `cluster-admin` role.
+- We'll create a `manager` IAM User with `AmazonEKSAssumeAdminPolicy` policy that can assume the `eks-admin` IAM Role.
+- Finally, we'll bind the `eks-admin` IAM Role with the K8s `my-admin` group using EKS API.
+
+In the code:
+
+- We created the two k8 manifests to create the `viewer` k8s role and a binding to bind the role to the `my-viewer` k8s group.
+
+  ```shell
+  kubectl apply -f ./k8s/1-rbac-viewer
+  ```
+
+- In _9-add-developer-user.tf_:
+  - we create IAM User `developer`
+  - create an IAM Policy, `AmazonEKSDeveloperPolicy`.
+    - Has minimum permissions to let devs update their local kubeconfig and connect to the cluster via AWS CLI / Console
+    - The k8s RBAC `viewer` role will give them further permissions when using `kubectl`
+  - create a policy attachment to attach policy to user. Note: best practice is to attach policy to group then add user to group
+  - next we create an `aws_eks_access_entry` to bind the developer IAM User to k8s RBAC `my-viewer` group using EKS API
+
+After applying the TF, we need to go to the Console and create access creds for the `developer` user and add them as a local profile using `aws configure --profile developer`.
+
+Check the profile is configured correctly:
+
+```shell
+aws sts get-caller-identity --profile developer
+```
+
+Next, connect to EKS and update local kubectl config:
+
+```shell
+aws eks update-kubeconfig \
+  --region eu-west-2 \
+  --name eks-tutorial-dev-demo \
+  --profile developer
+```
+
+Output: _Updated context arn:aws:eks:eu-west-2:496487758480:cluster/eks-tutorial-dev-demo in /Users/gregbrown/.kube/config_
+
+Check that the local Kubernetes config uses the `developer` profile:
+
+```shell
+kubectl config view --minify
+```
+
+Check we have access to the cluster:
+
+```shell
+kubectl get pods
+# Out: No resources found in default namespace.
+```
+
+We can check if we have permissions:
+
+```shell
+kubectl auth can-i get pods
+# Out: yes
+
+kubectl auth can-i get nodes
+# Out: no
+
+kubectl get nodes
+# Out: Error from server (Forbidden): nodes is forbidden: User "arn:aws:iam::0000000000:user/developer" cannot list resource "nodes" in API group "" at the cluster scope
+
+# Check admin privileges
+kubectl auth can-i "*" "*"
+# Out: no
+```
+
+- In _k8s/2-rbac-admin/admin-cluster-role-binding.yaml_:
+  - we create another IAM User and IAM Role and grant admin privileges in the cluster
+  - k8s ships with a default cluster admin role and group, but the EKS API won't let use the default group (since it starts with the system prefix), so we create our own admin group, `my-admin`, and bind it to the existing `cluster-admin` role.
+
+To apply this binding, we need to switch to the admin user again:
+
+```shell
+# Note: on work machine I used `export AWS_PROFILE=personal`
+aws eks update-kubeconfig \
+  --region eu-west-2 \
+  --name eks-tutorial-dev-demo
+```
+
+Apply the binding:
+
+```shell
+kubectl apply -f ./k8s/2-rbac-admin
+```
+
+- In _10-add-manager-role.tf`:
+  - First, we use `data` resource to get AWS account number for IAM Role.
+  - We create an `eks-admin` IAM Role with the principal: `"arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"`. This allows any user in the account to assume the IAM Role.
+  - We create the `eks-admin` IAM policy with permission to grant all access to EKS. You can also grant additional permissions to view all EKS tabs (?)
+  - We attach the `eks-admin` policy to the `eks-admin` role.
+  - We create another IAM User, `manager`, using TF and will create keys manually. Note: when we want to tear down the infra, we'll have to manually delete the keys.
+  - We create an IAM Policy, `AmazonEKSAssumeAdminPolicy`, to allow the `manager` IAM User to assume the `eks-admin` IAM Role. (I thought we already allowed these with the `"arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"` principal?)
+  - Next, we attach the IAM Policy to the `manager` IAM Role (Note: best practice is to first create an IAM Group)
+  - Lastly, we create an `aws_eks_access_entry` resource to add the IAM User to the `my-admin` k8s RBAC group.
+
+Lets apply the TF and check the Console. We should see we now have the `manager` IAM User. Create access keys and configure a `manager` profile.
+
+We will not use the `manager` IAM User directly to access EKS. Instead, we will assume the `eks-admin` IAM Role.
+
+Check you can assume the role using the `manager` IAM User:
+
+```shell
+export PERSONAL_ACCOUNT_ID=  # omitted for security
+aws sts assume-role \
+  --role-arn arn:aws:iam::${PERSONAL_ACCOUNT_ID}:role/eks-tutorial-dev-demo-eks-admin \
+  --role-session-name manager-session \
+  --profile manager
+# Out: (temporary credentials)
+```
+
+We now need to create another AWS profile manually, edit aws config:
+
+```shell
+# vim ~/.aws/config
+[profile eks-admin]
+role_arn = arn:aws:iam::[PERSONAL_ACCOUNT_ID]:role/eks-tutorial-dev-demo-eks-admin
+source_profile = manager
+```
+
+This profile doesn't have any credentials. We will use this profile with `kubectl`, we'll get a set of temporary credentials for the role using the `manager` IAM User to assume the `eks-admin` role.
+
+Note: if we created a `manager` IAM Group and added specific users to the group, they could replace `source_profile` with their own profile rather than needing to configure the `manager` profile.
+
+Now, lets update kube config, but this time use the `eks-admin` profile we just configured:
+
+```shell
+aws eks update-kubeconfig \
+  --region eu-west-2 \
+  --name eks-tutorial-dev-demo \
+  --profile eks-admin
 ```
