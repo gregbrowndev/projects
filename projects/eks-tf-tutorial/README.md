@@ -25,6 +25,8 @@ Goals:
   * [Part 1: Create AWS VPC](#part-1-create-aws-vpc)
   * [Part 2: Create EKS Cluster](#part-2-create-eks-cluster)
   * [Part 3: Add IAM User and IAM Role](#part-3-add-iam-user-and-iam-role)
+  * [Part 4: Horizontal Pod Autoscaler (HPA)](#part-4-horizontal-pod-autoscaler-hpa)
+  * [Part 5: EKS Pod Identities and Cluster Autoscaler](#part-5-eks-pod-identities-and-cluster-autoscaler)
 
 <!-- tocstop -->
 
