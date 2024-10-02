@@ -34,10 +34,21 @@ Goals:
 
 - Install [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 
+- Install [SOPS](https://github.com/getsops/sops)
+
+For MacOS:
+
+```shell
+curl -LO https://github.com/getsops/sops/releases/download/v3.9.0/sops-v3.9.0.linux.arm64
+mv sops-v3.9.0.linux.arm64 /usr/local/bin/sops
+chmod +x /usr/local/bin/sops
+```
+
 The table of contents in this README can be generated using `markdown-toc`:
 
 - Install `npm install -g markdown-toc`
 - Run `make docs` to generate the table of contents
+
 
 ### Getting Started
 
@@ -372,4 +383,214 @@ aws eks update-kubeconfig \
   --region eu-west-2 \
   --name eks-tutorial-dev-demo \
   --profile eks-admin
+```
+
+### Part 4: Horizontal Pod Autoscaler (HPA)
+
+Part 3: [YouTube Link](https://www.youtube.com/watch?v=0EWsKSdmbz0&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=4&ab_channel=AntonPutra)
+
+Overview:
+
+- In this part, we'll cover K8s `HorizontalPodAutoscaler` (HPA) and the components you need to install to make it work.
+- Commonly, we would use CPU or memory useage or both to decide when to scale the pod. In order to do this, we must make sure the `Deployment` defines CPU/memory limits.
+- When following the GitOps approach, we must not set `replicas` on the `Deployment` or `StatefulSet`, otherwise you will get a conflict/race condition between the GitOps tool and the HPA, e.g. ArgoCD keeps trying to scale to 1 while HPA is trying to scale to 5.
+- The HPA resource uses a `spec.scaleTargetRef.name` property to select the `metadata.name` property of the `Deployment`, not a label like a `Service`.
+- To scale using custom metrics, e.g. queue size or requests per second, we will need another component. See [related tutorials](https://www.youtube.com/@AntonPutra/search?query=hpa%20custom%20metrics).
+- To use HPA, we usually deploy `metrics-server` to the cluster that scrapes each kubelet and publishes them to the K8s metrics API. The `metrics-server` rarely needs any maintainance so its safe to deploy it using a Helm Chart.
+- We will take a look at using the Terraform Helm provider so we can apply Helm Charts through Terraform
+  - Note: Keiran mentioned that this is a bit flakey, if the apply fails it can screw your k8s deployment
+
+In `11-helm-provider.tf`:
+
+- we configured the Helm provider
+
+In `12-metrics-server.tf`:
+
+- we use the Helm provider to install the metrics server
+- we also created a config file at `values/metrics-server.yaml` to store some configuration, e.g.
+  - `metric-resolution=15s` defines the frequency the metrics are scraped.
+  - `secure-port=10250` defines the port to scrape on the kubelets, so it needs to be defined correctly.
+
+In order to apply TF, we need to use `terraform init` to initialise the new TF provider:
+
+```shell
+terraform init
+terraform apply
+```
+
+We can check if we can see the metrics-server pod running:
+
+```shell
+kubectl get pods -n kube-system
+```
+
+We can also try to fetch some logs:
+
+```shell
+kubectl logs -l app.kubernetes.io/instance=metrics-server -f -n kube-system
+```
+
+This is especially important when provisioning a custer using kops.
+
+Finally, the most important thing to check is we can get the metrics of the pods in the cluster:
+
+```shell
+kubectl top pods -n kube-system
+```
+
+or
+
+```shell
+kubectl top nodes -n kube-system
+```
+
+> Note: CPU (cores) such as "4m" means millicores or equivalent to 0.004 vCPUs in ECS. The memory unit "Mi" (mebibytes) is similar to MB, e.g.
+> 1 MiB = 1,048,576 bytes (2^20 bytes)
+> 1 MB  = 1,000,000 bytes (10^6 bytes)
+> So 15Mi = 15.73 MB
+
+Lets deploy the simple app:
+
+```shell
+kubectl apply -f ./k8s/3-simple-app
+```
+
+and check the pods are running:
+
+```shell
+watch -t kubectl get pods -n 3-example
+# NAME                     READY   STATUS    RESTARTS   AGE
+# myapp-86db698dcc-qrpmn   1/1     Running   0          4m51s
+```
+
+and the HPA is running:
+
+```shell
+watch -t kubectl get hpa -n 3-example
+# NAME    REFERENCE          TARGETS          MINPODS   MAXPODS   REPLICAS   AGE
+# myapp   Deployment/myapp   1%/80%, 0%/70%   1         5         1          4m34s
+```
+
+> Note: the HPA `TARGETS` shows "unknown" when you forget to define the resource limits on the deployment.
+
+We can check the service is running:
+
+```shell
+kubectl get svc -n 3-example        
+# NAME    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+# myapp   ClusterIP   172.20.238.204   <none>        8080/TCP   6m28s
+```
+
+We can use port-forwarding to access the service from our local machines:
+
+```shell
+kubectl port-forward svc/myapp 8080 -n 3-example
+```
+
+which we can hit with curl:
+
+```shell
+curl "localhost:8080/api/cpu?index=44"
+# (after some time)
+# {"message":"Testing CPU load: Fibonacci index is 44, number is 701408733"}%      
+```
+
+This will start a job to generate Fibonacci numbers which is CPU intensive. We can see the load in the HPA:
+
+```shell
+watch -t kubectl get hpa -n 3-example
+# NAME    REFERENCE          TARGETS            MINPODS   MAXPODS   REPLICAS   AGE
+# myapp   Deployment/myapp   101%/80%, 0%/70%   1         5         2          10m
+```
+
+We can see that the HPA created a second pod to handle the load!
+
+HPA will also scale down the pod after 5-10 mins of sub-threshold load. This is configurable in the HPA resource.
+
+Let's clean up and delete the namespace we created:
+
+```shell
+kubectl delete ns 3-example
+```
+
+### Part 5: EKS Pod Identities and Cluster Autoscaler
+
+Overview:
+
+In this part, we'll cover:
+
+- EKS Pod Identities to provide fine-grained permissions to pods, e.g. allow access to a specific S3 bucket
+- Cluster Autoscaler to scale the number of nodes in our cluster
+
+Notes:
+
+- Cluster Autoscaler needs to be installed into the cluster
+- Remember we need to disable `scaling_config[0].desired_size` in the `8-nodes.tf` Terraform code, to prevent TF from scaling the cluster size back to its initial configuration.
+- Cluster Autoscaler requires permissions to interact with AWS to adjust to number of nodes.
+  - Previously, we would use IAM OIDC provider. It was a bit complicated, we would need to:
+    - Create an OIDC provider on the IAM side
+    - Create an IAM Role
+    - Establish trust with a particular k8s namespace and k8 service account
+    - The most annoying part about this approach was needing to use an annotation on the ServiceAccount to link the IAM Role using the IAM Role ARN.
+  - Now with EKS' Pod Identities, it is much easier.
+    - We enable it using an EKS addon, `eks-pod-identity-agent`.
+    - We still need to create an IAM Role for the K8s `ServiceAccount`, but the trust (`Principal`) is just `pods.eks.amazonaws.com` rather than an ARN.
+    - To bind an IAM Role with an k8s `ServiceAccount`, we don't need to use an annotation anymore. Instead, we use EKS API with the `aws_eks_pod_identity_assocation` TF resource.
+
+In `13-pod-Identity-addon.tf`:
+
+- We deploy the EKS Pod Identity agent as a k8s `DaemonSet` so it runs on every single node.
+- We deploy this simply as an EKS addon.
+
+We can find the latest version of any addon using:
+
+```shell
+aws eks describe-addon-versions \
+  --region eu-west-2 \
+  --addon-name eks-pod-identity-agent
+```
+
+You can see the latest version at the top. At the time of writing the latest version was `v1.3.2-eksbuild.2` but I'll keep it the same as used in the tutorial.
+
+Let's apply the TF: `terraform apply`, and check the Pod Identity pod is running:
+
+```shell
+kubectl get pods -n kube-system
+# NAME                              READY   STATUS    RESTARTS   AGE
+# eks-pod-identity-agent-ds4hb      1/1     Running   0          77s
+# ...
+```
+
+We can also get the daemonsets, specifically:
+
+```shell
+kubectl get daemonset eks-pod-identity-agent -n kube-system
+# NAME                     DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+# eks-pod-identity-agent   1         1         1       1            1           <none>          2m24s
+```
+
+Without the agent running, we won't be able to authorised our client with AWS Services.
+
+In `14-cluster-autoscaler.tf`:
+
+- We first need to create an IAM Role which the Cluster Autoscaler client will assume to scale the nodes.
+- We always use `Service = "pods.eks.amazonaws.com"` for the trust relationship. Compared to using the OIDC provider approach, we would need to specify both the k8s namespace and service account provider.
+- Next, we create a IAM Policy that allows the IAM Role (and Cluster Autoscaler) to access the autoscaling group.
+- We attach the IAM Policy to the IAM Role
+- Next, we need to associate this with a k8s account. We still need to provide the `namespace` where the Autoscaler is running and the `cluster-autoscaler` service account
+- Finally, we deploy the Cluster Autoscaler using a Helm Chart
+
+Let's apply the TF and check the autoscaler is deployed:
+
+```shell
+kubectl get pods -n kube-system
+# NAME                                                 READY   STATUS             RESTARTS      AGE
+# autoscaler-aws-cluster-autoscaler-56d4497b59-t524t   0/1     CrashLoopBackOff   5 (63s ago)   3m59s
+# ...
+```
+
+Looks like it crashed!
+
+```shell
+kubectl logs -l app.kubernetes.io/instance=autoscaler -f -n kube-system
 ```
