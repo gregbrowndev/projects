@@ -74,6 +74,19 @@ Apply:
 terraform apply
 ```
 
+Configure local kubeconfig:
+
+```shell
+export AWS_PROFILE=personal
+aws eks update-kubeconfig --region eu-west-2 --name eks-tutorial-dev-demo
+```
+
+or manually set profile to use temp Role-based auth:
+
+```shell
+aws eks update-kubeconfig --region eu-west-2 --name eks-tutorial-dev-demo --profile eks-admin
+```
+
 Destroy:
 
 > Note: we created IAM User keys manually, for `developer` and `manager` IAM Users. These keys will need to be deleted manually to tear down the infra.
@@ -389,7 +402,7 @@ aws eks update-kubeconfig \
 
 ### Part 4: Horizontal Pod Autoscaler (HPA)
 
-Part 3: [YouTube Link](https://www.youtube.com/watch?v=0EWsKSdmbz0&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=4&ab_channel=AntonPutra)
+Part 4: [YouTube Link](https://www.youtube.com/watch?v=0EWsKSdmbz0&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=4&ab_channel=AntonPutra)
 
 Overview:
 
@@ -478,7 +491,7 @@ watch -t kubectl get hpa -n 3-example
 We can check the service is running:
 
 ```shell
-kubectl get svc -n 3-example        
+kubectl get svc -n 3-example
 # NAME    TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
 # myapp   ClusterIP   172.20.238.204   <none>        8080/TCP   6m28s
 ```
@@ -494,7 +507,7 @@ which we can hit with curl:
 ```shell
 curl "localhost:8080/api/cpu?index=44"
 # (after some time)
-# {"message":"Testing CPU load: Fibonacci index is 44, number is 701408733"}%      
+# {"message":"Testing CPU load: Fibonacci index is 44, number is 701408733"}%
 ```
 
 This will start a job to generate Fibonacci numbers which is CPU intensive. We can see the load in the HPA:
@@ -516,6 +529,8 @@ kubectl delete ns 3-example
 ```
 
 ### Part 5: EKS Pod Identities and Cluster Autoscaler
+
+Part 5: [YouTube Link](https://www.youtube.com/watch?v=HbRyRJnBEfw&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=14&ab_channel=AntonPutra)
 
 Overview:
 
@@ -596,3 +611,43 @@ Looks like it crashed!
 ```shell
 kubectl logs -l app.kubernetes.io/instance=autoscaler -f -n kube-system
 ```
+
+> The error looks like the cluster-autoscaler was not assuming the IAM role we associated
+> with the `cluster-autoscaler` service account via Pod Identity. I upgraded the Cluster
+> Autoscaler to Helm Chart version 9.43.0 which seemed to fix the issue.
+
+We can apply the TF changes and deploy the `k8s/4-cluster-autoscaler-app` manifests:
+
+```shell
+kubectl apply -f ./k8s/4-cluster-autoscaler-app
+```
+
+Watch the nodes and pods. At first you will see only 2 pods running. Eventually, you will see a second node appear
+and the remaining pods will start running.
+
+```shell
+watch -t kubectl get nodes
+# NAME                                        STATUS   ROLES    AGE     VERSION
+# ip-10-0-4-49.eu-west-2.compute.internal     Ready    <none>   16m     v1.29.8-eks-a737599
+# ip-10-0-40-138.eu-west-2.compute.internal   Ready    <none>   2m18s   v1.29.8-eks-a737599
+```
+
+```shell
+watch -t kubectl get pods -n 4-example
+# NAME                     READY   STATUS    RESTARTS   AGE
+# myapp-5c94dbbc45-6ph79   1/1     Running   0          3m15s
+# myapp-5c94dbbc45-8n42h   1/1     Running   0          3m15s
+# myapp-5c94dbbc45-fh4h4   1/1     Running   0          3m15s
+# myapp-5c94dbbc45-nlm6z   1/1     Running   0          3m15s
+# myapp-5c94dbbc45-wb6ks   1/1     Running   0          3m15s
+```
+
+Clean up by deleting the namespace:
+
+```shell
+kubectl delete ns 4-example
+```
+
+> Note: it will take around 10 minutes for the second node to scale back down.
+
+
