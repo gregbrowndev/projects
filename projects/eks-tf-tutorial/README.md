@@ -31,6 +31,7 @@ Goals:
     + [Example 1: Exposing a service directly to the internet](#example-1-exposing-a-service-directly-to-the-internet)
     + [Example 2: Exposing an ingress to the internet](#example-2-exposing-an-ingress-to-the-internet)
     + [Example 3: Using ingress with SSL termination](#example-3-using-ingress-with-ssl-termination)
+  * [Part 7: Ingress Nginx Controller](#part-7-ingress-nginx-controller)
 
 <!-- tocstop -->
 
@@ -878,4 +879,121 @@ Clean up:
 kubectl delete ns 7-example
 ```
 
+### Part 7: Ingress Nginx Controller
 
+Part 6: [YouTube Link](https://www.youtube.com/watch?v=xwiRjimKW9c&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=7&ab_channel=AntonPutra)
+
+Overview:
+
+In this part, we'll cover:
+
+- Pretty much the same as in the last part, but using Ingress Nginx Controller for ingress
+- The pros and cons and which one is recommended
+
+Notes:
+
+- Architecture:
+  - When using Ingress Nginx, a Nginx pod is deployed in the cluster and a Layer 4 NLB is provisioned outside the cluster.
+  - The NLB does not understand HTTP protocol and will not terminate TLS, so it will pass everything to the NGINX controller.
+  - The ingress rules in the manifest are used to generate an Nginx config to route the traffic to the pods.
+  - Nginx acts as a reverse proxy.
+- We'll still use AWS Load Balancer Controller to create an NLB outside the cluster to route traffic to the Nginx pod.
+  - We'll use `IP mode` like before in the NLB. This means:
+  - AWS will not use NodePorts, so won't add all the k8s workers to the target group.
+  - Instead, it will use NGINX controller pod IP addresses only in the target group.
+- Since we have a central proxy in the cluster, we can scrape metrics using Prometheus to monitor all network traffic.
+- In many organisations, its common to have two Ingress nginx for internal and external facing services.
+  - The `external-nginx` will have a public LB (public IP) outside the cluster exposed to the internet
+  - The `internal-nginx` will have private LB (private IP) outside the cluster that is only routable within the VPC. For this we use private Route53 hosted zones, private DNS, and Client VPNs, e.g. for Grafana dashboards. We'll look at this in a future section of the tutorial.
+- Another less-known benefit of Ingress Nginx is that it can be used to route both TCL and UDP services. Usually we'd expose them with a service of type Load Balancer. In the AWS controller, this would create a separate NLB per service which results in higher costs, as the NLB are charged hourly. With Nginx controller, we can expose the Load Balancer services with a single NLB load balancer
+- For TLS termination, there are two solutions:
+  - Load the certificate and private key into k8s Secret
+  - Automate this process with Cert Manager (Lets Encrypt)
+- Cert Manager can be configured for one of two challenges:
+  - HTTP-01 is easier to set up
+  - DNS-01 is recommended for production but more involved to set up as it requires Cert Manager to have permissions to write TXT records to Route53
+  - Lets Encrypt certificates are valid for 90 days, but Cert Manager will try to renew them every 60 days. If renewal fails, you can configure it to send you an email.
+
+In `./terraform/16-nginx-ingress.tf`:
+
+- We deploy the Nginx controller with Helm
+- It is simple to set up as it doesn't require any IAM permissions
+- We create a separate values file to configure an external, public facing NLB to route traffic into the cluster.
+
+Deploy terraform and check:
+
+```shell
+kubectl get svc -n ingress
+# NAME                                          TYPE           CLUSTER-IP       EXTERNAL-IP                                                                    PORT(S)                      AGE
+# external-ingress-nginx-controller             LoadBalancer   172.20.214.127   k8s-ingress-external-c725936549-ed294beaf4e30b50.elb.eu-west-2.amazonaws.com   80:31431/TCP,443:30563/TCP   106s
+# external-ingress-nginx-controller-admission   ClusterIP      172.20.136.195   <none>                                                                         443/TCP                      106s
+```
+
+- The `external-ingress-nginx-controller` LB is used for each ingress that we configure. This is an NLB created in AWS.
+- You will always want to create a CNAME record with a value pointing to this LB, i.e. `k8s-ingress-external-c725936549-ed294beaf4e30b50.elb.eu-west-2.amazonaws.com`.
+- By default, it exposes only port 80 and 443.
+- There are options to expose custom TCP and UDP services using a single load balancer.
+- The NLB target group contains the IP address of the Nginx ingress. If we have more replicas of Nginx, we would see these here too.
+
+We can see the IP of the Nginx pod matches the IP in the NLB target group:
+
+```shell
+kubectl get pods -o wide -n ingress
+# NAME                                                READY   STATUS    RESTARTS   AGE     IP            NODE                                      NOMINATED NODE   READINESS GATES
+# external-ingress-nginx-controller-5574df9cd-bgm5q   1/1     Running   0          7m51s   10.0.15.186   ip-10-0-4-49.eu-west-2.compute.internal   <none>           <none>
+```
+
+After deploying Nginx Ingress controller, we can see we have the second ingress class:
+
+```shell
+kubectl get ingressclass
+# NAME             CONTROLLER             PARAMETERS   AGE
+# alb              ingress.k8s.aws/alb    <none>       4h36m
+# external-nginx   k8s.io/ingress-nginx   <none>       9m21s
+```
+
+> Note: It's called `external-nginx` because thats what we put in the values.yaml. If we wanted to create an internal nginx, we'd need to deploy a separate nginx controller with an internal LB.
+
+In `./k8s/8-nginx-example-1.yaml`:
+
+- We deploy a simple app like before
+- We created a service with clusterip type
+- For ingress, we've referenced the `external-nginx` class in `ingressClassName`
+- The ingress uses `ex8.antonputra.com` host-based routing. We won't create a DNS for this one, we'll test it like we did before.
+
+Apply and check:
+
+```shell
+kubectl apply -f ./k8s/8-nginx-example-1
+# namespace/8-example created
+# deployment.apps/myapp created
+# service/myapp created
+# ingress.networking.k8s.io/myapp created
+
+kubectl get pods -n 8-example
+# NAME                     READY   STATUS    RESTARTS   AGE
+# myapp-54c68646fc-r9h5j   1/1     Running   0          34s
+
+kubectl get ing -n 8-example
+# NAME    CLASS            HOSTS                ADDRESS                                                                        PORTS   AGE
+# myapp   external-nginx   ex8.antonputra.com   k8s-ingress-external-c725936549-ed294beaf4e30b50.elb.eu-west-2.amazonaws.com   80      74s
+```
+
+We can use the ingress to CURL the service:
+
+```shell
+curl -i --header "Host: ex8.antonputra.com" http://k8s-ingress-external-c725936549-ed294beaf4e30b50.elb.eu-west-2.amazonaws.com/about
+# HTTP/1.1 200 OK
+# Date: Sat, 12 Oct 2024 17:44:26 GMT
+# Content-Type: application/json
+# Content-Length: 39
+# Connection: keep-alive
+#
+# {"service":"myapp","version:":"v0.1.4"}%
+```
+
+Clean up:
+
+```shell
+kubectl delete ns 8-example
+```
