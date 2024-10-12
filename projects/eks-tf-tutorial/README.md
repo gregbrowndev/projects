@@ -27,6 +27,10 @@ Goals:
   * [Part 3: Add IAM User and IAM Role](#part-3-add-iam-user-and-iam-role)
   * [Part 4: Horizontal Pod Autoscaler (HPA)](#part-4-horizontal-pod-autoscaler-hpa)
   * [Part 5: EKS Pod Identities and Cluster Autoscaler](#part-5-eks-pod-identities-and-cluster-autoscaler)
+  * [Part 6: AWS Load Balancer Controller](#part-6-aws-load-balancer-controller)
+    + [Example 1: Exposing a service directly to the internet](#example-1-exposing-a-service-directly-to-the-internet)
+    + [Example 2: Exposing an ingress to the internet](#example-2-exposing-an-ingress-to-the-internet)
+    + [Example 3: Using ingress with SSL termination](#example-3-using-ingress-with-ssl-termination)
 
 <!-- tocstop -->
 
@@ -622,8 +626,7 @@ We can apply the TF changes and deploy the `k8s/4-cluster-autoscaler-app` manife
 kubectl apply -f ./k8s/4-cluster-autoscaler-app
 ```
 
-Watch the nodes and pods. At first you will see only 2 pods running. Eventually, you will see a second node appear
-and the remaining pods will start running.
+Watch the nodes and pods. At first you will see only 2 pods running. Eventually, you will see a second node appear and the remaining pods will start running.
 
 ```shell
 watch -t kubectl get nodes
@@ -649,5 +652,230 @@ kubectl delete ns 4-example
 ```
 
 > Note: it will take around 10 minutes for the second node to scale back down.
+
+### Part 6: AWS Load Balancer Controller
+
+Part 6: [YouTube Link](https://www.youtube.com/watch?v=5XpPiORNy1o&list=PLiMWaCMwGJXnKY6XmeifEpjIfkWRo9v2l&index=7&ab_channel=AntonPutra)
+
+Overview:
+
+In this part, we'll cover:
+
+- How to expose your application running in k8s to the internet or within just the VPC
+- Cloud Controller Manager (legacy) and how it provisions cloud resources when you create a LoadBalancer service (NLB in AWS)
+
+Notes:
+
+- Cloud Controller Manager (legacy)
+  - For a long time would create a classic load balancer by default in AWS
+  - You can use specific annotations in the manifest to control the type, internal, and cross-zone enabled, for example
+  - Problems:
+    - Cloud Providers have to integrate their changes into the Kubernetes release cycle, slowing down development
+    - The legacy LB controller works by adding all your k8s workers to the target group using NodePorts. This adds additional network hops which increases latency. The target groups also have a hard limit of 500 IPs (?), so this solution doesn't scale for large k8s clusters.
+  - This controller has been deprecated and only receives bug and security fixes. In Kubernetes 1.31, this controller has been removed altogether!
+- AWS Load Balancer Controller
+  - Cloud providers now develop their own external k8s controllers. AWS has the [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/).
+  - This is usually installed using Helm Charts
+  - This controller creates an NLB for each k8s `Service` and a ALB for a k8s `Ingress`
+  - Since we now use the native VPC network when creating EKS cluster, each pod gets VPC routable IP addresses. This means you can add pod IP addresses directly to the LB target group
+- Ingress
+  - There are two ingress types available:
+    - When using the AWS Load Balancer Controller to create an `Ingress`, it creates a Layer 7 ALB running outside the EKS cluster.
+      - It understands HTTP protocol, so you can route via host/path headers and HTTP verbs.
+      - `Instance Mode` adds the service's `NodePort` to the target group, like the legacy controller.
+      - `IP Mode` adds the pods IP address directly to the target group and is more efficient
+      - We can use annotations to add a ACM certificate ARN to secure the ALB with TLS (HTTPS).
+      - To monitor network traffic and collect metrics, we'd need to get them from ALB.
+      - The AWS LB Controller creates one ALB per `Ingress` by default. There is the `IngressGroup` resource that enables you to group multiple Ingress resources together and merge them into a single ALB.
+    - When using the classic Nginx Ingress Controller to create an `Ingress`, it creates a Nginx server running inside the EKS cluster and a Layer 4 NLB outside the EKS cluster.
+      - To secure the ingress with TLS, you'd need to deploy Kubernetes Cert Manager which keeps the SSL certs up to date with Lets Encrypt. However, you need to store the certificate and private key in the EKS cluster and mount them to the Nginx pod.
+      - Having a proxy (the nginx server) adds complexity, but one benefit is that is creates a single place we can monitor network traffic for all applications, e.g. using Prometheus. We'd be able to get requests per second, latency, availability, etc.
+
+Questions:
+
+- Do AWS NLB's also have target groups?
+- Does each `Ingress` create a new ALB or does it merge them together?
+- Does each load balancer `Service` create a new NLB? Is this very expensive?
+  - Note: NLBs are cheaper and faster than ALBs!
+- How actually do the ALB/NLB interact?
+  - The ingress ALB routes traffic from the internet/VPC to a target group. Does this target group then contain the NLB IP address which then load balances the requests directly to the pods?
+
+In `15-aws-lbc.tf`:
+
+- The AWS Load Balancer Controller will need access to create load balancers, so we create a policy to allow this. We used Pod Identities to grant access.
+- In the previous example, we use Pod Identities with `assume_role_policy` on the role itself. It is the same in this case, but we use a data resource to create the assume policy and we've created the role as a separate resource.
+- Next, we create a IAM Policy to define the permissions for the AWS Load Balancer Controller.
+  - In this example, we've put the policy in a file. This is just another way of doing it.
+- Next, we attach the policy to the role.
+- Finally, we link the IAM Role with the Kubernetes ServiceAccount using Pod Identity Association
+- With IAM permissions set up, we then deploy the AWS Load Balancer Controller using the Helm provider
+
+In `./iam/AWSLoadBalancerController.json`:
+
+- We need to create the IAM Policy file used in the TF above.
+- This is a large IAM policy and doesn't have any constraints. For example, if you wanted to dynamically add resource constraints, you would use the `templatefile` Terraform function and parse it during creation.
+
+Apply these TF changes and get the pod is running:
+
+```shell
+kubectl get pods -n kube-system
+```
+
+Let's test out the AWS LB controller with a set of examples.
+
+#### Example 1: Exposing a service directly to the internet
+
+In `k8s/5-lbc-example-1`:
+
+- We've create a simple example using an internet facing service of type `LoadBalancer`
+- The `service.beta.kubernetes.io/aws-load-balancer-type: external` annotation tells k8s to use the AWS Load Balancer Controller, otherwise the legacy controller will be
+  used.
+- The `service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip` annotation tells the NLB to use IP mode to add the pod IPs directly to the target group
+- The `service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing` annotation sets a public IP on the NLB so you can reach it from the internet
+- The `service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"` annotation can be set optionally to use a proxy protocol if your application needs to know the actual client source
+  IP address, otherwise it will get the load balancer source IP.
+
+Apply and check its running:
+
+```shell
+kubectl apply -f ./k8s/5-lbc-example-1
+# namespace/5-example created
+# deployment.apps/myapp created
+# service/myapp created
+
+kubectl get pods -n 5-example
+# NAME                     READY   STATUS    RESTARTS   AGE
+# myapp-54c68646fc-2w6wf   1/1     Running   0          12s
+
+kubectl get svc -n 5-example
+# NAME    TYPE           CLUSTER-IP      EXTERNAL-IP                                                PORT(S)          AGE
+# myapp   LoadBalancer   172.20.18.230   k8s-5example-myapp-[omitted].elb.eu-west-2.amazonaws.com   8080:32742/TCP   86s
+```
+
+> Note: it may take a few minutes for the LB to appear. If it doesn't get created, check the AWS load balancer controller logs.
+
+Checking out the AWS Console:
+
+- We can see the load balancer was created
+  - It is a Network load balancer. Note: NLBs are cheaper and faster the ALBs, but they are Layer 4 as opposed to Layer 7 for ALBs. As such, they are limited to only route traffic directly to a target group, whereas an ALB can use protocol-specific routing.
+  - It was created in the public subnets, because of the `internet-facing` annotation and because we added annotations to the subnets when we created the VPC.
+  - Looking at the target group, we see that because we used IP mode, it does not add all the k8s NodePorts to target group and instead added a single pod IP address. This is the biggest benefit of IP mode: lower latency, better security, and no limit on how many nodes the cluster can have.
+
+We can check the IP of the pod using the command below:
+
+```shell
+kubectl get pods -o wide -n 5-example
+# NAME                     READY   STATUS    RESTARTS   AGE   IP          NODE                                      NOMINATED NODE   READINESS GATES
+# myapp-54c68646fc-2w6wf   1/1     Running   0          53m   10.0.1.97   ip-10-0-4-49.eu-west-2.compute.internal   <none>           <none>
+```
+
+We can use CURL to hit the NLB: to test we can access the pod
+
+```shell
+curl -i http://k8s-5example-myapp-[omitted].elb.eu-west-2.amazonaws.com:8080/about
+# HTTP/1.1 200 OK
+# Date: Sat, 12 Oct 2024 14:04:43 GMT
+# Content-Type: application/json
+# Content-Length: 39
+#
+# {"service":"myapp","version:":"v0.1.4"}
+```
+
+Clean up:
+
+```shell
+kubectl delete ns 5-example
+```
+
+#### Example 2: Exposing an ingress to the internet
+
+In addition to creating load balancers, the AWS Load Balancer Controller can create ingresses (forward proxies). It ships with support for ALB by default:
+
+```shell
+kubectl get ingressclass
+# NAME   CONTROLLER            PARAMETERS   AGE
+# alb    ingress.k8s.aws/alb   <none>       71m
+```
+
+In this example, `./k8s/6-lbc-example-2`:
+
+- we have the same deployment object
+- we create a service of type `ClusterIP`:
+  - Note: if you want to use ingress with `Instance Mode`, you would use `NodePort`. For an ALB with `IP mode` we use `ClusterIP`
+- we create an ingress with relevant annotations. Importantly, we need to add the `alb.ingress.kubernetes.io/healthcheck-path: /health` annotation to health check the pods attached to the target group
+- The ingress contains a host-based routing rule for the host `ex6.antonputra.com` and path `/`. We won't create a DNS record in this example (the next one we will), but we'll see how we can use CURL to add this header for local testing.
+
+Lets apply and check our objects have been created:
+
+```shell
+kubectl apply -f ./k8s/6-lbc-example-2
+# namespace/6-example created
+# deployment.apps/myapp created
+# service/myapp created
+# ingress.networking.k8s.io/myapp created
+
+kubectl get ing -n 6-example
+# NAME    CLASS   HOSTS                ADDRESS                                                                PORTS   AGE
+# myapp   alb     ex6.antonputra.com   k8s-6example-myapp-363e976e6a-1006909819.eu-west-2.elb.amazonaws.com   80      62s
+
+curl -i --header "Host: ex6.antonputra.com" http://k8s-6example-myapp-363e976e6a-1006909819.eu-west-2.elb.amazonaws.com/about
+# HTTP/1.1 200 OK
+# Date: Sat, 12 Oct 2024 14:27:49 GMT
+# Content-Type: application/json
+# Content-Length: 39
+# Connection: keep-alive
+#
+# {"service":"myapp","version:":"v0.1.4"}%
+```
+
+> Note: Since we're using ALB, we don't need to use port 8080 like we did with the NLB
+
+Clean up:
+
+```shell
+kubectl delete ns 6-example
+```
+
+#### Example 3: Using ingress with SSL termination
+
+To use HTTPS and do SSL termination at the ALB, we cannot use Lets Encrypt to obtain an SSL certificate. Instead, we'll use ACM.
+
+> I won't do this in this tutorial, because you have to create both an SSL certificate and a custom domain. (Can't think of a useful one I actual want to create, so will skip this example.)
+
+We'll do this via the Console, but this can be done via Terraform. I guess for this course, we would't want the certificate to get deleted everytime we clean down our infrastructure as it costs money to issue an SSL cert!
+
+Here are the steps:
+
+- Go to Route53 and register a domain, e.g. `ex7.antonputra.com`.
+- Go to AWS Certificate Manager (ACM)
+- Request a public certificate
+- Provide the domain name, `ex7.antonputra.com`
+- Validation method: DNS validation - recommended
+- Key algorithm: RSA 2048
+
+Next, we need to prove that we own the domain name. When using Route53 to create the domain, you can just click "Create records in Route 53".
+
+After the certificate is verified, we can copy the ARN into the Ingress annotation, e.g. `alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-2:424432388155:certificate/7f32327d-ad95-4977-91c2-8fae85e9e598`
+
+> Note: because we're doing SSL termination outside of the EKS cluster, we don't need to keep the certficate and private key in k8s! In the next, section, we'll look at setting up Ingress Nginx using Cert Manager and handle SSL termination in the cluster.
+
+Once the Ingress is deployed, the final step is to create a CNAME record in our DNS to route traffic to the ALB for the custom domain.
+
+- For the record name, we'd use `ex7`
+- For the CNAME value, we'd use the ALB DNS
+
+Check you can resolve the DNS:
+
+```shell
+dig ex7.antonputra.com
+```
+
+The final check is to test we have a valid certificate in the browser at https://ex7.antonputra.com/about.
+
+Clean up:
+
+```shell
+kubectl delete ns 7-example
+```
 
 
