@@ -992,8 +992,25 @@ curl -i --header "Host: ex8.antonputra.com" http://k8s-ingress-external-c7259365
 # {"service":"myapp","version:":"v0.1.4"}%
 ```
 
+For the next example, we'll set up HTTPS so we'll need deploy Cert Manager.
+
+In `terraform/17-cert-manager.tf`:
+
+- We used Helm to deploy Cert Manager
+
+Then in `k8s/9-nginx-example-2`:
+
+- We deploy a `ClusterIssuer` custom resource to manage the certificate
+
 Clean up:
 
 ```shell
 kubectl delete ns 8-example
+```
+
+Note: to clean up you need to run:
+
+```shell
+terraform destroy --target helm_release.external_nginx
+terraform destroy
 ```
