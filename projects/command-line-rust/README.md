@@ -34,3 +34,60 @@ The branches are organized as follows:
 
 ![Rust](rust.jpg)
 
+
+## Notes
+
+### Problem 1: Hello World 
+
+Create a new project:
+
+```shell
+$ cargo new --name hello 01_hello
+```
+
+Run the project:
+
+```shell
+$ cd 01_hello
+$ cargo run --quiet
+```
+
+Getting help for a Rust command:
+
+```shell
+cargo help run
+```
+
+You can also run the compiled binary directly:
+
+```shell
+$ ./target/debug/hello
+```
+
+Running tests:
+
+```shell
+$ cargo test
+```
+
+We tried to add a test to run the `hello` executable. However, it failed because it wasn't found in the `PATH`. We can
+view the `PATH` with:
+
+```shell
+$ echo $PATH | tr : '\n'
+/Users/gregbrown/.cargo/bin
+/Users/gregbrown/.sdkman/candidates/java/current/bin
+/Users/gregbrown/.local/bin
+```
+
+> `tr` (_translate characters_) is a Unix utility that translates characters from one set to another.
+
+Towards the end of this problem, we created two small binaries, `true` and `false`, to view the effects of the exit
+status on the problem. We can run these binaries with:
+
+```shell    
+cargo run --quiet --bin true
+```
+
+Here we can see that we can run multiple binaries within a package.
+
