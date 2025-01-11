@@ -5,3 +5,4 @@ debug
 *.py
 **/*.rs.bk
 Cargo.lock
+.vscode
